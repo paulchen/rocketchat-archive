@@ -1,3 +1,3 @@
 
-rootProject.name = "rocketchat-archive"
+rootProject.name = "rocketchat-archive-backend"
 

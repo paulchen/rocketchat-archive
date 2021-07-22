@@ -4,6 +4,8 @@ val ktor_version = "1.6.1"
 
 plugins {
     kotlin("jvm") version "1.5.21"
+    application
+    id("com.palantir.docker") version "0.26.0"
 }
 
 group = "at.rueckgr.rocketchat"
@@ -28,4 +30,23 @@ tasks.test {
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "11"
+}
+
+application {
+    mainClassName = "at.rueckgr.rocketchat.archive.MainKt"
+}
+
+distributions {
+    main {
+        version = ""
+    }
+}
+
+docker {
+    name = "${project.name}:latest"
+    files("build/distributions")
+}
+
+tasks.docker {
+    dependsOn(tasks.distTar)
 }

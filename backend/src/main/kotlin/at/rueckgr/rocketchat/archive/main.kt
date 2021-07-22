@@ -1,3 +1,5 @@
+package at.rueckgr.rocketchat.archive
+
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.jackson.*
