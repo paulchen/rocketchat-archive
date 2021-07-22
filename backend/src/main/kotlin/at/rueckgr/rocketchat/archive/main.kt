@@ -1,3 +1,10 @@
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.jackson.*
+import io.ktor.response.*
+import io.ktor.routing.*
+import io.ktor.server.engine.*
+import io.ktor.server.netty.*
 import org.litote.kmongo.*
 import java.time.LocalDateTime
 
@@ -10,6 +17,7 @@ data class RocketchatMessage(val _id: String, val rid: String, val msg: String, 
 data class RocketchatUser(val _id: String, val name: String, val username: String)
 
 fun main() {
+    /*
     val client = KMongo.createClient()
     val database = client.getDatabase("rocketchat")
     database.getCollection<RocketchatRoom>("rocketchat_room")
@@ -29,4 +37,19 @@ fun main() {
         .getCollection<RocketchatUser>("users")
         .find()
         .forEach { println(it.username) }
+
+     */
+
+    embeddedServer(Netty, 8080) {
+        install(ContentNegotiation) {
+            jackson {}
+        }
+        routing {
+            route("/test") {
+                get {
+                    call.respond(mapOf("response" to "wtf"))
+                }
+            }
+        }
+    }.start(wait = true)
 }
