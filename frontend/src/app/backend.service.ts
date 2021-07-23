@@ -10,7 +10,7 @@ export class BackendService {
   constructor(private http: HttpClient) { }
 
   getTest(): Observable<TestResponse> {
-    return this.http.get<TestResponse>("/services/test");
+    return this.http.get<TestResponse>("./services/test");
   }
 }
 
