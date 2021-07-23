@@ -84,6 +84,24 @@ ProxyPassReverse /             http://localhost:3000/
 ```
 * The frontend listens to port `42773`. You can change this port in `docker-compose.yml`.
 * You may want to create a Systemd unit to ensure the application is started automatically on boot.
+  Take this snippet as a template:
+```
+[Unit]
+Description=Rocketchat archive
+Requires=mongo.service
+After=mongo.service
+
+[Service]
+User=paulchen
+Type=oneshot
+RemainAfterExit=true
+WorkingDirectory=/opt/rocketchat-archive/
+ExecStart=/usr/local/bin/docker-compose up -d --remove-orphans
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target
+```
 * This application does not involve any authentication.
   Therefore, without taking any additional measures, all messages in all channels would be exposed to the public.
   To apply basic HTTP authentication, you can extend the above proxy configuration by the following lines:
