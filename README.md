@@ -2,7 +2,7 @@
 
 Fast searchable online archive for instances of [Rocket.Chat](https://rocket.chat/).
 
-## Installation and deplyoment
+## Installation and deployment
 
 Clone the Git repository to your local machine or server.
 Then build frontend, backend, the docker images.
@@ -13,7 +13,7 @@ Finally, fire up everything
 * Git
 * Docker
 * Docker-Compose
-* Node.js (recently enough, development was done with 16.5.0)
+* Node.js (recently enough; Node 16.5.0 was used for development)
 
 ### Build frontend
 
@@ -55,18 +55,18 @@ Finally, you are ready to start everything up:
 docker-compose up
 ```
 
-The frontend will listen on port `42773` locally, so point your browser to e.g. http://localhost:42773/.
+The frontend will listen on port `42773` locally, so you may want to point your browser to http://localhost:42773/.
 
 ### Things to know
 
 * The backend connects to a host `mongo` in the network `rocketchat_default`.
-This is intended to be used with a Docker-based deployment of Rocket.Chat
-(see e.g. [https://docs.rocket.chat/installing-and-updating/docker-containers/systemd](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd)]
-  )
+  This is intended to be used with a Docker-based deployment of Rocket.Chat
+  (e.g., [https://docs.rocket.chat/installing-and-updating/docker-containers/systemd](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd)).
+  You can change this configuration in `docker-compose.yml`. 
 * You may want to configure your web server to be a reverse proxy that forwards certain paths to port `42773`.
-E.g. when using the Apache configuration from
-[https://docs.rocket.chat/installing-and-updating/manual-installation/configuring-ssl-reverse-proxy](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd)) ,
-you can change the configuration of the modules `mod-rewrite` and `mod-proxy` to:
+  E.g., when using the Apache configuration from
+  [https://docs.rocket.chat/installing-and-updating/manual-installation/configuring-ssl-reverse-proxy](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd),
+  you can change the configuration of the modules `mod-rewrite` and `mod-proxy` to:
 ```
 RewriteEngine On
 RewriteCond %{HTTP:CONNECTION} Upgrade [NC]
