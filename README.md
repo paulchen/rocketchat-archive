@@ -84,3 +84,19 @@ ProxyPassReverse /             http://localhost:3000/
 ```
 * The frontend listens to port `42773`. You can change this port in `docker-compose.yml`.
 * You may want to create a Systemd unit to ensure the application is started automatically on boot.
+* This application does not involve any authentication.
+  Therefore, without taking any additional measures, all messages in all channels would be exposed to the public.
+  To apply basic HTTP authentication, you can extend the above proxy configuration by the following lines:
+```
+<Location /archive>
+  AuthUserFile /etc/apache2/htpasswd-archive
+  AuthName "You shall not pass!"
+  AuthType Basic
+  require valid-user
+</Location>
+```
+  Don't forget to create the file `/etc/apache2/htpasswd-archive` using
+
+```
+htpasswd -c /etc/apache2/htpasswd-archive <username>
+```
