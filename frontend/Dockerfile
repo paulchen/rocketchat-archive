@@ -7,7 +7,7 @@
 
 FROM nginx:latest
 #COPY --from=build /usr/local/app/dist/rocketchat-archive /usr/share/nginx/html
-COPY dist/rocketchat-archive /usr/share/nginx/html
 COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
+COPY dist/rocketchat-archive /usr/share/nginx/html
 EXPOSE 80
 
