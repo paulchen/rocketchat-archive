@@ -1,6 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 val ktor_version = "1.6.1"
+val log4jVersion = "2.14.1"
 
 plugins {
     kotlin("jvm") version "1.5.21"
@@ -20,6 +21,10 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-gson:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
+    implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
+    implementation("org.slf4j:slf4j-api:1.7.32")
+    implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
 
     testImplementation(kotlin("test"))
 }
