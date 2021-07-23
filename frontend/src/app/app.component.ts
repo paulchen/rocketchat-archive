@@ -11,7 +11,8 @@ import {MessageData} from "./message-data";
 export class AppComponent implements OnInit {
   channelData: ChannelData;
   selectedChannel: Channel;
-  messageData: MessageData
+  messageData: MessageData;
+  currentPage: number;
 
   constructor(private backendService: BackendService) { }
 
@@ -24,10 +25,41 @@ export class AppComponent implements OnInit {
 
   selectChannel(channel: Channel) {
     this.selectedChannel = channel;
+    this.currentPage = 1;
 
-    this.backendService.getMessages(channel).subscribe(response => {
+    this.loadMessages();
+  }
+
+  private loadMessages() {
+    this.backendService.getMessages(this.selectedChannel, this.currentPage).subscribe(response => {
       this.messageData = response;
     });
+  }
+
+  loadFirstPage() {
+    this.currentPage = 1;
+    this.loadMessages();
+  }
+
+  loadNextPage() {
+    this.currentPage++;
+    if (this.currentPage > this.messageData.pages) {
+      this.currentPage = this.messageData.pages;
+    }
+    this.loadMessages();
+  }
+
+  loadPreviousPage() {
+    this.currentPage--;
+    if (this.currentPage < 1) {
+      this.currentPage = 1;
+    }
+    this.loadMessages()
+  }
+
+  loadLastPage() {
+    this.currentPage = this.messageData.pages;
+    this.loadMessages();
   }
 
 }

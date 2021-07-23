@@ -9,6 +9,15 @@
 <hr />
 
 <div *ngIf="messageData != null">
+  <a href="javascript:void(0);" (click)="loadFirstPage();">First</a>&nbsp;
+  <a href="javascript:void(0);" (click)="loadPreviousPage();">Previous</a>&nbsp;
+  <a href="javascript:void(0);" (click)="loadNextPage();">Next</a>&nbsp;
+  <a href="javascript:void(0);" (click)="loadLastPage();">Last</a>&nbsp;
+</div>
+
+<hr />
+
+<div *ngIf="messageData != null">
   <table style="width: 100%;">
     <tr *ngFor="let message of messageData.messages">
       <td style="white-space: nowrap;">[{{message.timestamp}}]</td>
