@@ -1,1 +1,19 @@
-{{response}}
+<div *ngIf="channelData != null">
+  <span *ngFor="let channel of channelData.channels">
+    <span *ngIf="channel == selectedChannel" style="font-weight: bold;">#{{channel.name}}</span>
+    <a *ngIf="channel != selectedChannel" (click)="selectChannel(channel)" href="javascript:void(0);">#{{channel.name}}</a>
+    &nbsp;
+  </span>
+</div>
+
+<hr />
+
+<div *ngIf="messageData != null">
+  <table style="width: 100%;">
+    <tr *ngFor="let message of messageData.messages">
+      <td style="white-space: nowrap;">[{{message.timestamp}}]</td>
+      <td style="white-space: nowrap;">{{message.username}}</td>
+      <td>{{message.message}}</td>
+    </tr>
+  </table>
+</div>

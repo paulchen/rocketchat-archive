@@ -1,7 +1,8 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
-import {TestResponse} from "./test-response";
+import {Channel, ChannelData} from "./channel-data";
+import {MessageData} from "./message-data";
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +10,12 @@ import {TestResponse} from "./test-response";
 export class BackendService {
   constructor(private http: HttpClient) { }
 
-  getTest(): Observable<TestResponse> {
-    return this.http.get<TestResponse>("./services/test");
+  getChannels(): Observable<ChannelData> {
+    return this.http.get<ChannelData>("./services/channels");
+  }
+
+  getMessages(channel: Channel): Observable<MessageData> {
+    return this.http.get<MessageData>("./services/channels/" + channel.id + "/messages");
   }
 }
 

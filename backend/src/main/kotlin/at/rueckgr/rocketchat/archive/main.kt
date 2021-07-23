@@ -23,7 +23,7 @@ data class RocketchatUser(val _id: String, val name: String, val username: Strin
 
 data class Channel(val name: String, val id: String)
 
-data class Message(val _id: String, val message: String, val timestamp: LocalDateTime, val username: String)
+data class Message(val id: String, val message: String, val timestamp: LocalDateTime, val username: String)
 
 fun main() {
     /*
