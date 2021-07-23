@@ -7,5 +7,6 @@ RUN npm run-script ng -- build
 
 FROM nginx:latest
 COPY --from=build /usr/local/app/dist/rocketchat-archive /usr/share/nginx/html
+COPY ./nginx/nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 80
 

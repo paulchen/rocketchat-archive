@@ -4,8 +4,14 @@ services:
     build: frontend
     ports:
       - "42773:80"
+    networks:
+      - backend
   backend:
     build: backend
-    ports:
-      - "8080:8080"
+    networks:
+      - backend
+      - rocketchat_default
 
+networks:
+  backend:
+  rocketchat_default:
