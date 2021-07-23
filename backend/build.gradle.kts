@@ -25,6 +25,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.4")
 
     testImplementation(kotlin("test"))
 }

@@ -1,7 +1,9 @@
 package at.rueckgr.rocketchat.archive
 
+import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.application.*
 import io.ktor.features.*
+import io.ktor.http.*
 import io.ktor.jackson.*
 import io.ktor.response.*
 import io.ktor.routing.*
@@ -9,14 +11,19 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
 import java.time.LocalDateTime
+import kotlin.math.ceil
 
 data class RocketchatRoom(val _id: String, val t: String, val name: String?)
 
-data class UserData(val _id: String, val username: String, val name: String)
+data class UserData(val _id: String, val username: String, val name: String?)
 
 data class RocketchatMessage(val _id: String, val rid: String, val msg: String, val ts: LocalDateTime, val u: UserData)
 
 data class RocketchatUser(val _id: String, val name: String, val username: String)
+
+data class Channel(val name: String, val id: String)
+
+data class Message(val _id: String, val message: String, val timestamp: LocalDateTime, val username: String)
 
 fun main() {
     /*
@@ -44,18 +51,44 @@ fun main() {
 
     embeddedServer(Netty, 8080) {
         install(ContentNegotiation) {
-            jackson {}
+            jackson {
+                findAndRegisterModules()
+                configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+            }
         }
         routing {
-            route("/test") {
+            route("/channels") {
                 get {
                     val client = KMongo.createClient("mongodb://mongo:27017")
                     val database = client.getDatabase("rocketchat")
-                    val rooms = database.getCollection<RocketchatRoom>("rocketchat_room")
+                    val channels = database.getCollection<RocketchatRoom>("rocketchat_room")
                         .find()
                         .filter { it.t == "c" }
-                        .map { it.name }
-                    call.respond(mapOf("rooms" to rooms))
+                        .map { Channel(it.name!!, it._id) }
+                    call.respond(mapOf("channels" to channels))
+                    client.close()
+                }
+            }
+            route("/channels/{id}/messages") {
+                get {
+                    val page = call.request.queryParameters["page"]?.toInt() ?: 1
+                    val id = call.parameters["id"] ?: return@get call.respondText("Missing id", status = HttpStatusCode.BadRequest)
+                    val client = KMongo.createClient("mongodb://mongo:27017")
+                    val database = client.getDatabase("rocketchat")
+                    val messages = database
+                        .getCollection<RocketchatMessage>("rocketchat_message")
+                        .find(RocketchatMessage::rid eq id)
+                        .descendingSort(RocketchatMessage::ts)
+                        .skip((page - 1) * 100)
+                        .limit(100)
+                        .map { Message(it._id, it.msg, it.ts, it.u.username) }
+                    val messageCount = database
+                        .getCollection<RocketchatMessage>("rocketchat_message")
+                        .find(RocketchatMessage::rid eq id)
+                        .count()
+                    val pageCount = ceil(messageCount.toDouble() / 100).toInt()
+                    call.respond(mapOf("messages" to messages, "pages" to pageCount))
+                    client.close()
                 }
             }
         }
