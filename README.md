@@ -1,0 +1,86 @@
+# rocketchat-archive
+
+Fast searchable online archive for instances of [Rocket.Chat](https://rocket.chat/).
+
+## Installation and deplyoment
+
+Clone the Git repository to your local machine or server.
+Then build frontend, backend, the docker images.
+Finally, fire up everything
+
+### Requirements
+
+* Git
+* Docker
+* Docker-Compose
+* Node.js (recently enough, development was done with 16.5.0)
+
+### Build frontend
+
+From the `frontend` directory, run
+
+```
+npm install
+npm run-script ng -- --build
+```
+
+Remember to add the `--base-href` switch in case the application will not be deployed
+on top level of your domain, e.g.
+
+```
+npm run-script ng -- --build --base-href="/archive/"
+```
+
+### Build backend
+
+From the `backend` directory, run
+
+```
+./gradlew distTar
+```
+
+### Build docker images
+
+From the root directory of the repository, run
+
+```
+docker-compose build
+```
+
+### Run
+
+Finally, you are ready to start everything up:
+
+```
+docker-compose up
+```
+
+The frontend will listen on port `42773` locally, so point your browser to e.g. http://localhost:42773/.
+
+### Things to know
+
+* The backend connects to a host `mongo` in the network `rocketchat_default`.
+This is intended to be used with a Docker-based deployment of Rocket.Chat
+(see e.g. [https://docs.rocket.chat/installing-and-updating/docker-containers/systemd](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd)]
+  )
+* You may want to configure your web server to be a reverse proxy that forwards certain paths to port `42773`.
+E.g. when using the Apache configuration from
+[https://docs.rocket.chat/installing-and-updating/manual-installation/configuring-ssl-reverse-proxy](https://docs.rocket.chat/installing-and-updating/docker-containers/systemd)) ,
+you can change the configuration of the modules `mod-rewrite` and `mod-proxy` to:
+```
+RewriteEngine On
+RewriteCond %{HTTP:CONNECTION} Upgrade [NC]
+RewriteCond %{HTTP:Upgrade}    =websocket [NC]
+RewriteRule /(.*)              ws://localhost:3000/$1 [P,L]
+RewriteCond %{HTTP:Upgrade}    !=websocket [NC]
+RewriteCond %{REQUEST_URI}     !maintenance.html
+RewriteCond %{REQUEST_URI}     !/archive
+RewriteRule /(.*)              http://localhost:3000/$1 [P,L]
+
+RewriteRule /archive/(.*)      http://localhost:42773/$1 [P,L]
+
+ProxyPassReverse /archive/     http://localhost:42773/
+ProxyPassReverse /             http://localhost:3000/
+```
+* The frontend listens to port `42773`. You can change this port in `docker-compose.yml`.
+* You may want to create a Systemd unit to ensure the application is started automatically on boot.
