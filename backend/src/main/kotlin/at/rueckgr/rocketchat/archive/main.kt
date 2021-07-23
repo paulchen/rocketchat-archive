@@ -49,7 +49,13 @@ fun main() {
         routing {
             route("/test") {
                 get {
-                    call.respond(mapOf("response" to "wtf"))
+                    val client = KMongo.createClient("mongodb://mongo:27017")
+                    val database = client.getDatabase("rocketchat")
+                    val rooms = database.getCollection<RocketchatRoom>("rocketchat_room")
+                        .find()
+                        .filter { it.t == "c" }
+                        .map { it.name }
+                    call.respond(mapOf("rooms" to rooms))
                 }
             }
         }

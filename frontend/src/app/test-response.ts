@@ -1,3 +1,3 @@
 export class TestResponse {
-  response: string;
+  rooms: string[];
 }

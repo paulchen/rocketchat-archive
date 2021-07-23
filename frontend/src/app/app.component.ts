@@ -13,7 +13,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendService.getTest().subscribe(response => {
-      this.response = response.response
+      this.response = response.rooms.join(" ")
     });
   }
 
