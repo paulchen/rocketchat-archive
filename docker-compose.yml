@@ -15,3 +15,4 @@ services:
 networks:
   backend:
   rocketchat_default:
+    external: True
