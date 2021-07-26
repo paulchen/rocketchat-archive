@@ -1,6 +1,7 @@
 package at.rueckgr.rocketchat.archive
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.http.*
@@ -10,7 +11,6 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
-import java.time.LocalDateTime
 import java.time.ZonedDateTime
 import kotlin.math.ceil
 
@@ -76,16 +76,31 @@ fun main() {
                     val id = call.parameters["id"] ?: return@get call.respondText("Missing id", status = HttpStatusCode.BadRequest)
                     val client = KMongo.createClient("mongodb://mongo:27017")
                     val database = client.getDatabase("rocketchat")
+
+                    val filterConditions = mutableListOf(RocketchatMessage::rid eq id)
+                    val userid = call.parameters["user"]?.trim() ?: ""
+                    if (userid.isNotBlank()) {
+                        filterConditions.add(RocketchatMessage::u / UserData::_id eq userid)
+                    }
+                    val text = call.parameters["text"]?.trim() ?: ""
+                    if (text.isNotBlank()) {
+                        filterConditions.add(Filters.regex("msg", text, "i"))
+                    }
+                    val filterCondition = when (filterConditions.size) {
+                        1 -> filterConditions.first()
+                        else -> and(filterConditions)
+                    }
+
                     val messages = database
                         .getCollection<RocketchatMessage>("rocketchat_message")
-                        .find(RocketchatMessage::rid eq id)
+                        .find(filterCondition)
                         .descendingSort(RocketchatMessage::ts)
                         .skip((page - 1) * 100)
                         .limit(100)
                         .map { Message(it._id, it.msg, it.ts, it.u.username) }
                     val messageCount = database
                         .getCollection<RocketchatMessage>("rocketchat_message")
-                        .find(RocketchatMessage::rid eq id)
+                        .find(filterCondition)
                         .count()
                     val pageCount = ceil(messageCount.toDouble() / 100).toInt()
                     call.respond(mapOf("messages" to messages, "pages" to pageCount))
