@@ -11,19 +11,20 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
 import java.time.LocalDateTime
+import java.time.ZonedDateTime
 import kotlin.math.ceil
 
 data class RocketchatRoom(val _id: String, val t: String, val name: String?)
 
 data class UserData(val _id: String, val username: String, val name: String?)
 
-data class RocketchatMessage(val _id: String, val rid: String, val msg: String, val ts: LocalDateTime, val u: UserData)
+data class RocketchatMessage(val _id: String, val rid: String, val msg: String, val ts: ZonedDateTime, val u: UserData)
 
 data class RocketchatUser(val _id: String, val name: String, val username: String)
 
 data class Channel(val name: String, val id: String)
 
-data class Message(val id: String, val message: String, val timestamp: LocalDateTime, val username: String)
+data class Message(val id: String, val message: String, val timestamp: ZonedDateTime, val username: String)
 
 fun main() {
     /*
