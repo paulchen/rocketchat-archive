@@ -26,6 +26,8 @@ data class Channel(val name: String, val id: String)
 
 data class Message(val id: String, val message: String, val timestamp: ZonedDateTime, val username: String)
 
+data class User(val id: String, val username: String)
+
 fun main() {
     /*
     val client = KMongo.createClient()
@@ -58,6 +60,17 @@ fun main() {
             }
         }
         routing {
+            route("/users") {
+                get {
+                    val client = KMongo.createClient("mongodb://mongo:27017")
+                    val database = client.getDatabase("rocketchat")
+                    val users = database.getCollection<RocketchatUser>("users")
+                        .find()
+                        .map { User(it._id, it.username) }
+                    call.respond(mapOf("users" to users))
+                    client.close()
+                }
+            }
             route("/channels") {
                 get {
                     val client = KMongo.createClient("mongodb://mongo:27017")
