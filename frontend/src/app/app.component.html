@@ -1,22 +1,29 @@
 <div *ngIf="channelData != null">
-  <p-tabView (onChange)="handleChange($event)">
+  <p-tabView (onChange)="handleTabChange($event)">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
-        <div style="height: 90vh;">
+        <div style="height: 85vh;">
           <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped"
-                   [scrollable]="true" scrollHeight="flex">
+                   [scrollable]="true" scrollHeight="flex" [paginator]="true" [rows]="limit" [totalRecords]="messageData.pages * limit"
+                   [lazy]="true" (onLazyLoad)="handleTableChange($event)" [globalFilterFields]="['username', 'message']" [loading]="loading"
+                   [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1">
             <ng-template pTemplate="colgroup">
               <colgroup>
                 <col style="width: 10%;" />
-                <col style="width: 7%;" />
-                <col style="width: 83%;" />
+                <col style="width: 10%;" />
+                <col style="width: 80%;" />
               </colgroup>
             </ng-template>
             <ng-template pTemplate="header">
               <tr>
-                <th>Timestamp</th>
+                <th pSortableColumn="timestamp">Timestamp <p-sortIcon field="timestamp"></p-sortIcon></th>
                 <th>Username</th>
                 <th>Message</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th><p-columnFilter type="text" field="username"></p-columnFilter></th>
+                <th><p-columnFilter type="text" field="message"></p-columnFilter></th>
               </tr>
             </ng-template>
             <ng-template pTemplate="body" let-message>

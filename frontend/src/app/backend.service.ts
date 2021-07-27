@@ -14,8 +14,9 @@ export class BackendService {
     return this.http.get<ChannelData>("./services/channels");
   }
 
-  getMessages(channel: Channel, page: number): Observable<MessageData> {
-    return this.http.get<MessageData>("./services/channels/" + channel.id + "/messages?page=" + page);
+  getMessages(channel: Channel, page: number, limit: number, sort: string, username: string, message: string): Observable<MessageData> {
+    const params = { page: page, limit: limit, sort: sort, user: username, text: message };
+    return this.http.get<MessageData>("./services/channels/" + channel.id + "/messages", { params });
   }
 }
 

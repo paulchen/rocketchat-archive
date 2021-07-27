@@ -12,58 +12,53 @@ export class AppComponent implements OnInit {
   channelData: ChannelData;
   selectedChannel: Channel;
   messageData: MessageData;
-  currentPage: number;
+  limit = 100;
+  loading = true;
 
   constructor(private backendService: BackendService) { }
 
   ngOnInit(): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
-      this.selectChannel(this.channelData.channels[0])
+      this.selectedChannel = this.channelData.channels[0];
+
+      this.messageData = new MessageData();
     });
   }
 
-  selectChannel(channel: Channel) {
-    this.selectedChannel = channel;
-    this.currentPage = 1;
-
-    this.loadMessages();
-  }
-
-  private loadMessages() {
-    this.backendService.getMessages(this.selectedChannel, this.currentPage).subscribe(response => {
-      this.messageData = response;
-    });
-  }
-
-  loadFirstPage() {
-    this.currentPage = 1;
-    this.loadMessages();
-  }
-
-  loadNextPage() {
-    this.currentPage++;
-    if (this.currentPage > this.messageData.pages) {
-      this.currentPage = this.messageData.pages;
-    }
-    this.loadMessages();
-  }
-
-  loadPreviousPage() {
-    this.currentPage--;
-    if (this.currentPage < 1) {
-      this.currentPage = 1;
-    }
-    this.loadMessages()
-  }
-
-  loadLastPage() {
-    this.currentPage = this.messageData.pages;
-    this.loadMessages();
-  }
-
-  handleChange(event: any) {
+  handleTabChange(event: any) {
     this.selectedChannel = this.channelData.channels[event.index];
-    this.loadMessages();
+  }
+
+  handleTableChange(event: any) {
+    let component = this;
+    setTimeout(function() { component.reloadData(event) }, 100);
+  }
+
+  reloadData(event: any) {
+    this.loading = true;
+
+    const limit = event.rows;
+    const first = event.first;
+    const page = (first / limit) + 1;
+
+    const sort = (event.sortOrder == -1) ? "desc" : "asc";
+
+    const filters = event.filters
+    let username = "";
+    let message = "";
+    if (filters) {
+      if ("username" in filters && "value" in filters["username"] && filters["username"]["value"]) {
+        username = filters["username"]["value"]
+      }
+      if ("message" in filters && "value" in filters["message"] && filters["message"]["value"]) {
+        message = filters["message"]["value"]
+      }
+    }
+
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, username, message).subscribe(response => {
+      this.messageData = response;
+      this.loading = false;
+    });
   }
 }
