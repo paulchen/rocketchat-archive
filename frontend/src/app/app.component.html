@@ -2,22 +2,32 @@
   <p-tabView (onChange)="handleChange($event)">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
-        <p-table *ngIf="messageData != null" [value]="messageData.messages" [autoLayout]="true">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Timestamp</th>
-              <th>Username</th>
-              <th>Message</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-message>
-            <tr>
-              <td style="white-space: nowrap;">{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</td>
-              <td style="white-space: nowrap;">{{message.username}}</td>
-              <td>{{message.message}}</td>
-            </tr>
-          </ng-template>
-        </p-table>
+        <div style="height: 90vh;">
+          <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped"
+                   [scrollable]="true" scrollHeight="flex">
+            <ng-template pTemplate="colgroup">
+              <colgroup>
+                <col style="width: 10%;" />
+                <col style="width: 7%;" />
+                <col style="width: 83%;" />
+              </colgroup>
+            </ng-template>
+            <ng-template pTemplate="header">
+              <tr>
+                <th>Timestamp</th>
+                <th>Username</th>
+                <th>Message</th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-message>
+              <tr>
+                <td style="white-space: nowrap;">{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+                <td style="white-space: nowrap;">{{message.username}}</td>
+                <td>{{message.message}}</td>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
       </ng-template>
     </p-tabPanel>
   </p-tabView>
