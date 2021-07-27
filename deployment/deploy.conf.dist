@@ -1,0 +1,2 @@
+BASE_HREF=/archive/
+SYSTEMD_UNIT=rocketchat-archive
