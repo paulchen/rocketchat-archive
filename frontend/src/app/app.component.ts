@@ -51,18 +51,18 @@ export class AppComponent implements OnInit {
     const sort = (event.sortOrder == -1) ? "desc" : "asc";
 
     const filters = event.filters
-    let username = "";
+    let userIds = [];
     let message = "";
     if (filters) {
       if ("username" in filters && "value" in filters["username"] && filters["username"]["value"]) {
-        username = filters["username"]["value"]
+        userIds = filters["username"]["value"]
       }
       if ("message" in filters && "value" in filters["message"] && filters["message"]["value"]) {
         message = filters["message"]["value"]
       }
     }
 
-    this.backendService.getMessages(this.selectedChannel, page, limit, sort, username, message).subscribe(response => {
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe(response => {
       this.messageData = response;
       this.loading = false;
     });

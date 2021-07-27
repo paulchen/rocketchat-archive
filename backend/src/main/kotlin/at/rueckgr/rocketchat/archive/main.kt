@@ -67,6 +67,7 @@ fun main() {
                     val users = database.getCollection<RocketchatUser>("users")
                         .find()
                         .map { User(it._id, it.username) }
+                        .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
                     call.respond(mapOf("users" to users))
                     client.close()
                 }
@@ -93,9 +94,9 @@ fun main() {
                     val database = client.getDatabase("rocketchat")
 
                     val filterConditions = mutableListOf(RocketchatMessage::rid eq id)
-                    val userid = call.parameters["user"]?.trim() ?: ""
-                    if (userid.isNotBlank()) {
-                        filterConditions.add(RocketchatMessage::u / UserData::_id eq userid)
+                    val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
+                    if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
+                        filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
                     }
                     val text = call.parameters["text"]?.trim() ?: ""
                     if (text.isNotBlank()) {
@@ -126,7 +127,6 @@ fun main() {
                         .getCollection<RocketchatMessage>("rocketchat_message")
                         .find(filterCondition)
                         .count()
-                    val pageCount = ceil(messageCount.toDouble() / limit).toInt()
                     call.respond(mapOf("messages" to messages, "messageCount" to messageCount))
                     client.close()
                 }
