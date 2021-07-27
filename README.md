@@ -21,14 +21,14 @@ From the `frontend` directory, run
 
 ```
 npm install
-npm run-script ng -- build
+npm run build
 ```
 
 Remember to add the `--base-href` switch in case the application will not be deployed
 on top level of your domain, e.g.
 
 ```
-npm run-script ng -- build --base-href="/archive/"
+npm run build -- --base-href="/archive/"
 ```
 
 ### Build backend
