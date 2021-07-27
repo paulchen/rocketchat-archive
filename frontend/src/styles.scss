@@ -1,4 +1,46 @@
 /* You can add global styles to this file, and also import other style files */
 html {
   font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+}
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.p-datatable .p-datatable-tbody > tr > td .p-column-title {
+  display: none;
+}
+
+@media screen and (max-width: 60rem) {
+  .p-datatable {
+    &.p-datatable {
+      .p-datatable-thead > tr > th,
+      .p-datatable-tfoot > tr > td {
+        display: none !important;
+      }
+
+      .p-datatable-tbody > tr > td {
+        text-align: left;
+        display: block;
+        width: 100%;
+        float: left;
+        clear: left;
+        border: 0 none;
+
+        .p-column-title {
+          padding: .4rem;
+          min-width: 30%;
+          display: inline-block;
+          margin: -.4em 1em -.4em -.4rem;
+          font-weight: bold;
+        }
+
+        &:last-child {
+          border-bottom: 1px solid var(--surface-d);
+        }
+      }
+    }
+  }
 }
