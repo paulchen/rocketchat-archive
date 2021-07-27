@@ -62,4 +62,8 @@ export class AppComponent implements OnInit {
     this.loadMessages();
   }
 
+  handleChange(event: any) {
+    this.selectedChannel = this.channelData.channels[event.index];
+    this.loadMessages();
+  }
 }
