@@ -3,7 +3,7 @@
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
          <div style="height: 85vh;">
-        <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped"
+        <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
                  [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
                  [lazy]="true" (onLazyLoad)="handleTableChange($event)" [loading]="loading"
                  [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
