@@ -8,6 +8,8 @@ import {CommonModule} from "@angular/common";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {TabViewModule} from "primeng/tabview";
 import {TableModule} from "primeng/table";
+import {MultiSelectModule} from "primeng/multiselect";
+import {FormsModule} from "@angular/forms";
 
 @NgModule({
   declarations: [
@@ -20,7 +22,9 @@ import {TableModule} from "primeng/table";
     HttpClientModule,
     CommonModule,
     TabViewModule,
-    TableModule
+    TableModule,
+    MultiSelectModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

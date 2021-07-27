@@ -3,6 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Channel, ChannelData} from "./channel-data";
 import {MessageData} from "./message-data";
+import {UserData} from "./user-data";
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,10 @@ export class BackendService {
   getMessages(channel: Channel, page: number, limit: number, sort: string, username: string, message: string): Observable<MessageData> {
     const params = { page: page, limit: limit, sort: sort, user: username, text: message };
     return this.http.get<MessageData>("./services/channels/" + channel.id + "/messages", { params });
+  }
+
+  getUsers(): Observable<UserData> {
+    return this.http.get<UserData>("./services/users")
   }
 }
 
