@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm") version "1.5.21"
     application
     id("com.palantir.docker") version "0.26.0"
+    id("com.palantir.git-version") version "0.12.3"
 }
 
 group = "at.rueckgr.rocketchat"
@@ -14,6 +15,14 @@ version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs("src/main/resources", "build/generated/resources")
+        }
+    }
 }
 
 dependencies {
@@ -55,4 +64,18 @@ docker {
 
 tasks.docker {
     dependsOn(tasks.distTar)
+}
+
+tasks.create("createVersionFile") {
+    doLast {
+        val gitVersion: groovy.lang.Closure<String> by project.extra
+        val file = File("build/generated/resources/git-revision")
+        project.mkdir(file.parentFile.path)
+        file.delete()
+        file.appendText(gitVersion())
+    }
+}
+
+tasks.processResources {
+    dependsOn("createVersionFile")
 }

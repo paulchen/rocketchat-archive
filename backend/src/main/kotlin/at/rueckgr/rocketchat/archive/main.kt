@@ -131,6 +131,15 @@ fun main() {
                     client.close()
                 }
             }
+            route("/version") {
+                get {
+                    val version: String = when (val resource = RocketchatMessage::class.java.getResource("/git-revision")) {
+                        null -> "unknown"
+                        else -> resource.readText().trim()
+                    }
+                    call.respond(mapOf("version" to version))
+                }
+            }
         }
     }.start(wait = true)
 }
