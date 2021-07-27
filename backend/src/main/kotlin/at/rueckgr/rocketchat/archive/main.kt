@@ -127,7 +127,7 @@ fun main() {
                         .find(filterCondition)
                         .count()
                     val pageCount = ceil(messageCount.toDouble() / limit).toInt()
-                    call.respond(mapOf("messages" to messages, "pages" to pageCount))
+                    call.respond(mapOf("messages" to messages, "messageCount" to messageCount))
                     client.close()
                 }
             }
