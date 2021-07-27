@@ -67,6 +67,7 @@ fun main() {
                     val users = database.getCollection<RocketchatUser>("users")
                         .find()
                         .map { User(it._id, it.username) }
+                        .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
                     call.respond(mapOf("users" to users))
                     client.close()
                 }
@@ -86,14 +87,16 @@ fun main() {
             route("/channels/{id}/messages") {
                 get {
                     val page = call.request.queryParameters["page"]?.toInt() ?: 1
+                    val limit = call.request.queryParameters["limit"]?.toInt() ?: 100
+                    val sortAscending = call.request.queryParameters["sort"] == "asc"
                     val id = call.parameters["id"] ?: return@get call.respondText("Missing id", status = HttpStatusCode.BadRequest)
                     val client = KMongo.createClient("mongodb://mongo:27017")
                     val database = client.getDatabase("rocketchat")
 
                     val filterConditions = mutableListOf(RocketchatMessage::rid eq id)
-                    val userid = call.parameters["user"]?.trim() ?: ""
-                    if (userid.isNotBlank()) {
-                        filterConditions.add(RocketchatMessage::u / UserData::_id eq userid)
+                    val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
+                    if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
+                        filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
                     }
                     val text = call.parameters["text"]?.trim() ?: ""
                     if (text.isNotBlank()) {
@@ -104,19 +107,27 @@ fun main() {
                         else -> and(filterConditions)
                     }
 
-                    val messages = database
-                        .getCollection<RocketchatMessage>("rocketchat_message")
-                        .find(filterCondition)
-                        .descendingSort(RocketchatMessage::ts)
-                        .skip((page - 1) * 100)
-                        .limit(100)
+                    val messages = if (sortAscending) {
+                        database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .find(filterCondition)
+                            .ascendingSort(RocketchatMessage::ts)
+                    }
+                    else {
+                        database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .find(filterCondition)
+                            .descendingSort(RocketchatMessage::ts)
+
+                    }
+                        .skip((page - 1) * limit)
+                        .limit(limit)
                         .map { Message(it._id, it.msg, it.ts, it.u.username) }
                     val messageCount = database
                         .getCollection<RocketchatMessage>("rocketchat_message")
                         .find(filterCondition)
                         .count()
-                    val pageCount = ceil(messageCount.toDouble() / 100).toInt()
-                    call.respond(mapOf("messages" to messages, "pages" to pageCount))
+                    call.respond(mapOf("messages" to messages, "messageCount" to messageCount))
                     client.close()
                 }
             }

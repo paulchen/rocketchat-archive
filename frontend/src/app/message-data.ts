@@ -1,6 +1,6 @@
 export class MessageData {
   messages: Message[];
-  pages: number;
+  messageCount: number;
 }
 
 export class Message {
