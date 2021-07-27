@@ -86,6 +86,8 @@ fun main() {
             route("/channels/{id}/messages") {
                 get {
                     val page = call.request.queryParameters["page"]?.toInt() ?: 1
+                    val limit = call.request.queryParameters["limit"]?.toInt() ?: 100
+                    val sortAscending = call.request.queryParameters["sort"] == "asc"
                     val id = call.parameters["id"] ?: return@get call.respondText("Missing id", status = HttpStatusCode.BadRequest)
                     val client = KMongo.createClient("mongodb://mongo:27017")
                     val database = client.getDatabase("rocketchat")
@@ -104,18 +106,27 @@ fun main() {
                         else -> and(filterConditions)
                     }
 
-                    val messages = database
-                        .getCollection<RocketchatMessage>("rocketchat_message")
-                        .find(filterCondition)
-                        .descendingSort(RocketchatMessage::ts)
-                        .skip((page - 1) * 100)
-                        .limit(100)
+                    val messages = if (sortAscending) {
+                        database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .find(filterCondition)
+                            .ascendingSort(RocketchatMessage::ts)
+                    }
+                    else {
+                        database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .find(filterCondition)
+                            .descendingSort(RocketchatMessage::ts)
+
+                    }
+                        .skip((page - 1) * limit)
+                        .limit(limit)
                         .map { Message(it._id, it.msg, it.ts, it.u.username) }
                     val messageCount = database
                         .getCollection<RocketchatMessage>("rocketchat_message")
                         .find(filterCondition)
                         .count()
-                    val pageCount = ceil(messageCount.toDouble() / 100).toInt()
+                    val pageCount = ceil(messageCount.toDouble() / limit).toInt()
                     call.respond(mapOf("messages" to messages, "pages" to pageCount))
                     client.close()
                 }
