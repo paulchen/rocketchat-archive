@@ -18,12 +18,11 @@ export class AppComponent implements OnInit {
   users: User[] = [];
   limit = 100;
   loading = true;
+  private timeout: number;
 
   constructor(private backendService: BackendService) { }
 
   ngOnInit(): void {
-
-
     this.checkVersion();
   }
 
@@ -60,13 +59,16 @@ export class AppComponent implements OnInit {
     this.selectedChannel = this.channelData.channels[event.index];
   }
 
-  handleTableChange(event: any) {
+  handleTableChange(event: any, reload: boolean) {
     let component = this;
-    setTimeout(function() { component.reloadData(event) }, 100);
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(function() { component.reloadData(event, reload) }, 100);
   }
 
-  reloadData(event: any) {
-    this.loading = true;
+  reloadData(event: any, reload: boolean) {
+    if (!reload) {
+      this.loading = true;
+    }
 
     const limit = event.rows;
     const first = event.first;
@@ -86,9 +88,13 @@ export class AppComponent implements OnInit {
       }
     }
 
+    const component = this;
     this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe(response => {
       this.messageData = response;
       this.loading = false;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
     });
   }
 }
