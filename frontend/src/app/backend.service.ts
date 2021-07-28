@@ -4,6 +4,7 @@ import {Observable} from "rxjs";
 import {Channel, ChannelData} from "./channel-data";
 import {MessageData} from "./message-data";
 import {UserData} from "./user-data";
+import {VersionData} from "./version-data";
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,10 @@ export class BackendService {
 
   getUsers(): Observable<UserData> {
     return this.http.get<UserData>("./services/users")
+  }
+
+  getVersion(): Observable<VersionData> {
+    return this.http.get<VersionData>("./services/version")
   }
 }
 

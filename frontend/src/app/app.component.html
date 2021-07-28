@@ -1,3 +1,7 @@
+<div *ngIf="versionError">
+  Git revisions of frontend and backend do not match, please check your deployment.
+</div>
+
 <div *ngIf="channelData != null">
   <p-tabView (onChange)="handleTabChange($event)">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">

@@ -2,7 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {BackendService} from "./backend.service";
 import {Channel, ChannelData} from "./channel-data";
 import {MessageData} from "./message-data";
-import {User, UserData} from "./user-data";
+import {User} from "./user-data";
+import gitData from '../git-version.json'
 
 @Component({
   selector: 'app-root',
@@ -13,22 +14,45 @@ export class AppComponent implements OnInit {
   channelData: ChannelData;
   selectedChannel: Channel;
   messageData: MessageData;
-  users: User[] = []
+  versionError: boolean;
+  users: User[] = [];
   limit = 100;
   loading = true;
 
   constructor(private backendService: BackendService) { }
 
   ngOnInit(): void {
+
+
+    this.checkVersion();
+  }
+
+  private checkVersion(): void {
+    this.backendService.getVersion().subscribe(response => {
+      const backendVersion = response.version.replace(".dirty", "");
+      if (gitData.shortSHA != backendVersion) {
+        this.versionError = true;
+      }
+      else {
+        this.getChannels();
+      }
+    });
+  }
+
+  private getChannels(): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
       this.selectedChannel = this.channelData.channels[0];
 
       this.messageData = new MessageData();
 
-      this.backendService.getUsers().subscribe(response => {
-        this.users = response.users;
-      });
+      this.getUsers();
+    });
+  }
+
+  private getUsers(): void {
+    this.backendService.getUsers().subscribe(response => {
+      this.users = response.users;
     });
   }
 
