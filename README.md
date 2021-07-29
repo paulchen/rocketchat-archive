@@ -118,3 +118,49 @@ WantedBy=multi-user.target
 ```
 htpasswd -c /etc/apache2/htpasswd-archive <username>
 ```
+
+## Miscellaneous
+
+### Deployment script
+
+TODO
+
+### Icinga check script
+
+This project includes a check script for Icinga (`misc/check_archive.py`).
+It requires Python 3 with the Requests library installed. It will check two things:
+* The Git revisions of frontend and backend match.
+* The backend returns a list of one or more channels.
+
+The script takes its configuration from three environment variables
+(`ARCHIVE_BASE_URL`, `ARCHIVE_USERNAME`, `ARCHIVE_PASSWORD`).
+
+A command definition for Icinga 2 might look like this:
+
+```
+object CheckCommand "check_rocketchat_archive" {
+  import "plugin-check-command"
+
+  command = [ "/opt/rocketchat-archive/misc/check_archive.py" ]
+
+  env.ARCHIVE_BASE_URL = "$base_url$"
+  env.ARCHIVE_USERNAME = "$username$"
+  env.ARCHIVE_PASSWORD = "$password$"
+}
+```
+
+And the matching service definition:
+
+```
+apply Service "Rocketchat Archive" {
+  import "generic-service"
+
+  check_command = "check_rocketchat_archive"
+
+  vars.base_url = "https://chat.rueckgr.at/archive/"
+  vars.username = "..."
+  vars.password = "..."
+
+  assign where host.name == "alpha"
+}
+```
