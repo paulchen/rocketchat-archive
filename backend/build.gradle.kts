@@ -48,7 +48,7 @@ tasks.withType<KotlinCompile>() {
 }
 
 application {
-    mainClassName = "at.rueckgr.rocketchat.archive.MainKt"
+    mainClass.set("at.rueckgr.rocketchat.archive.MainKt")
 }
 
 distributions {
