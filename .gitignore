@@ -1,3 +1,3 @@
 .idea
-deployment/deploy.conf
+misc/deploy.conf
 frontend/src/git-version.json
