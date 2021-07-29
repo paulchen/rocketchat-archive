@@ -123,7 +123,16 @@ htpasswd -c /etc/apache2/htpasswd-archive <username>
 
 ### Deployment script
 
-TODO
+To simplify build and deployment of both frontend and backend, there is a deployment script (`misc/deploy.sh`).
+To use it, copy `deploy.conf.dist` to `deploy.conf` and configure it accordingly.
+The script will perform the following steps:
+* Run `git pull`.
+* Build the frontend.
+* Build the backend.
+* Run `docker-compose build`.
+* Restart the systemd unit.
+
+If any of the steps fails, the script will abort immediately.
 
 ### Icinga check script
 
