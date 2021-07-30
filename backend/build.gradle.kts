@@ -62,8 +62,8 @@ docker {
     files("build/distributions")
 }
 
-tasks.docker {
-    dependsOn(tasks.distTar)
+tasks.dockerPrepare {
+    dependsOn(tasks.build)
 }
 
 tasks.create("createVersionFile") {
