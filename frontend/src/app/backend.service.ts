@@ -2,7 +2,7 @@ import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Channel, ChannelData} from "./channel-data";
-import {MessageData} from "./message-data";
+import {MessageData, MessagePage} from "./message-data";
 import {UserData} from "./user-data";
 import {VersionData} from "./version-data";
 
@@ -27,6 +27,10 @@ export class BackendService {
 
   getVersion(): Observable<VersionData> {
     return this.http.get<VersionData>("./services/version")
+  }
+
+  getMessage(channel: string, message: string): Observable<MessagePage> {
+    return this.http.get<MessagePage>("./services/channels/" + channel + "/messages/" + message);
   }
 }
 

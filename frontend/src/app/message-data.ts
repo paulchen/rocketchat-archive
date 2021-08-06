@@ -9,3 +9,9 @@ export class Message {
   timestamp: Date;
   username: string;
 }
+
+export class MessagePage {
+  channel: string;
+  message: string;
+  page: number;
+}

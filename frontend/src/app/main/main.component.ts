@@ -1,0 +1,182 @@
+import { Component, OnInit } from '@angular/core';
+import {Channel, ChannelData} from "../channel-data";
+import {Message, MessageData} from "../message-data";
+import {User} from "../user-data";
+import {BackendService} from "../backend.service";
+import {ActivatedRoute} from "@angular/router";
+import {Location, LocationStrategy} from "@angular/common";
+import {MenuItem, MessageService} from "primeng/api";
+
+@Component({
+  selector: 'app-main',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
+  providers: [MessageService]
+})
+export class MainComponent implements OnInit {
+  channelData: ChannelData;
+  selectedChannel: Channel;
+  messageData: MessageData;
+  users: User[] = [];
+  limit = 100;
+  loading = true;
+  private timeout: number;
+  tabIndex: number;
+  first: number = 0;
+  highlightedMessage: string | null = null;
+  contextMenuItems: MenuItem[];
+  selectedMessage: Message;
+
+  constructor(
+    private backendService: BackendService,
+    private route: ActivatedRoute,
+    private location: Location,
+    private locationStrategy: LocationStrategy,
+    private messageService: MessageService) { }
+
+  ngOnInit(): void {
+    this.contextMenuItems = [
+      { label: 'Link to archive', command: () => this.createLink(false, this.selectedMessage) },
+      { label: 'Link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },
+    ];
+
+    let page = null;
+    let channel = null;
+    let message = null;
+    this.route.pathFromRoot[1].url.subscribe(val => {
+      if (val.length > 0) {
+        channel = val[0];
+      }
+      if (val.length > 1) {
+        if (isNaN(Number(val[1]))) {
+          message = val[1];
+          this.highlightedMessage = message.path;
+          page = null;
+        }
+        else {
+          page = Number(val[1]);
+          this.first = (page - 1) * this.limit;
+        }
+      }
+      if (val.length > 2) {
+        this.highlightedMessage = val[2].path;
+      }
+    });
+
+    if (channel && message && !page) {
+      this.getPageForMessage(channel, message);
+    }
+    else {
+      if (!page) {
+        page = 1
+      }
+      this.getChannels(channel, message, page);
+    }
+  }
+
+  private getPageForMessage(channel: string, message: string) {
+    this.backendService.getMessage(channel, message).subscribe(response => {
+      this.first = (response.page - 1) * this.limit;
+      this.getChannels(response.channel, response.message, response.page);
+    });
+  }
+
+  private createLink(rocketchat: boolean, selectedMessage: Message) {
+    let url = "";
+    if(rocketchat) {
+      url = "https://chat.rueckgr.at/channel/" + this.selectedChannel.name + "?msg=" + selectedMessage.id;
+    }
+    else {
+      url = location.origin + this.locationStrategy.getBaseHref() + this.selectedChannel.id + "/" + selectedMessage.id;
+    }
+    navigator.clipboard.writeText(url).then(x => {
+      this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
+    }).catch(e => {
+      this.messageService.add({ severity: 'error', summary: 'Error copying link to clipboard'});
+    });
+  }
+
+  private getChannels(channel: String | null, message: String | null, page: number): void {
+    this.backendService.getChannels().subscribe(response => {
+      this.channelData = response;
+
+      this.selectedChannel = this.channelData.channels[0];
+      if (channel) {
+        for (let i = 1; i < this.channelData.channels.length; i++) {
+          if (this.channelData.channels[i].id == channel) {
+            this.selectedChannel = this.channelData.channels[i];
+            this.tabIndex = i;
+            break;
+          }
+        }
+      }
+
+      this.messageData = new MessageData();
+
+      this.getUsers();
+    });
+  }
+
+  private getUsers(): void {
+    this.backendService.getUsers().subscribe(response => {
+      this.users = response.users;
+    });
+  }
+
+  handleTabChange(event: any) {
+    this.selectedChannel = this.channelData.channels[event.index];
+    this.first = 0;
+  }
+
+  handleTableChange(event: any, reload: boolean) {
+    let component = this;
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(function() { component.reloadData(event, reload) }, 100);
+  }
+
+  reloadData(event: any, reload: boolean) {
+    if (!reload) {
+      this.loading = true;
+    }
+
+    const limit = event.rows;
+    const first = event.first;
+    const page = (first / limit) + 1;
+
+    const sort = (event.sortOrder == -1) ? "desc" : "asc";
+
+    const filters = event.filters
+    let userIds = [];
+    let message = "";
+    if (filters) {
+      if ("username" in filters && "value" in filters["username"] && filters["username"]["value"]) {
+        userIds = filters["username"]["value"]
+      }
+      if ("message" in filters && "value" in filters["message"] && filters["message"]["value"]) {
+        message = filters["message"]["value"]
+      }
+    }
+
+    const component = this;
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe(response => {
+      this.messageData = response;
+      this.loading = false;
+
+      this.updateUrl();
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
+    });
+  }
+
+  private updateUrl(): void {
+    const page = (this.first / this.limit) + 1;
+    let url = '/' + this.selectedChannel.id + '/' + page;
+
+    if (this.highlightedMessage) {
+      url += '/' + this.highlightedMessage;
+    }
+
+    this.location.go(url);
+  }
+}

@@ -10,10 +10,15 @@ import {TabViewModule} from "primeng/tabview";
 import {TableModule} from "primeng/table";
 import {MultiSelectModule} from "primeng/multiselect";
 import {FormsModule} from "@angular/forms";
+import { MainComponent } from './main/main.component';
+import {ContextMenuModule} from "primeng/contextmenu";
+import {ButtonModule} from "primeng/button";
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    MainComponent
   ],
   imports: [
     BrowserModule,
@@ -24,7 +29,10 @@ import {FormsModule} from "@angular/forms";
     TabViewModule,
     TableModule,
     MultiSelectModule,
-    FormsModule
+    FormsModule,
+    ContextMenuModule,
+    ButtonModule,
+    ToastModule
   ],
   providers: [],
   bootstrap: [AppComponent]

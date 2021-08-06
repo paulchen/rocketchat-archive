@@ -84,6 +84,35 @@ fun main() {
                     client.close()
                 }
             }
+            route("/channels/{channel}/messages/{message}") {
+                get {
+                    val channel = call.parameters["channel"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
+                    val message = call.parameters["message"] ?: return@get call.respondText("Missing message", status = HttpStatusCode.BadRequest)
+
+                    val client = KMongo.createClient("mongodb://mongo:27017")
+                    val database = client.getDatabase("rocketchat")
+
+                    val dbMessage = database
+                        .getCollection<RocketchatMessage>("rocketchat_message")
+                        .findOneById(message) ?: return@get call.respondText("Not found", status = HttpStatusCode.NotFound)
+                    val timestamp = dbMessage.ts
+
+                    val filterConditions = and(
+                        RocketchatMessage::rid eq channel,
+                        RocketchatMessage::ts gt timestamp
+                    )
+
+                    val count = database
+                        .getCollection<RocketchatMessage>("rocketchat_message")
+                        .find(filterConditions)
+                        .count()
+
+                    val page = ceil((count + 1) / 100.0).toInt()
+
+                    call.respond(mapOf("channel" to channel, "message" to message, "page" to page))
+                    client.close()
+                }
+            }
             route("/channels/{id}/messages") {
                 get {
                     val page = call.request.queryParameters["page"]?.toInt() ?: 1
