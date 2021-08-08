@@ -90,10 +90,10 @@ export class MainComponent implements OnInit {
   private createLink(rocketchat: boolean, selectedMessage: Message) {
     let url;
     if(rocketchat) {
-      url = "https://chat.rueckgr.at/channel/" + this.selectedChannel.name + "?msg=" + selectedMessage.id;
+      url = "https://chat.rueckgr.at/channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
-      url = location.origin + this.locationStrategy.getBaseHref() + this.selectedChannel.id + "/" + selectedMessage.id;
+      url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(selectedMessage.id);
     }
     navigator.clipboard.writeText(url).then(() => {
       this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});

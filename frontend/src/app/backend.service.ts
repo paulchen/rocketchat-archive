@@ -18,7 +18,7 @@ export class BackendService {
 
   getMessages(channel: Channel, page: number, limit: number, sort: string, userIds: string[], message: string): Observable<MessageData> {
     const params = { page: page, limit: limit, sort: sort, userIds: userIds.join(","), text: message };
-    return this.http.get<MessageData>("./services/channels/" + channel.id + "/messages", { params });
+    return this.http.get<MessageData>("./services/channels/" + encodeURIComponent(channel.id) + "/messages", { params });
   }
 
   getUsers(): Observable<UserData> {
@@ -30,7 +30,7 @@ export class BackendService {
   }
 
   getMessage(channel: string, message: string): Observable<MessagePage> {
-    return this.http.get<MessagePage>("./services/channels/" + channel + "/messages/" + message);
+    return this.http.get<MessagePage>("./services/channels/" + encodeURIComponent(channel) + "/messages/" + encodeURIComponent(message));
   }
 }
 
