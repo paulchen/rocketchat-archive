@@ -26,6 +26,7 @@ export class MainComponent implements OnInit {
   highlightedMessage: string | null = null;
   contextMenuItems: MenuItem[];
   selectedMessage: Message;
+  channelNotFound: boolean = true;
 
   constructor(
     private backendService: BackendService,
@@ -70,45 +71,57 @@ export class MainComponent implements OnInit {
       if (!page) {
         page = 1
       }
-      this.getChannels(channel, message, page);
+      this.getChannels(channel);
     }
   }
 
   private getPageForMessage(channel: string, message: string) {
     this.backendService.getMessage(channel, message).subscribe(response => {
       this.first = (response.page - 1) * this.limit;
-      this.getChannels(response.channel, response.message, response.page);
+      this.getChannels(response.channel);
     });
   }
 
   private createLink(rocketchat: boolean, selectedMessage: Message) {
-    let url = "";
+    let url;
     if(rocketchat) {
       url = "https://chat.rueckgr.at/channel/" + this.selectedChannel.name + "?msg=" + selectedMessage.id;
     }
     else {
       url = location.origin + this.locationStrategy.getBaseHref() + this.selectedChannel.id + "/" + selectedMessage.id;
     }
-    navigator.clipboard.writeText(url).then(x => {
+    navigator.clipboard.writeText(url).then(() => {
       this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
-    }).catch(e => {
+    }).catch(() => {
       this.messageService.add({ severity: 'error', summary: 'Error copying link to clipboard'});
     });
   }
 
-  private getChannels(channel: String | null, message: String | null, page: number): void {
+  private getChannels(channel: String | null): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
 
       this.selectedChannel = this.channelData.channels[0];
       if (channel) {
-        for (let i = 1; i < this.channelData.channels.length; i++) {
+        this.channelNotFound = true;
+        for (let i = 0; i < this.channelData.channels.length; i++) {
           if (this.channelData.channels[i].id == channel) {
             this.selectedChannel = this.channelData.channels[i];
             this.tabIndex = i;
+            this.channelNotFound = false;
             break;
           }
         }
+      }
+      else if (this.channelData.channels.length > 0) {
+        this.selectedChannel = this.channelData.channels[0];
+        this.tabIndex = 0;
+        this.channelNotFound = false;
+      }
+
+      if(this.channelNotFound) {
+        this.loading = false;
+        return;
       }
 
       this.messageData = new MessageData();
@@ -135,6 +148,9 @@ export class MainComponent implements OnInit {
   }
 
   reloadData(event: any, reload: boolean) {
+    if (this.channelNotFound) {
+      return;
+    }
     if (!reload) {
       this.loading = true;
     }

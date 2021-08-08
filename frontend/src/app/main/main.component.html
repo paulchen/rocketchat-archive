@@ -2,7 +2,11 @@
 
 <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
-<div *ngIf="channelData != null">
+<div *ngIf="this.channelNotFound && !this.loading">
+  Channel not found.
+</div>
+
+<div *ngIf="channelData != null && !this.channelNotFound">
   <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
