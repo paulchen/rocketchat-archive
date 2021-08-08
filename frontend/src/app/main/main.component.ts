@@ -4,7 +4,7 @@ import {Message, MessageData} from "../message-data";
 import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute} from "@angular/router";
-import {Location, LocationStrategy} from "@angular/common";
+import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
 import {MenuItem, MessageService} from "primeng/api";
 
 @Component({
@@ -34,7 +34,8 @@ export class MainComponent implements OnInit {
     private route: ActivatedRoute,
     private location: Location,
     private locationStrategy: LocationStrategy,
-    private messageService: MessageService) { }
+    private messageService: MessageService,
+    private viewportScroller: ViewportScroller) { }
 
   ngOnInit(): void {
     this.contextMenuItems = [
@@ -188,9 +189,29 @@ export class MainComponent implements OnInit {
       }
       this.updateUrl();
 
+      if (this.highlightedMessage && !reload) {
+        setTimeout(function() { component.scrollToMessage() }, 100);
+      }
+
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
     });
+  }
+
+  private scrollToMessage(): void {
+    if (this.highlightedMessage) {
+      let previousMessage;
+      for (let message of this.messageData.messages) {
+        if (message.id == this.highlightedMessage) {
+          break;
+        }
+        previousMessage = message;
+      }
+
+      if (previousMessage) {
+        this.viewportScroller.scrollToAnchor(previousMessage.id);
+      }
+    }
   }
 
   private updateUrl(): void {

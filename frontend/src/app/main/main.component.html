@@ -39,6 +39,7 @@
             <ng-template pTemplate="body" let-message>
               <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
                 <td style="white-space: nowrap;">
+                  <a id="{{message.id}}"></a>
                   <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();">
                     {{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}
                   </button>
