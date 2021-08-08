@@ -27,6 +27,7 @@ export class MainComponent implements OnInit {
   contextMenuItems: MenuItem[];
   selectedMessage: Message;
   channelNotFound: boolean = true;
+  messageNotFound: boolean = false;
 
   constructor(
     private backendService: BackendService,
@@ -79,6 +80,10 @@ export class MainComponent implements OnInit {
     this.backendService.getMessage(channel, message).subscribe(response => {
       this.first = (response.page - 1) * this.limit;
       this.getChannels(response.channel);
+    }, () => {
+      this.messageNotFound = true;
+      this.channelNotFound = false;
+      this.loading = false;
     });
   }
 

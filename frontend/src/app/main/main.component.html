@@ -2,9 +2,9 @@
 
 <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
-<div *ngIf="this.channelNotFound && !this.loading">
-  Channel not found.
-</div>
+<div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
+
+<div *ngIf="this.messageNotFound && !this.loading">Message not found.</div>
 
 <div *ngIf="channelData != null && !this.channelNotFound">
   <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
