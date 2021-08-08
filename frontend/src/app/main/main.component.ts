@@ -162,6 +162,9 @@ export class MainComponent implements OnInit {
       this.messageData = response;
       this.loading = false;
 
+      if (response.messages.filter(m => m.id == this.highlightedMessage).length == 0) {
+        this.highlightedMessage = null;
+      }
       this.updateUrl();
 
       clearTimeout(this.timeout);
