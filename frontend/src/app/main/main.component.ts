@@ -6,6 +6,7 @@ import {BackendService} from "../backend.service";
 import {ActivatedRoute} from "@angular/router";
 import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
 import {MenuItem, MessageService} from "primeng/api";
+import clientConfiguration from '../../client-configuration.json'
 
 @Component({
   selector: 'app-main',
@@ -91,7 +92,7 @@ export class MainComponent implements OnInit {
   private createLink(rocketchat: boolean, selectedMessage: Message) {
     let url;
     if(rocketchat) {
-      url = "https://chat.rueckgr.at/channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
+      url = clientConfiguration.rocketchatUrl + "channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
       url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(selectedMessage.id);

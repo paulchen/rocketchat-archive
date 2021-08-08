@@ -21,14 +21,16 @@ From the `frontend` directory, run
 
 ```
 npm install
-npm run build
+ROCKETCHAT_URL='...' npm run build
 ```
+
+Set the variable `ROCKETCHAT_URL` to the URL of your Rocket.Chat installation (including the trailing `/`).
 
 Remember to add the `--base-href` switch in case the application will not be deployed
 on top level of your domain, e.g.
 
 ```
-npm run build -- --base-href="/archive/"
+ROCKETCHAT_URL='...' npm run build -- --base-href="/archive/"
 ```
 
 ### Build backend

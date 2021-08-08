@@ -19,7 +19,7 @@ git pull || exit 1
 cd "$BASE_DIR/frontend"
 
 npm install || exit 1
-npm run build -- --base-href="$BASE_HREF" || exit 1
+ROCKETCHAT_URL="$ROCKETCHAT_URL" npm run build -- --base-href="$BASE_HREF" || exit 1
 
 cd "$BASE_DIR/backend"
 
