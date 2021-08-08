@@ -115,10 +115,24 @@ fun main() {
             }
             route("/channels/{id}/messages") {
                 get {
-                    val page = call.request.queryParameters["page"]?.toInt() ?: 1
-                    val limit = call.request.queryParameters["limit"]?.toInt() ?: 100
-                    val sortAscending = call.request.queryParameters["sort"] == "asc"
-                    val id = call.parameters["id"] ?: return@get call.respondText("Missing id", status = HttpStatusCode.BadRequest)
+                    val page = try {
+                        call.request.queryParameters["page"]?.toInt() ?: 1
+                    }
+                    catch (e: NumberFormatException) {
+                        return@get call.respondText("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
+                    }
+                    val limit = try {
+                        call.request.queryParameters["limit"]?.toInt() ?: 100
+                    }
+                    catch (e: NumberFormatException) {
+                        return@get call.respondText("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
+                    }
+                    val sortAscending = when(call.request.queryParameters["sort"]) {
+                        "asc" -> true
+                        "desc" -> false
+                        else -> return@get call.respondText("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
+                    }
+                    val id = call.parameters["id"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
                     val client = KMongo.createClient("mongodb://mongo:27017")
                     val database = client.getDatabase("rocketchat")
 
