@@ -175,3 +175,25 @@ apply Service "Rocketchat Archive" {
   assign where host.name == "alpha"
 }
 ```
+
+## Local development
+
+In order to run the application on your local machine, take the following steps:
+
+* Ensure Docker is installed.
+* Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
+* Fire up a local MongoDB instance using Docker: 
+
+```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:4.2.15 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+
+* Set up the MongoDB replica set:
+
+```docker exec -it mongo mongo localhost/rocketchat --eval "rs.initiate({ _id: 'rs0', members: [ { _id: 0, host: 'localhost:27017' } ]})"```
+
+* Use `mongodump` to create a dump
+  of your production installation of Rocket.Chat (into a directory named `dump`).
+* Place this directory on your local machine.
+* From the directoy containing that directory, invoke `mongorestore`.
+* Start the backend (e.g., import the Gradle project into IntelliJ IDEA and invoke `MainKt`).
+* Start the fronted (e.g., run `npm install` and `ROCKETCHAT_URL='...' npm run start`) from the `frontend` directory.
+* Point your browser to http://localhost:4200.
