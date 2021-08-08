@@ -14,6 +14,10 @@ body {
 }
 
 @media screen and (max-width: 60rem) {
+  .p-tabview .p-tabview-panels {
+    padding: 0 !important;
+  }
+
   .p-datatable {
     &.p-datatable {
       .p-datatable-thead > tr > th,
@@ -28,6 +32,13 @@ body {
         float: left;
         clear: left;
         border: 0 none;
+        padding: 0.3rem 0.5rem !important;
+
+        &.username {
+          font-weight: bold;
+          margin-top: -2rem;
+          margin-left: 17ch;
+        }
 
         .p-column-title {
           padding: .4rem;
@@ -39,6 +50,10 @@ body {
 
         &:last-child {
           border-bottom: 1px solid var(--surface-d);
+        }
+
+        .p-button-link {
+          padding: 0;
         }
       }
     }
