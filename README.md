@@ -54,8 +54,11 @@ docker-compose build
 Finally, you are ready to start everything up:
 
 ```
-docker-compose up
+RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... docker-compose up
 ```
+
+Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
+[RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
 
 The frontend will listen on port `42773` locally, so you may want to point your browser to http://localhost:42773/.
 
@@ -100,6 +103,8 @@ RemainAfterExit=true
 WorkingDirectory=/opt/rocketchat-archive/
 ExecStart=/usr/local/bin/docker-compose up -d --remove-orphans
 ExecStop=/usr/local/bin/docker-compose down
+Environment=RAVUSBOT_USERNAME=...
+Environment=RAVUSBOT_PASSWORD=...
 
 [Install]
 WantedBy=multi-user.target

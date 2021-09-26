@@ -30,6 +30,8 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktor_version")
     implementation("io.ktor:ktor-gson:$ktor_version")
     implementation("io.ktor:ktor-jackson:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-auth:$ktor_version")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
