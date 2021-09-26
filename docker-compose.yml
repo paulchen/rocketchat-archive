@@ -1,15 +1,15 @@
 version: "3.7"
 services:
   frontend:
-    environment:
-      - ROCKETCHAT_USERNAME
-      - ROCKETCHAT_PASSWORD
     build: frontend
     ports:
       - "127.0.0.1:42773:80"
     networks:
       - backend
   backend:
+    environment:
+      - RAVUSBOT_USERNAME
+      - RAVUSBOT_PASSWORD
     build: backend
     networks:
       - backend
