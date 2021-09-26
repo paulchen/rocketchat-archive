@@ -26,14 +26,16 @@ class ServerForArchive(private val ravusBotService: RavusBotService) {
                 route("/user/{username}") {
                     get {
                         val username = call.parameters["username"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
-                        val usernames = ravusBotService.getUsernames(username)
-
-                        if (usernames.isEmpty()) {
-                            return@get call.respondText("Unknown username", status = HttpStatusCode.NotFound)
-                        }
+                        val usernamesFromRavusBot = ravusBotService.getUsernames(username)
 
                         val client = KMongo.createClient("mongodb://mongo:27017")
                         val database = client.getDatabase("rocketchat")
+
+                        val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }
+                        val databaseUser = database.getCollection<RocketchatUser>("users")
+                            .find(RocketchatUser::username `in` usernames)
+                            .singleOrNull()
+                            ?: return@get call.respondText("Unknown username", status = HttpStatusCode.NotFound)
 
                         val message = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -42,7 +44,7 @@ class ServerForArchive(private val ravusBotService: RavusBotService) {
                             .limit(1)
                             .singleOrNull()
 
-                        val userDetails = UserDetails(usernames[0], message?.ts)
+                        val userDetails = UserDetails(databaseUser.username, message?.ts)
 
                         call.respond(mapOf("user" to userDetails))
                         client.close()
