@@ -27,7 +27,7 @@ body {
 
       .p-datatable-tbody > tr > td {
         text-align: left;
-        display: block;
+        display: block !important;
         width: 100%;
         float: left;
         clear: left;
@@ -38,6 +38,7 @@ body {
           font-weight: bold;
           margin-top: -2rem;
           margin-left: 17ch;
+          padding-top: 6px !important;
         }
 
         .p-column-title {
