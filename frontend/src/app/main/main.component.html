@@ -16,7 +16,8 @@
                    [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
                    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
                    [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
-                   [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id">
+                   [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
+                   responsiveLayout="scroll">
             <ng-template pTemplate="header">
               <tr>
                 <th pSortableColumn="timestamp">Timestamp <p-sortIcon field="timestamp"></p-sortIcon></th>
