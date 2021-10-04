@@ -27,12 +27,16 @@ fun main() {
 
     val ravusBotService = RavusBotService(ravusBotUsername, ravusBotPassword)
 
+    val databaseName = System.getenv("DATABASE") ?: return
+
+    val archiveConfiguration = ArchiveConfiguration(database = databaseName)
+
     runBlocking {
         val serverForArchive = async {
-            ServerForArchive(ravusBotService).start()
+            ServerForArchive(archiveConfiguration, ravusBotService).start()
         }
         val serverForFrontend = async {
-            ServerForFrontend().start()
+            ServerForFrontend(archiveConfiguration).start()
         }
 
         serverForArchive.await()

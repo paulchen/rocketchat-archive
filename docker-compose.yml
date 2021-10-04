@@ -8,6 +8,7 @@ services:
       - backend
   backend:
     environment:
+      - DATABASE_NAME
       - RAVUSBOT_USERNAME
       - RAVUSBOT_PASSWORD
     build: backend

@@ -11,9 +11,8 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
-import kotlin.text.get
 
-class ServerForArchive(private val ravusBotService: RavusBotService) {
+class ServerForArchive(private val archiveConfiguration: ArchiveConfiguration, private val ravusBotService: RavusBotService) {
     fun start() {
         embeddedServer(Netty, 8081) {
             install(ContentNegotiation) {
@@ -28,8 +27,8 @@ class ServerForArchive(private val ravusBotService: RavusBotService) {
                         val username = call.parameters["username"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
                         val usernamesFromRavusBot = ravusBotService.getUsernames(username)
 
-                        val client = KMongo.createClient("mongodb://mongo:27017")
-                        val database = client.getDatabase("rocketchat")
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
 
                         val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }
                         val databaseUser = database.getCollection<RocketchatUser>("users")

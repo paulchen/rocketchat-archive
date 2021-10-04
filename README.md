@@ -54,11 +54,12 @@ docker-compose build
 Finally, you are ready to start everything up:
 
 ```
-RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... docker-compose up
+RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... docker-compose up
 ```
 
 Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
 [RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
+Set `DATABASE` to the name of your MongoDB database (usually `rocketchat`).
 
 The frontend will listen on port `42773` locally, so you may want to point your browser to http://localhost:42773/.
 
@@ -105,6 +106,7 @@ ExecStart=/usr/local/bin/docker-compose up -d --remove-orphans
 ExecStop=/usr/local/bin/docker-compose down
 Environment=RAVUSBOT_USERNAME=...
 Environment=RAVUSBOT_PASSWORD=...
+Environment=DATABASE=...
 
 [Install]
 WantedBy=multi-user.target
@@ -189,7 +191,7 @@ In order to run the application on your local machine, take the following steps:
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:4.2.15 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:4.2.16 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 

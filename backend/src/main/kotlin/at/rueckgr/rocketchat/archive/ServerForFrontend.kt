@@ -12,9 +12,8 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
 import kotlin.math.ceil
-import kotlin.text.get
 
-class ServerForFrontend {
+class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {
@@ -26,8 +25,8 @@ class ServerForFrontend {
             routing {
                 route("/users") {
                     get {
-                        val client = KMongo.createClient("mongodb://mongo:27017")
-                        val database = client.getDatabase("rocketchat")
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
                         val users = database.getCollection<RocketchatUser>("users")
                             .find()
                             .map { User(it._id, it.username) }
@@ -38,8 +37,8 @@ class ServerForFrontend {
                 }
                 route("/channels") {
                     get {
-                        val client = KMongo.createClient("mongodb://mongo:27017")
-                        val database = client.getDatabase("rocketchat")
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
                         val channels = database.getCollection<RocketchatRoom>("rocketchat_room")
                             .find()
                             .filter { it.t == "c" }
@@ -53,8 +52,8 @@ class ServerForFrontend {
                         val channel = call.parameters["channel"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
                         val message = call.parameters["message"] ?: return@get call.respondText("Missing message", status = HttpStatusCode.BadRequest)
 
-                        val client = KMongo.createClient("mongodb://mongo:27017")
-                        val database = client.getDatabase("rocketchat")
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
 
                         val dbMessage = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -97,8 +96,8 @@ class ServerForFrontend {
                             else -> return@get call.respondText("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
                         }
                         val id = call.parameters["id"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
-                        val client = KMongo.createClient("mongodb://mongo:27017")
-                        val database = client.getDatabase("rocketchat")
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
 
                         val filterConditions = mutableListOf(RocketchatMessage::rid eq id)
                         val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
