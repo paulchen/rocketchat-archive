@@ -11,9 +11,11 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
+import java.util.regex.Pattern
+import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
 
-class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) {
+class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {
@@ -106,7 +108,13 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                         }
                         val text = call.parameters["text"]?.trim() ?: ""
                         if (text.isNotBlank()) {
-                            filterConditions.add(Filters.regex("msg", text, "i"))
+                            try {
+                                filterConditions.add(Filters.regex("msg", Pattern.compile(text, Pattern.CASE_INSENSITIVE)))
+                            }
+                            catch (e: PatternSyntaxException) {
+                                logger().info("Invalid regular expression in request: {}", text)
+                                return@get call.respondText("Invalid regular expression", status = HttpStatusCode.BadRequest)
+                            }
                         }
                         val filterCondition = when (filterConditions.size) {
                             1 -> filterConditions.first()
