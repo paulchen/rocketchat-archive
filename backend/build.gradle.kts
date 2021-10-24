@@ -1,6 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktor_version = "1.6.3"
+val ktor_version = "1.6.4"
 val log4jVersion = "2.14.1"
 
 plugins {
@@ -20,7 +20,7 @@ repositories {
 sourceSets {
     main {
         resources {
-            srcDirs("src/main/resources", "build/generated/resources")
+            srcDirs("build/generated/resources")
         }
     }
 }
@@ -36,7 +36,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.12.5")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
 }
