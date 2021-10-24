@@ -15,11 +15,15 @@ import {ContextMenuModule} from "primeng/contextmenu";
 import {ButtonModule} from "primeng/button";
 import {ToastModule} from "primeng/toast";
 import {EncodeUrlParamsSafelyInterceptor} from "./encode-url-params-safely-interceptor";
+import { StatsComponent } from './stats/stats.component';
+import {PanelModule} from "primeng/panel";
+import {DropdownModule} from "primeng/dropdown";
 
 @NgModule({
   declarations: [
     AppComponent,
-    MainComponent
+    MainComponent,
+    StatsComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +37,9 @@ import {EncodeUrlParamsSafelyInterceptor} from "./encode-url-params-safely-inter
     FormsModule,
     ContextMenuModule,
     ButtonModule,
-    ToastModule
+    ToastModule,
+    PanelModule,
+    DropdownModule
   ],
   providers: [{
       provide: HTTP_INTERCEPTORS,

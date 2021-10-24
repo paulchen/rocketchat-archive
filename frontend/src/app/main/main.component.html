@@ -10,6 +10,10 @@
   <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
+        <div style="text-align: center;">
+          <button pButton type="button" class="p-button-link" (click)="navigateToStats()" label="Stats"></button>
+        </div>
+
         <div style="height: 85vh;">
           <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
                    [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
@@ -41,9 +45,7 @@
               <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
                 <td style="white-space: nowrap;">
                   <a id="{{message.id}}"></a>
-                  <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();">
-                    {{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}
-                  </button>
+                  <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();" label="{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
                 </td>
                 <td style="white-space: nowrap;" class="username">{{message.username}}</td>
                 <td>{{message.message}}</td>

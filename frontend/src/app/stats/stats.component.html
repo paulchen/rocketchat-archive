@@ -1,0 +1,48 @@
+<div>
+  <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
+</div>
+
+<p-panel header="Channel selection">
+  <div>
+    Channel:
+    <p-dropdown [options]="channelData.channels" optionLabel="name" optionValue="name" [(ngModel)]="selectedChannel" (onChange)="loadStats($event.value)">
+      <ng-template pTemplate="selectedItem">
+        <div>#{{selectedChannel}}</div>
+      </ng-template>
+      <ng-template let-channel pTemplate="item">
+        #{{channel.name}}
+      </ng-template>
+    </p-dropdown>
+  </div>
+</p-panel>
+
+<p-panel header="Message counts per user">
+  <div>
+    <p-table>
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Username</th>
+          <th>Messages</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body">
+        <tr>
+          <td>username</td>
+          <td>message count</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</p-panel>
+
+<p-panel header="Messages by year">
+  TODO
+</p-panel>
+
+<p-panel header="Messages by month">
+  TODO
+</p-panel>
+
+<p-panel header="Top days">
+  TODO
+</p-panel>

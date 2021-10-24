@@ -145,6 +145,86 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                         client.close()
                     }
                 }
+                route("/channels/{id}/stats") {
+                    get {
+                        val id = call.parameters["id"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
+
+                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
+                        val database = client.getDatabase(archiveConfiguration.database)
+
+                        val userMessageCount = database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .aggregate<StatsResult>(
+                                match(RocketchatMessage::rid eq id),
+                                project(
+                                    StatsResult::key from RocketchatMessage::u / UserData::username,
+                                    StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
+                                ),
+                                group(
+                                    StatsResult::key,
+                                    StatsResult::key first StatsResult::key,
+                                    StatsResult::value sum StatsResult::value
+                                ),
+                                sort(
+                                    descending(StatsResult::value)
+                                )
+                            )
+                            .toList()
+                            .associateBy({ it.key }, { it.value.toInt() })
+
+                        val messagesPerMonth = database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .aggregate<StatsResult>(
+                                match(RocketchatMessage::rid eq id),
+                                project(
+                                    StatsResult::key from month(RocketchatMessage::ts),
+                                    StatsResult::additionalKey from year(RocketchatMessage::ts),
+                                    StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
+                                ),
+                                group(
+                                    fields(StatsResult::key from StatsResult::key, StatsResult::additionalKey from StatsResult::additionalKey),
+                                    StatsResult::key first StatsResult::key,
+                                    StatsResult::additionalKey first StatsResult::additionalKey,
+                                    StatsResult::value sum 1
+                                ),
+                                sort(
+                                    ascending(StatsResult::key, StatsResult::additionalKey)
+                                )
+                            )
+                            .toList()
+                            .associateBy({ String.format("%02d", it.key.toInt()) + "-" + it.additionalKey }, { it.value.toInt() })
+
+                        val messagesPerYear = database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .aggregate<StatsResult>(
+                                match(RocketchatMessage::rid eq id),
+                                project(
+                                    StatsResult::key from year(RocketchatMessage::ts),
+                                    StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
+                                ),
+                                group(
+                                    StatsResult::key,
+                                    StatsResult::key first StatsResult::key,
+                                    StatsResult::value sum StatsResult::value
+                                ),
+                                sort(
+                                    ascending(StatsResult::key)
+                                )
+                            )
+                            .toList()
+                            .associateBy({ it.key }, { it.value.toInt() })
+
+                        call.respond(
+                            ChannelStats(
+                                userMessageCount,
+                                mapOf(
+                                    "messagesPerMonth" to TimebasedMessageCount(messagesPerMonth),
+                                    "messagesPerYear" to TimebasedMessageCount(messagesPerYear)
+                                )
+                            )
+                        )
+                    }
+                }
                 route("/version") {
                     get {
                         val version: String = when (val resource = RocketchatMessage::class.java.getResource("/git-revision")) {
