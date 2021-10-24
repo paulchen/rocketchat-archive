@@ -196,6 +196,11 @@ export class MainComponent implements OnInit {
 
       clearTimeout(this.timeout);
       this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
+    }, error => {
+      this.loading = false;
+
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
     });
   }
 
