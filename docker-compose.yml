@@ -6,15 +6,23 @@ services:
       - "127.0.0.1:42773:80"
     networks:
       - backend
+    logging:
+      driver: "journald"
+      options:
+        tag: "{{.ImageName}}"
   backend:
     environment:
-      - DATABASE_NAME
+      - DATABASE
       - RAVUSBOT_USERNAME
       - RAVUSBOT_PASSWORD
     build: backend
     networks:
       - backend
       - rocketchat_default
+    logging:
+      driver: "journald"
+      options:
+        tag: "{{.ImageName}}"
 
 networks:
   backend:
