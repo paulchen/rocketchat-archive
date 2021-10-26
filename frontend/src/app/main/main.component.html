@@ -1,57 +1,61 @@
-<p-toast></p-toast>
+<div class="archive">
+  <p-toast></p-toast>
 
-<p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+  <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
-<div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
+  <div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
 
-<div *ngIf="this.messageNotFound && !this.loading">Message not found.</div>
+  <div *ngIf="this.messageNotFound && !this.loading">Message not found.</div>
 
-<div *ngIf="channelData != null && !this.channelNotFound">
-  <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
-    <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
-      <ng-template pTemplate="content">
-        <div style="height: 85vh;">
-          <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
-                   [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
-                   [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
-                   [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
-                   [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
-                   [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
-                   responsiveLayout="scroll">
-            <ng-template pTemplate="header">
-              <tr>
-                <th pSortableColumn="timestamp">Timestamp <p-sortIcon field="timestamp"></p-sortIcon></th>
-                <th>Username</th>
-                <th>Message</th>
-              </tr>
-              <tr>
-                <th></th>
-                <th>
-                  <p-columnFilter type="text" field="username">
-                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                      <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id">
-                      </p-multiSelect>
-                    </ng-template>
-                  </p-columnFilter>
-                </th>
-                <th><p-columnFilter type="text" field="message" placeholder="Regular expression"></p-columnFilter></th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-message>
-              <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
-                <td style="white-space: nowrap;">
-                  <a id="{{message.id}}"></a>
-                  <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();">
-                    {{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}
-                  </button>
-                </td>
-                <td style="white-space: nowrap;" class="username">{{message.username}}</td>
-                <td>{{message.message}}</td>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
-      </ng-template>
-    </p-tabPanel>
-  </p-tabView>
+  <div *ngIf="channelData != null && !this.channelNotFound">
+    <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
+      <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
+        <ng-template pTemplate="content">
+          <div style="text-align: center;">
+            <button pButton type="button" class="p-button-link" (click)="navigateToStats()" label="Stats"></button>
+          </div>
+
+          <div style="height: 85vh;">
+            <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
+                     [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
+                     [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
+                     [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
+                     [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
+                     [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
+                     responsiveLayout="scroll">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th pSortableColumn="timestamp">Timestamp <p-sortIcon field="timestamp"></p-sortIcon></th>
+                  <th>Username</th>
+                  <th>Message</th>
+                </tr>
+                <tr>
+                  <th></th>
+                  <th>
+                    <p-columnFilter type="text" field="username">
+                      <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id">
+                        </p-multiSelect>
+                      </ng-template>
+                    </p-columnFilter>
+                  </th>
+                  <th><p-columnFilter type="text" field="message" placeholder="Regular expression"></p-columnFilter></th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-message>
+                <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
+                  <td style="white-space: nowrap;">
+                    <a id="{{message.id}}"></a>
+                    <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();" label="{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
+                  </td>
+                  <td style="white-space: nowrap;" class="username">{{message.username}}</td>
+                  <td>{{message.message}}</td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </ng-template>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
 </div>

@@ -3,7 +3,7 @@ import {Channel, ChannelData} from "../channel-data";
 import {Message, MessageData} from "../message-data";
 import {User} from "../user-data";
 import {BackendService} from "../backend.service";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
 import {MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
@@ -36,7 +36,9 @@ export class MainComponent implements OnInit {
     private location: Location,
     private locationStrategy: LocationStrategy,
     private messageService: MessageService,
-    private viewportScroller: ViewportScroller) { }
+    private viewportScroller: ViewportScroller,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.contextMenuItems = [
@@ -229,5 +231,10 @@ export class MainComponent implements OnInit {
     }
 
     this.location.go(url);
+  }
+
+  navigateToStats() {
+    clearTimeout(this.timeout);
+    this.router.navigate(['/stats']);
   }
 }

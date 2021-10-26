@@ -1,0 +1,45 @@
+<div class="stats">
+  <div>
+    <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
+  </div>
+
+  <p-panel header="Channel selection">
+    <div>
+      Channel:
+      <p-dropdown [options]="channelData.channels" optionLabel="name" optionValue="name" [(ngModel)]="selectedChannel" (onChange)="loadStats($event.value)">
+        <ng-template pTemplate="selectedItem">
+          <div>#{{selectedChannel}}</div>
+        </ng-template>
+        <ng-template let-channel pTemplate="item">
+          #{{channel.name}}
+        </ng-template>
+      </p-dropdown>
+    </div>
+  </p-panel>
+
+  <div class="grid">
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-panel header="Message counts per user">
+        <app-stats-table [stats]="stats.userMessageCount"></app-stats-table>
+      </p-panel>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-panel header="Top days">
+        <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts"></app-stats-table>
+      </p-panel>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-panel header="Messages by year">
+        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts"></app-stats-table>
+      </p-panel>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-3">
+      <p-panel header="Messages by month">
+        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts"></app-stats-table>
+      </p-panel>
+    </div>
+  </div>
+</div>
