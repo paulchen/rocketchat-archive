@@ -62,3 +62,10 @@ body {
     }
   }
 }
+
+.stats {
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td,{
+    padding: 4px;
+  }
+}
