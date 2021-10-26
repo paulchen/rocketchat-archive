@@ -19,6 +19,7 @@ import { StatsComponent } from './stats/stats.component';
 import {PanelModule} from "primeng/panel";
 import {DropdownModule} from "primeng/dropdown";
 import { StatsTableComponent } from './stats-table/stats-table.component';
+import {ProgressSpinnerModule} from "primeng/progressspinner";
 
 @NgModule({
   declarations: [
@@ -27,22 +28,23 @@ import { StatsTableComponent } from './stats-table/stats-table.component';
     StatsComponent,
     StatsTableComponent
   ],
-  imports: [
-    BrowserModule,
-    BrowserAnimationsModule,
-    AppRoutingModule,
-    HttpClientModule,
-    CommonModule,
-    TabViewModule,
-    TableModule,
-    MultiSelectModule,
-    FormsModule,
-    ContextMenuModule,
-    ButtonModule,
-    ToastModule,
-    PanelModule,
-    DropdownModule
-  ],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        AppRoutingModule,
+        HttpClientModule,
+        CommonModule,
+        TabViewModule,
+        TableModule,
+        MultiSelectModule,
+        FormsModule,
+        ContextMenuModule,
+        ButtonModule,
+        ToastModule,
+        PanelModule,
+        DropdownModule,
+        ProgressSpinnerModule
+    ],
   providers: [{
       provide: HTTP_INTERCEPTORS,
       useClass: EncodeUrlParamsSafelyInterceptor,

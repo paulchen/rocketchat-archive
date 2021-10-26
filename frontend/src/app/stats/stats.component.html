@@ -1,4 +1,10 @@
-<div class="stats">
+<div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
+  <div style="height: 100px; width: 100px;">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</div>
+
+<div class="stats" *ngIf="dataLoaded">
   <div>
     <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
   </div>

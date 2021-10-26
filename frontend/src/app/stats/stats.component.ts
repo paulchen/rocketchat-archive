@@ -12,6 +12,7 @@ export class StatsComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
   selectedChannel: string;
   stats: ChannelStats;
+  dataLoaded: boolean;
 
   constructor(
     public router: Router,
@@ -33,7 +34,8 @@ export class StatsComponent implements OnInit {
   loadStats(channelName: string) {
     let channel = this.findChannel(channelName);
     this.backendService.getChannelStats(channel).subscribe(response => {
-      this.stats = response
+      this.stats = response;
+      this.dataLoaded = true;
     });
   }
 
