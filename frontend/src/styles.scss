@@ -19,6 +19,10 @@ body {
       padding: 0 !important;
     }
 
+    .p-datatable-wrapper {
+      overflow-x: hidden !important;
+    }
+
     .p-datatable {
       &.p-datatable {
         .p-datatable-thead > tr > th,
