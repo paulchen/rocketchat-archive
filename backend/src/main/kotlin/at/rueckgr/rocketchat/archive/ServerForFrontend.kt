@@ -11,7 +11,6 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
-import java.util.*
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
@@ -257,6 +256,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 )
                             )
                         )
+                        client.close()
                     }
                 }
                 route("/version") {
