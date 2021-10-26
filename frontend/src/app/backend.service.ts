@@ -34,7 +34,7 @@ export class BackendService {
   }
 
   getChannelStats(channel: Channel): Observable<ChannelStats>{
-    return this.http.get<ChannelStats>("../services/channels/" + encodeURIComponent(channel.id) + "/stats")
+    return this.http.get<ChannelStats>("./services/channels/" + encodeURIComponent(channel.id) + "/stats")
   }
 }
 
