@@ -4,4 +4,4 @@ data class ChannelStats(val userMessageCount: Map<String, Int>, val timebasedMes
 
 data class TimebasedMessageCount(val messageCounts: Map<String, Int>)
 
-data class StatsResult(val key: String, val additionalKey: String?, val value: String)
+data class StatsResult(val key: String, val additionalKey1: String?, val additionalKey2: String?, val value: String)

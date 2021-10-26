@@ -11,6 +11,7 @@ import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
+import java.util.*
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
@@ -178,21 +179,18 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 match(RocketchatMessage::rid eq id),
                                 project(
                                     StatsResult::key from month(RocketchatMessage::ts),
-                                    StatsResult::additionalKey from year(RocketchatMessage::ts),
+                                    StatsResult::additionalKey1 from year(RocketchatMessage::ts),
                                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
                                 ),
                                 group(
-                                    fields(StatsResult::key from StatsResult::key, StatsResult::additionalKey from StatsResult::additionalKey),
+                                    fields(StatsResult::key from StatsResult::key, StatsResult::additionalKey1 from StatsResult::additionalKey1),
                                     StatsResult::key first StatsResult::key,
-                                    StatsResult::additionalKey first StatsResult::additionalKey,
+                                    StatsResult::additionalKey1 first StatsResult::additionalKey1,
                                     StatsResult::value sum 1
-                                ),
-                                sort(
-                                    ascending(StatsResult::key, StatsResult::additionalKey)
                                 )
                             )
                             .toList()
-                            .associateBy({ String.format("%02d", it.key.toInt()) + "-" + it.additionalKey }, { it.value.toInt() })
+                            .associateByTo(TreeMap<String, Int>(), { it.additionalKey1 + "-" + String.format("%02d", it.key.toInt()) }, { it.value.toInt() })
 
                         val messagesPerYear = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -212,14 +210,47 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 )
                             )
                             .toList()
-                            .associateBy({ it.key }, { it.value.toInt() })
+                            .associateByTo(TreeMap<String, Int>(), { it.key }, { it.value.toInt() })
+
+                        val topDays = database
+                            .getCollection<RocketchatMessage>("rocketchat_message")
+                            .aggregate<StatsResult>(
+                                match(RocketchatMessage::rid eq id),
+                                project(
+                                    StatsResult::key from dayOfMonth(RocketchatMessage::ts),
+                                    StatsResult::additionalKey1 from month(RocketchatMessage::ts),
+                                    StatsResult::additionalKey2 from year(RocketchatMessage::ts),
+                                    StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
+                                ),
+                                group(
+                                    fields(
+                                        StatsResult::key from StatsResult::key,
+                                        StatsResult::additionalKey1 from StatsResult::additionalKey1,
+                                        StatsResult::additionalKey2 from StatsResult::additionalKey2
+                                    ),
+                                    StatsResult::key first StatsResult::key,
+                                    StatsResult::additionalKey1 first StatsResult::additionalKey1,
+                                    StatsResult::additionalKey2 first StatsResult::additionalKey2,
+                                    StatsResult::value sum 1
+                                ),
+                                sort(
+                                    descending(StatsResult::value)
+                                ),
+                                limit(10)
+                            )
+                            .toList()
+                            .associateBy(
+                                { it.additionalKey2 + "-" + String.format("%02d", it.additionalKey1!!.toInt()) + "-" + String.format("%02d", it.key.toInt()) },
+                                { it.value.toInt() }
+                            )
 
                         call.respond(
                             ChannelStats(
                                 userMessageCount,
                                 mapOf(
                                     "messagesPerMonth" to TimebasedMessageCount(messagesPerMonth),
-                                    "messagesPerYear" to TimebasedMessageCount(messagesPerYear)
+                                    "messagesPerYear" to TimebasedMessageCount(messagesPerYear),
+                                    "topDays" to TimebasedMessageCount(topDays)
                                 )
                             )
                         )
