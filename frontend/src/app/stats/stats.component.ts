@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router} from "@angular/router";
 import {BackendService} from "../backend.service";
-import {Channel, ChannelData} from "../channel-data";
+import {Channel, ChannelData, ChannelStats} from "../channel-data";
 
 @Component({
   selector: 'app-stats',
@@ -11,6 +11,7 @@ import {Channel, ChannelData} from "../channel-data";
 export class StatsComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
   selectedChannel: string;
+  stats: ChannelStats;
 
   constructor(
     public router: Router,
@@ -32,7 +33,7 @@ export class StatsComponent implements OnInit {
   loadStats(channelName: string) {
     let channel = this.findChannel(channelName);
     this.backendService.getChannelStats(channel).subscribe(response => {
-      // TODO
+      this.stats = response
     });
   }
 

@@ -171,7 +171,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 )
                             )
                             .toList()
-                            .associateBy({ it.key }, { it.value.toInt() })
+                            .map { MessageCount(it.key, it.value.toInt()) }
 
                         val messagesPerMonth = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -190,7 +190,8 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 )
                             )
                             .toList()
-                            .associateByTo(TreeMap<String, Int>(), { it.additionalKey1 + "-" + String.format("%02d", it.key.toInt()) }, { it.value.toInt() })
+                            .sortedBy { it.additionalKey1 + "-" + String.format("%02d", it.key.toInt()) }
+                            .map { MessageCount(it.additionalKey1 + "-" + String.format("%02d", it.key.toInt()), it.value.toInt()) }
 
                         val messagesPerYear = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -210,7 +211,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 )
                             )
                             .toList()
-                            .associateByTo(TreeMap<String, Int>(), { it.key }, { it.value.toInt() })
+                            .map { MessageCount(it.key, it.value.toInt()) }
 
                         val topDays = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -239,10 +240,12 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 limit(10)
                             )
                             .toList()
-                            .associateBy(
-                                { it.additionalKey2 + "-" + String.format("%02d", it.additionalKey1!!.toInt()) + "-" + String.format("%02d", it.key.toInt()) },
-                                { it.value.toInt() }
-                            )
+                            .map {
+                                MessageCount(
+                                    it.additionalKey2 + "-" + String.format("%02d", it.additionalKey1!!.toInt()) + "-" + String.format("%02d", it.key.toInt()),
+                                    it.value.toInt()
+                                )
+                            }
 
                         call.respond(
                             ChannelStats(

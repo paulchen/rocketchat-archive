@@ -17,32 +17,17 @@
 </p-panel>
 
 <p-panel header="Message counts per user">
-  <div>
-    <p-table>
-      <ng-template pTemplate="header">
-        <tr>
-          <th>Username</th>
-          <th>Messages</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body">
-        <tr>
-          <td>username</td>
-          <td>message count</td>
-        </tr>
-      </ng-template>
-    </p-table>
-  </div>
+  <app-stats-table [stats]="stats.userMessageCount"></app-stats-table>
 </p-panel>
 
 <p-panel header="Messages by year">
-  TODO
+  <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts"></app-stats-table>
 </p-panel>
 
 <p-panel header="Messages by month">
-  TODO
+  <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts"></app-stats-table>
 </p-panel>
 
 <p-panel header="Top days">
-  TODO
+  <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts"></app-stats-table>
 </p-panel>

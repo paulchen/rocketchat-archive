@@ -18,12 +18,14 @@ import {EncodeUrlParamsSafelyInterceptor} from "./encode-url-params-safely-inter
 import { StatsComponent } from './stats/stats.component';
 import {PanelModule} from "primeng/panel";
 import {DropdownModule} from "primeng/dropdown";
+import { StatsTableComponent } from './stats-table/stats-table.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
-    StatsComponent
+    StatsComponent,
+    StatsTableComponent
   ],
   imports: [
     BrowserModule,

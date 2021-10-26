@@ -8,10 +8,15 @@ export class Channel {
 }
 
 export class ChannelStats {
-  userMessageCount: {[userName: string]: number};
+  userMessageCount: MessageCount[];
   timebasedMessageCounts: {[key: string]: TimebasedMessageCount};
 }
 
 export class TimebasedMessageCount {
-  messageCounts: {[timeDefinition: string]: number};
+  messageCounts: MessageCount[];
+}
+
+export class MessageCount {
+  key: string;
+  messages: number;
 }
