@@ -49,6 +49,11 @@ class ServerForArchive(private val archiveConfiguration: ArchiveConfiguration, p
                         client.close()
                     }
                 }
+                route("/version") {
+                    get {
+                        call.respond(mapOf("version" to VersionHelper.instance.getVersion()))
+                    }
+                }
             }
         }.start()
     }
