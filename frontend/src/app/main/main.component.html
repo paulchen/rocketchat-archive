@@ -16,7 +16,7 @@
           </div>
 
           <div style="height: 85vh;">
-            <p-table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
+            <p-table #table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
                      [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
                      [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
                      [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
@@ -48,7 +48,9 @@
                     <a id="{{message.id}}"></a>
                     <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();" label="{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
                   </td>
-                  <td style="white-space: nowrap;" class="username">{{message.username}}</td>
+                  <td style="white-space: nowrap;" class="username">
+                    <button pButton type="button" class="p-button-link" (click)="table.filter([ getUserId(message.username) ], 'username', 'equals')" label="{{message.username}}"></button>
+                  </td>
                   <td>{{message.message}}</td>
                 </tr>
               </ng-template>

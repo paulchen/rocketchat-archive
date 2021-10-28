@@ -237,4 +237,14 @@ export class MainComponent implements OnInit {
     clearTimeout(this.timeout);
     this.router.navigate(['/stats']);
   }
+
+  getUserId(username: string): string {
+    var userId = '';
+    this.users.forEach(user => {
+      if(user.username == username) {
+        userId = user.id
+      }
+    });
+    return userId;
+  }
 }
