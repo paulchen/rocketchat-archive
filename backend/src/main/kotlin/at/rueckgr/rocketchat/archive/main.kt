@@ -17,7 +17,7 @@ data class Channel(val name: String, val id: String)
 
 data class Message(val id: String, val message: String, val timestamp: ZonedDateTime, val username: String)
 
-data class User(val id: String, val username: String)
+data class User(val id: String, val name: String, val username: String)
 
 data class UserDetails(val username: String, val timestamp: ZonedDateTime?)
 

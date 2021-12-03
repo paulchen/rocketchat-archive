@@ -30,11 +30,15 @@ class ServerForArchive(private val archiveConfiguration: ArchiveConfiguration, p
                         val client = KMongo.createClient(archiveConfiguration.mongoUrl)
                         val database = client.getDatabase(archiveConfiguration.database)
 
-                        val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }
-                        val databaseUser = database.getCollection<RocketchatUser>("users")
-                            .find(RocketchatUser::username `in` usernames)
-                            .singleOrNull()
-                            ?: return@get call.respondText("Unknown username", status = HttpStatusCode.NotFound)
+                        val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }.map { it.lowercase() }
+                        val databaseUsers = database.getCollection<RocketchatUser>("users")
+                            .find()
+                            .map { User(it._id, it.name, it.username) }
+                            .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
+                        if (databaseUsers.isEmpty()) {
+                            return@get call.respondText("Unknown username", status = HttpStatusCode.NotFound)
+                        }
+                        val databaseUser = databaseUsers[0]
 
                         val message = database
                             .getCollection<RocketchatMessage>("rocketchat_message")

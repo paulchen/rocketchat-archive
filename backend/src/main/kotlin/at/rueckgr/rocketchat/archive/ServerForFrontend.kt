@@ -31,7 +31,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                         val database = client.getDatabase(archiveConfiguration.database)
                         val users = database.getCollection<RocketchatUser>("users")
                             .find()
-                            .map { User(it._id, it.username) }
+                            .map { User(it._id, it.name, it.username) }
                             .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
                         call.respond(mapOf("users" to users))
                         client.close()
