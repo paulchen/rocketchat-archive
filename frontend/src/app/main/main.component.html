@@ -34,7 +34,7 @@
                   <th>
                     <p-columnFilter type="text" field="username">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id">
+                        <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" appendTo="body">
                         </p-multiSelect>
                       </ng-template>
                     </p-columnFilter>
