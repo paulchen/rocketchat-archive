@@ -200,7 +200,7 @@ In order to run the application on your local machine, take the following steps:
 * Use `mongodump` to create a dump
   of your production installation of Rocket.Chat (into a directory named `dump`).
 * Place this directory on your local machine.
-* From the directoy containing that directory, invoke `mongorestore`.
+* From the directory containing that directory, invoke `mongorestore`.
 * Start the backend (e.g., import the Gradle project into IntelliJ IDEA and invoke `MainKt`).
-* Start the fronted (e.g., run `npm install` and `ROCKETCHAT_URL='...' npm run start`) from the `frontend` directory.
+* Start the frontend (e.g., run `npm install` and `ROCKETCHAT_URL='...' npm run start`) from the `frontend` directory.
 * Point your browser to http://localhost:4200.
