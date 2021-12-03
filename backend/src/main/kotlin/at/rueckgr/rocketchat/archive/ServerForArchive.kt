@@ -42,7 +42,7 @@ class ServerForArchive(private val archiveConfiguration: ArchiveConfiguration, p
 
                         val message = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
-                            .find(RocketchatMessage::u / UserData::username `in` usernames)
+                            .find(RocketchatMessage::u / UserData::_id eq databaseUser.id)
                             .descendingSort(RocketchatMessage::ts)
                             .limit(1)
                             .singleOrNull()
