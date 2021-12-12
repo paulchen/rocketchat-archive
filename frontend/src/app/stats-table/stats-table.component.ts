@@ -9,6 +9,8 @@ import {MessageCount} from "../channel-data";
 export class StatsTableComponent implements OnInit {
   @Input() stats: MessageCount[];
 
+  @Input() firstColumn: String;
+
   constructor() { }
 
   ngOnInit(): void {

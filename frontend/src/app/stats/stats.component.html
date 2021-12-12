@@ -26,25 +26,25 @@
   <div class="grid">
     <div class="col-12 md:col-6 lg:col-3">
       <p-panel header="Message counts per user">
-        <app-stats-table [stats]="stats.userMessageCount"></app-stats-table>
+        <app-stats-table [stats]="stats.userMessageCount" firstColumn="Username"></app-stats-table>
       </p-panel>
     </div>
 
     <div class="col-12 md:col-6 lg:col-3">
       <p-panel header="Top days">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts"></app-stats-table>
+        <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts" firstColumn="Day"></app-stats-table>
       </p-panel>
     </div>
 
     <div class="col-12 md:col-6 lg:col-3">
       <p-panel header="Messages by year">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts"></app-stats-table>
+        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts" firstColumn="Year"></app-stats-table>
       </p-panel>
     </div>
 
     <div class="col-12 md:col-6 lg:col-3">
       <p-panel header="Messages by month">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts"></app-stats-table>
+        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts" firstColumn="Month"></app-stats-table>
       </p-panel>
     </div>
   </div>
