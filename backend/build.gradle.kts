@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "1.6.4"
+val ktorVersion = "1.6.7"
 val log4jVersion = "2.15.0"
 
 plugins {
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.0"
     application
-    id("com.palantir.docker") version "0.29.0"
+    id("com.palantir.docker") version "0.31.0"
     id("com.palantir.git-version") version "0.12.3"
 }
 
@@ -26,7 +26,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.litote.kmongo:kmongo:4.3.0")
+    implementation("org.litote.kmongo:kmongo:4.4.0")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-gson:$ktorVersion")
     implementation("io.ktor:ktor-jackson:$ktorVersion")
@@ -38,7 +38,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.5.31")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
 }
 
 tasks.test {
