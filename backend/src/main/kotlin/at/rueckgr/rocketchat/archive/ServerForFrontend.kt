@@ -261,7 +261,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                 }
                 route("/version") {
                     get {
-                        call.respond(mapOf("version" to VersionHelper.instance.getVersion()))
+                        call.respond(mapOf("version" to VersionHelper.instance.getVersion().revision))
                     }
                 }
             }
