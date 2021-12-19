@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 val ktorVersion = "1.6.7"
-val log4jVersion = "2.16.0"
+val log4jVersion = "2.17.0"
 
 plugins {
     kotlin("jvm") version "1.6.0"
