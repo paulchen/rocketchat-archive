@@ -64,7 +64,8 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
 
                         val filterConditions = and(
                             RocketchatMessage::rid eq channel,
-                            RocketchatMessage::ts gt timestamp
+                            RocketchatMessage::ts gt timestamp,
+                            RocketchatMessage::t eq null
                         )
 
                         val count = database
@@ -101,7 +102,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                         val client = KMongo.createClient(archiveConfiguration.mongoUrl)
                         val database = client.getDatabase(archiveConfiguration.database)
 
-                        val filterConditions = mutableListOf(RocketchatMessage::rid eq id)
+                        val filterConditions = mutableListOf(RocketchatMessage::rid eq id, RocketchatMessage::t eq null)
                         val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
                         if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
                             filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
@@ -116,21 +117,17 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                                 return@get call.respondText("Invalid regular expression", status = HttpStatusCode.BadRequest)
                             }
                         }
-                        val filterCondition = when (filterConditions.size) {
-                            1 -> filterConditions.first()
-                            else -> and(filterConditions)
-                        }
 
                         val messages = if (sortAscending) {
                             database
                                 .getCollection<RocketchatMessage>("rocketchat_message")
-                                .find(filterCondition)
+                                .find(and(filterConditions))
                                 .ascendingSort(RocketchatMessage::ts)
                         }
                         else {
                             database
                                 .getCollection<RocketchatMessage>("rocketchat_message")
-                                .find(filterCondition)
+                                .find(and(filterConditions))
                                 .descendingSort(RocketchatMessage::ts)
 
                         }
@@ -139,7 +136,7 @@ class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) 
                             .map { Message(it._id, it.msg, it.ts, it.u.username) }
                         val messageCount = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
-                            .find(filterCondition)
+                            .find(and(filterConditions))
                             .count()
                         call.respond(mapOf("messages" to messages, "messageCount" to messageCount))
                         client.close()

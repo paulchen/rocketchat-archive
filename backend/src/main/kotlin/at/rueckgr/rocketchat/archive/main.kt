@@ -9,7 +9,7 @@ data class RocketchatRoom(val _id: String, val t: String, val name: String?)
 
 data class UserData(val _id: String, val username: String, val name: String?)
 
-data class RocketchatMessage(val _id: String, val rid: String, val msg: String, val ts: ZonedDateTime, val u: UserData)
+data class RocketchatMessage(val _id: String, val rid: String, val msg: String, val ts: ZonedDateTime, val u: UserData, val t: String?)
 
 data class RocketchatUser(val _id: String, val name: String, val username: String)
 
