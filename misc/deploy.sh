@@ -12,6 +12,7 @@ fi
 
 . deploy.conf
 
+. ~/.nvm/nvm.sh || exit 1
 nvm use lts/gallium || exit 1
 
 cd "$BASE_DIR"
