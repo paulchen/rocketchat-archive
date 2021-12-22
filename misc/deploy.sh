@@ -12,6 +12,8 @@ fi
 
 . deploy.conf
 
+nvm use lts/gallium || exit 1
+
 cd "$BASE_DIR"
 
 git pull || exit 1
