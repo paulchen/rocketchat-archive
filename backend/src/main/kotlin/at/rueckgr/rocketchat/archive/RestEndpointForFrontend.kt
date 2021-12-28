@@ -15,7 +15,7 @@ import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
 
-class ServerForFrontend(private val archiveConfiguration: ArchiveConfiguration) : Logging {
+class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfiguration) : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {

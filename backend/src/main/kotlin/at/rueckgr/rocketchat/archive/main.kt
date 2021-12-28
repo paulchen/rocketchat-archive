@@ -32,15 +32,15 @@ fun main() {
     val archiveConfiguration = ArchiveConfiguration(database = databaseName)
 
     runBlocking {
-        val serverForArchive = async {
-            ServerForArchive(archiveConfiguration, ravusBotService).start()
+        val restEndpointForBot = async {
+            RestEndpointForBot(archiveConfiguration, ravusBotService).start()
         }
-        val serverForFrontend = async {
-            ServerForFrontend(archiveConfiguration).start()
+        val restEndpointForFrontend = async {
+            RestEndpointForFrontend(archiveConfiguration).start()
         }
 
-        serverForArchive.await()
-        serverForFrontend.await()
+        restEndpointForBot.await()
+        restEndpointForFrontend.await()
     }
 
 }

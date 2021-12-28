@@ -12,7 +12,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import org.litote.kmongo.*
 
-class ServerForArchive(private val archiveConfiguration: ArchiveConfiguration, private val ravusBotService: RavusBotService) {
+class RestEndpointForBot(private val archiveConfiguration: ArchiveConfiguration, private val ravusBotService: RavusBotService) {
     fun start() {
         embeddedServer(Netty, 8081) {
             install(ContentNegotiation) {
