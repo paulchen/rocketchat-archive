@@ -60,6 +60,9 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val dbMessage = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .findOneById(message) ?: return@get call.respondText("Not found", status = HttpStatusCode.NotFound)
+                        if (dbMessage.t != null) {
+                            return@get call.respondText("Not found", status = HttpStatusCode.NotFound)
+                        }
                         val timestamp = dbMessage.ts
 
                         val filterConditions = and(
@@ -152,7 +155,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val userMessageCount = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .aggregate<StatsResult>(
-                                match(RocketchatMessage::rid eq id),
+                                match(RocketchatMessage::rid eq id, RocketchatMessage::t eq null),
                                 project(
                                     StatsResult::key from RocketchatMessage::u / UserData::username,
                                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
@@ -172,7 +175,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val messagesPerMonth = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .aggregate<StatsResult>(
-                                match(RocketchatMessage::rid eq id),
+                                match(RocketchatMessage::rid eq id, RocketchatMessage::t eq null),
                                 project(
                                     StatsResult::key from month(RocketchatMessage::ts),
                                     StatsResult::additionalKey1 from year(RocketchatMessage::ts),
@@ -192,7 +195,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val messagesPerYear = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .aggregate<StatsResult>(
-                                match(RocketchatMessage::rid eq id),
+                                match(RocketchatMessage::rid eq id, RocketchatMessage::t eq null),
                                 project(
                                     StatsResult::key from year(RocketchatMessage::ts),
                                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
@@ -212,7 +215,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val topDays = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .aggregate<StatsResult>(
-                                match(RocketchatMessage::rid eq id),
+                                match(RocketchatMessage::rid eq id, RocketchatMessage::t eq null),
                                 project(
                                     StatsResult::key from dayOfMonth(RocketchatMessage::ts),
                                     StatsResult::additionalKey1 from month(RocketchatMessage::ts),
