@@ -25,13 +25,11 @@
                      responsiveLayout="scroll">
               <ng-template pTemplate="header">
                 <tr>
-                  <th pSortableColumn="timestamp">Timestamp <p-sortIcon field="timestamp"></p-sortIcon></th>
-                  <th>Username</th>
-                  <th>Message</th>
-                </tr>
-                <tr>
-                  <th></th>
+                  <th pSortableColumn="timestamp">
+                    Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
+                  </th>
                   <th>
+                    Username
                     <p-columnFilter type="text" field="username">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                         <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" appendTo="body">
@@ -39,7 +37,10 @@
                       </ng-template>
                     </p-columnFilter>
                   </th>
-                  <th><p-columnFilter type="text" field="message" placeholder="Regular expression"></p-columnFilter></th>
+                  <th>
+                    Message
+                    <p-columnFilter type="text" field="message" placeholder="Regular expression"></p-columnFilter>
+                  </th>
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-message>

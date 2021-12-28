@@ -14,6 +14,15 @@ body {
   display: none;
 }
 
+.p-datatable-thead th {
+  vertical-align: top;
+
+  p-columnfilter {
+    display: block;
+    padding-top: 1em;
+  }
+}
+
 .p-datatable td {
   max-width: 100vw;
 }
@@ -30,11 +39,11 @@ body {
 
     .p-datatable {
       &.p-datatable {
-        .p-datatable-thead > tr > th,
-        .p-datatable-tfoot > tr > td {
-          display: none !important;
+        .p-datatable-thead > tr > th:first-child {
+          display: none;
         }
-
+        .p-datatable-thead > tr > th,
+        .p-datatable-tfoot > tr > td,
         .p-datatable-tbody > tr > td {
           text-align: left;
           display: block;
