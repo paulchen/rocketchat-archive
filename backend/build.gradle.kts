@@ -5,7 +5,7 @@ val ktorVersion = "1.6.7"
 val log4jVersion = "2.17.0"
 
 plugins {
-    kotlin("jvm") version "1.6.0"
+    kotlin("jvm") version "1.6.10"
     application
     id("com.palantir.docker") version "0.31.0"
 }
@@ -36,9 +36,9 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.0")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.1")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
 }
 
 tasks.test {
