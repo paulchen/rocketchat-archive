@@ -13,6 +13,10 @@ body {
   display: none;
 }
 
+.p-datatable td {
+  max-width: 100vw;
+}
+
 @media screen and (max-width: 60rem) {
   .archive {
     .p-tabview .p-tabview-panels {
