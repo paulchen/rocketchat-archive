@@ -33,6 +33,7 @@ export class StatsComponent implements OnInit {
 
   loadStats(channelName: string) {
     let channel = this.findChannel(channelName);
+    this.dataLoaded = false;
     this.backendService.getChannelStats(channel).subscribe(response => {
       this.stats = response;
       this.dataLoaded = true;
