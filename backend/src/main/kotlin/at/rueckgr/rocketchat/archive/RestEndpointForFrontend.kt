@@ -152,12 +152,16 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val client = KMongo.createClient(archiveConfiguration.mongoUrl)
                         val database = client.getDatabase(archiveConfiguration.database)
 
+                        val users = database.getCollection<RocketchatUser>("users")
+                            .find()
+                            .associate { it._id to it.username }
+
                         val userMessageCount = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .aggregate<StatsResult>(
                                 match(RocketchatMessage::rid eq id, RocketchatMessage::t eq null),
                                 project(
-                                    StatsResult::key from RocketchatMessage::u / UserData::username,
+                                    StatsResult::key from RocketchatMessage::u / UserData::_id,
                                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
                                 ),
                                 group(
@@ -170,7 +174,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                                 )
                             )
                             .toList()
-                            .map { MessageCount(it.key, it.value.toInt()) }
+                            .map { MessageCount(users[it.key]!!, it.value.toInt()) }
 
                         val messagesPerMonth = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
