@@ -4,7 +4,7 @@
 #RUN ./gradlew dependencies
 #RUN ./gradlew distTar
 
-FROM openjdk:11-jre-slim
+FROM openjdk:17-jdk-slim
 RUN mkdir /app
 ADD build/distributions/rocketchat-archive-backend.tar /app
 
