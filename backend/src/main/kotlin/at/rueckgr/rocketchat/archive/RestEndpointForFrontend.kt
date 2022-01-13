@@ -1,6 +1,8 @@
 package at.rueckgr.rocketchat.archive
 
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.mongodb.client.MongoClient
+import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
@@ -10,12 +12,46 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.util.pipeline.*
 import org.litote.kmongo.*
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
 
-class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfiguration) : Logging {
+class MongoOperation {
+    var result: () -> Unit = {}
+
+    fun result(result: () -> Unit) {
+        this.result = result
+    }
+}
+
+suspend fun mongoOperation(pipelineContext: PipelineContext<*, ApplicationCall>, lambda: MongoOperation.() -> Unit) {
+    val database = Mongo.getInstance()
+
+    pipelineContext.call.respond(MongoOperation().apply(lambda))
+
+    database.close()
+}
+
+class Mongo {
+    private val client: MongoClient = KMongo.createClient("TODO")
+    private val database: MongoDatabase = this.client.getDatabase("TODO")
+
+    companion object {
+        private val instance = ThreadLocal.withInitial { Mongo() }
+
+        fun getInstance(): Mongo {
+            return instance.get()
+        }
+    }
+
+    fun getDatabase() = this.database
+
+    fun close() = this.client.close()
+}
+
+class RestEndpointForFrontend() : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {
@@ -27,25 +63,17 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
             routing {
                 route("/users") {
                     get {
-                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
-                        val database = client.getDatabase(archiveConfiguration.database)
-                        val users = database.getCollection<RocketchatUser>("users")
-                            .find()
-                            .map { User(it._id, it.name, it.username) }
-                            .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
-                        call.respond(mapOf("users" to users))
-                        client.close()
+                        mongoOperation(this) {
+                            result { mapOf("users" to loadUsers()) }
+                        }
                     }
                 }
                 route("/channels") {
                     get {
-                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
-                        val database = client.getDatabase(archiveConfiguration.database)
-                        val channels = database.getCollection<RocketchatRoom>("rocketchat_room")
-                            .find()
-                            .filter { it.t == "c" }
-                            .map { Channel(it.name!!, it._id) }
-                        call.respond(mapOf("channels" to channels))
+                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
+
+                        call.respond(mapOf("channels" to loadChannels(database)))
                         client.close()
                     }
                 }
@@ -54,8 +82,8 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         val channel = call.parameters["channel"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
                         val message = call.parameters["message"] ?: return@get call.respondText("Missing message", status = HttpStatusCode.BadRequest)
 
-                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
-                        val database = client.getDatabase(archiveConfiguration.database)
+                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
 
                         val dbMessage = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
@@ -102,8 +130,8 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                             else -> return@get call.respondText("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
                         }
                         val id = call.parameters["id"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
-                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
-                        val database = client.getDatabase(archiveConfiguration.database)
+                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
 
                         val filterConditions = mutableListOf(RocketchatMessage::rid eq id, RocketchatMessage::t eq null)
                         val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
@@ -136,7 +164,7 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         }
                             .skip((page - 1) * limit)
                             .limit(limit)
-                            .map { Message(it._id, it.msg, it.ts, it.u.username) }
+                            .map { mapMessage(it) }
                         val messageCount = database
                             .getCollection<RocketchatMessage>("rocketchat_message")
                             .find(and(filterConditions))
@@ -145,12 +173,62 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
                         client.close()
                     }
                 }
+                route("/reports") {
+                    get {
+                        val page = try {
+                            call.request.queryParameters["page"]?.toInt() ?: 1
+                        }
+                        catch (e: NumberFormatException) {
+                            return@get call.respondText("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
+                        }
+                        val limit = try {
+                            call.request.queryParameters["limit"]?.toInt() ?: 100
+                        }
+                        catch (e: NumberFormatException) {
+                            return@get call.respondText("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
+                        }
+                        val sortAscending = when(call.request.queryParameters["sort"]) {
+                            "asc" -> true
+                            "desc" -> false
+                            else -> return@get call.respondText("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
+                        }
+
+                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
+
+                        val users = loadUsers(database).associateBy(User::id)
+                        val channels = loadChannels(database).map { it.id }
+                        val reports = if (sortAscending) {
+                            database
+                                .getCollection<RocketchatReport>("rocketchat_report")
+                                .find()
+                                .ascendingSort(RocketchatReport::ts)
+                        }
+                        else {
+                            database
+                                .getCollection<RocketchatReport>("rocketchat_report")
+                                .find()
+                                .descendingSort(RocketchatReport::ts)
+                        }
+                            .skip((page - 1) * limit)
+                            .limit(limit)
+                            .filter { channels.contains(it.message.rid) }
+                            .map { mapReport(it, users) }
+
+                        val reportsCount = database
+                            .getCollection<RocketchatReport>("rocketchat_report")
+                            .find()
+                            .count()
+                        call.respond(mapOf("reports" to reports, "reportsCount" to reportsCount))
+                        client.close()
+                    }
+                }
                 route("/channels/{id}/stats") {
                     get {
                         val id = call.parameters["id"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
 
-                        val client = KMongo.createClient(archiveConfiguration.mongoUrl)
-                        val database = client.getDatabase(archiveConfiguration.database)
+                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
 
                         val users = database.getCollection<RocketchatUser>("users")
                             .find()
@@ -271,4 +349,28 @@ class RestEndpointForFrontend(private val archiveConfiguration: ArchiveConfigura
             }
         }.start()
     }
+
+    private fun mapMessage(message: RocketchatMessage) =
+        Message(message._id, message.msg, message.ts, message.u.username)
+
+    private fun mapReport(report: RocketchatReport, users: Map<String, User>) =
+        Report(report._id, mapMessage(report.message), report.description, report.ts, users[report.userId]!!)
+
+    private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username)
+
+    private fun mapChannel(channel: RocketchatRoom) = Channel(channel.name!!, channel._id)
+
+    private fun loadUsers() = this.loadUsers(Mongo.getInstance().getDatabase())
+
+    private fun loadUsers(database: MongoDatabase) = database
+        .getCollection<RocketchatUser>("users")
+        .find()
+        .map { mapUser(it) }
+        .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
+
+    private fun loadChannels(database: MongoDatabase) = database
+        .getCollection<RocketchatRoom>("rocketchat_room")
+        .find()
+        .filter { it.t == "c" }
+        .map { mapChannel(it) }
 }
