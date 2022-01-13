@@ -1,7 +1,6 @@
 package at.rueckgr.rocketchat.archive
 
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import io.ktor.application.*
 import io.ktor.features.*
@@ -76,6 +75,10 @@ class RestEndpointForFrontend : Logging {
                 route("/channels/{id}/messages") {
                     get {
                         mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "id"; required = true }
+                                queryParameter { name = "sort"; required = true }
+                            }
                             result {
                                 val page = try {
                                     call.request.queryParameters["page"]?.toInt() ?: 1
@@ -89,14 +92,13 @@ class RestEndpointForFrontend : Logging {
                                 catch (e: NumberFormatException) {
                                     throw MongoOperationException("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
                                 }
-                                val sortAscending = when(call.request.queryParameters["sort"]) {
+                                val sortAscending = when(parameter("sort")) {
                                     "asc" -> true
                                     "desc" -> false
                                     else -> throw MongoOperationException("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
                                 }
-                                val id = call.parameters["id"] ?: throw MongoOperationException("Missing channel", status = HttpStatusCode.BadRequest)
 
-                                val filterConditions = mutableListOf(RocketchatMessage::rid eq id, RocketchatMessage::t eq null)
+                                val filterConditions = mutableListOf(RocketchatMessage::rid eq parameter("id"), RocketchatMessage::t eq null)
                                 val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
                                 if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
                                     filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
@@ -191,8 +193,11 @@ class RestEndpointForFrontend : Logging {
                 route("/channels/{id}/stats") {
                     get {
                         mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "id"; required = true }
+                            }
                             result {
-                                val id = call.parameters["id"] ?: throw MongoOperationException("Missing channel", status = HttpStatusCode.BadRequest)
+                                val id = parameter("id")
 
                                 val database = Mongo.getInstance().getDatabase()
 
