@@ -25,8 +25,11 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                 route("/user/{username}") {
                     get {
                         mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "username"; required = true }
+                            }
                             result {
-                                val username = call.parameters["username"] ?: throw MongoOperationException("Missing channel", status = HttpStatusCode.BadRequest)
+                                val username = parameter("username")!!
                                 val usernamesFromRavusBot = ravusBotService.getUsernames(username)
 
                                 val database = Mongo.getInstance().getDatabase()

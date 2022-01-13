@@ -41,7 +41,7 @@ class Parameters : ArrayList<Parameter>() {
     }
 }
 
-class ParameterBuilder(private val type: ParameterType) {
+class ParameterBuilder(val type: ParameterType) {
     var name: String = ""
     var required: Boolean = false
 

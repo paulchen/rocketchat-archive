@@ -42,20 +42,21 @@ class RestEndpointForFrontend : Logging {
                 route("/channels/{channel}/messages/{message}") {
                     get {
                         mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "channel"; required = true }
+                                urlParameter { name = "message"; required = true }
+                            }
                             result {
-                                val channel = call.parameters["channel"] ?: throw MongoOperationException("Missing channel", status = HttpStatusCode.BadRequest)
-                                val message = call.parameters["message"] ?: throw MongoOperationException("Missing message", status = HttpStatusCode.BadRequest)
-
                                 val dbMessage = Mongo.getInstance().getDatabase()
                                     .getCollection<RocketchatMessage>("rocketchat_message")
-                                    .findOneById(message) ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
+                                    .findOneById(parameter("message")!!) ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
                                 if (dbMessage.t != null) {
                                     throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
                                 }
                                 val timestamp = dbMessage.ts
 
                                 val filterConditions = and(
-                                    RocketchatMessage::rid eq channel,
+                                    RocketchatMessage::rid eq parameter("channel"),
                                     RocketchatMessage::ts gt timestamp,
                                     RocketchatMessage::t eq null
                                 )
@@ -67,7 +68,7 @@ class RestEndpointForFrontend : Logging {
 
                                 val page = ceil((count + 1) / 100.0).toInt()
 
-                                mapOf("channel" to channel, "message" to message, "page" to page)
+                                mapOf("channel" to parameter("channel"), "message" to parameter("message"), "page" to page)
                             }
                         }
                     }
@@ -77,21 +78,15 @@ class RestEndpointForFrontend : Logging {
                         mongoOperation(this) {
                             parameters {
                                 urlParameter { name = "id"; required = true }
+                                queryParameter { name = "page"; datatype = Int; default = 1 }
+                                queryParameter { name = "limit"; datatype = Int; default = 100 }
                                 queryParameter { name = "sort"; required = true }
+                                queryParameter { name = "userIds" }
+                                queryParameter { name = "text" }
                             }
                             result {
-                                val page = try {
-                                    call.request.queryParameters["page"]?.toInt() ?: 1
-                                }
-                                catch (e: NumberFormatException) {
-                                    throw MongoOperationException("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
-                                }
-                                val limit = try {
-                                    call.request.queryParameters["limit"]?.toInt() ?: 100
-                                }
-                                catch (e: NumberFormatException) {
-                                    throw MongoOperationException("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
-                                }
+                                val page = intParameter("page")
+                                val limit = intParameter("limit")
                                 val sortAscending = when(parameter("sort")) {
                                     "asc" -> true
                                     "desc" -> false
@@ -99,11 +94,11 @@ class RestEndpointForFrontend : Logging {
                                 }
 
                                 val filterConditions = mutableListOf(RocketchatMessage::rid eq parameter("id"), RocketchatMessage::t eq null)
-                                val userIds = call.parameters["userIds"]?.trim()?.split(",") ?: emptyList()
+                                val userIds = parameter("userIds")?.trim()?.split(",") ?: emptyList()
                                 if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
                                     filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
                                 }
-                                val text = call.parameters["text"]?.trim() ?: ""
+                                val text = parameter("text")?.trim() ?: ""
                                 if (text.isNotBlank()) {
                                     try {
                                         filterConditions.add(Filters.regex("msg", Pattern.compile(text, Pattern.CASE_INSENSITIVE)))
@@ -142,20 +137,15 @@ class RestEndpointForFrontend : Logging {
                 route("/reports") {
                     get {
                         mongoOperation(this) {
+                            parameters {
+                                queryParameter { name = "page"; datatype = Int; default = 1 }
+                                queryParameter { name = "limit"; datatype = Int; default = 100 }
+                                queryParameter { name = "sort"; required = true }
+                            }
                             result {
-                                val page = try {
-                                    call.request.queryParameters["page"]?.toInt() ?: 1
-                                }
-                                catch (e: NumberFormatException) {
-                                    throw MongoOperationException("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
-                                }
-                                val limit = try {
-                                    call.request.queryParameters["limit"]?.toInt() ?: 100
-                                }
-                                catch (e: NumberFormatException) {
-                                    throw MongoOperationException("Invalid value for page parameter", status = HttpStatusCode.BadRequest)
-                                }
-                                val sortAscending = when(call.request.queryParameters["sort"]) {
+                                val page = intParameter("page")
+                                val limit = intParameter("limit")
+                                val sortAscending = when(parameter("sort")) {
                                     "asc" -> true
                                     "desc" -> false
                                     else -> throw MongoOperationException("Invalid value for sort parameter", status = HttpStatusCode.BadRequest)
