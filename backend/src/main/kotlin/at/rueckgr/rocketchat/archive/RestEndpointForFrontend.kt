@@ -19,39 +19,48 @@ import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
 
 class MongoOperation {
-    var result: () -> Unit = {}
+    var result: () -> Any = {}
 
-    fun result(result: () -> Unit) {
+    fun result(result: () -> Any) {
         this.result = result
     }
 }
 
-suspend fun mongoOperation(pipelineContext: PipelineContext<*, ApplicationCall>, lambda: MongoOperation.() -> Unit) {
+suspend fun mongoOperation(pipelineContext: PipelineContext<*, ApplicationCall>, lambda: MongoOperation.() -> Any) {
     val database = Mongo.getInstance()
 
-    pipelineContext.call.respond(MongoOperation().apply(lambda))
+    val m = MongoOperation()
+    m.lambda()
+    pipelineContext.call.respond(m.result())
 
     database.close()
 }
 
 class Mongo {
-    private val client: MongoClient = KMongo.createClient("TODO")
-    private val database: MongoDatabase = this.client.getDatabase("TODO")
+    private val client: MongoClient = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
+    private val database: MongoDatabase = this.client.getDatabase(ConfigurationProvider.getConfiguration().database)
+    private var closed = false
 
     companion object {
         private val instance = ThreadLocal.withInitial { Mongo() }
 
         fun getInstance(): Mongo {
+            if (instance.get().closed) {
+                instance.set(Mongo())
+            }
             return instance.get()
         }
     }
 
     fun getDatabase() = this.database
 
-    fun close() = this.client.close()
+    fun close() {
+        this.client.close()
+        this.closed = true
+    }
 }
 
-class RestEndpointForFrontend() : Logging {
+class RestEndpointForFrontend : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {
