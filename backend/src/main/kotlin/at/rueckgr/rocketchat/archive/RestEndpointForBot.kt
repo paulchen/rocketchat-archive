@@ -24,38 +24,40 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
             routing {
                 route("/user/{username}") {
                     get {
-                        val username = call.parameters["username"] ?: return@get call.respondText("Missing channel", status = HttpStatusCode.BadRequest)
-                        val usernamesFromRavusBot = ravusBotService.getUsernames(username)
+                        mongoOperation(this) {
+                            result {
+                                val username = call.parameters["username"] ?: throw MongoOperationException("Missing channel", status = HttpStatusCode.BadRequest)
+                                val usernamesFromRavusBot = ravusBotService.getUsernames(username)
 
-                        val client = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
-                        val database = client.getDatabase(ConfigurationProvider.getConfiguration().database)
+                                val database = Mongo.getInstance().getDatabase()
 
-                        val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }.map { it.lowercase() }
-                        val databaseUsers = database.getCollection<RocketchatUser>("users")
-                            .find()
-                            .map { User(it._id, it.name, it.username) }
-                            .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
-                        if (databaseUsers.isEmpty()) {
-                            return@get call.respondText("Unknown username", status = HttpStatusCode.NotFound)
+                                val usernames = usernamesFromRavusBot.ifEmpty { listOf(username) }.map { it.lowercase() }
+                                val databaseUsers = database.getCollection<RocketchatUser>("users")
+                                    .find()
+                                    .map { User(it._id, it.name, it.username) }
+                                    .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
+                                if (databaseUsers.isEmpty()) {
+                                    throw MongoOperationException("Unknown username", status = HttpStatusCode.NotFound)
+                                }
+                                val databaseUser = databaseUsers[0]
+
+                                val message = database
+                                    .getCollection<RocketchatMessage>("rocketchat_message")
+                                    .find(
+                                        and(
+                                            RocketchatMessage::u / UserData::_id eq databaseUser.id,
+                                            RocketchatMessage::t eq null
+                                        )
+                                    )
+                                    .descendingSort(RocketchatMessage::ts)
+                                    .limit(1)
+                                    .singleOrNull()
+
+                                val userDetails = UserDetails(databaseUser.username, message?.ts)
+
+                                mapOf("user" to userDetails)
+                            }
                         }
-                        val databaseUser = databaseUsers[0]
-
-                        val message = database
-                            .getCollection<RocketchatMessage>("rocketchat_message")
-                            .find(
-                                and(
-                                    RocketchatMessage::u / UserData::_id eq databaseUser.id,
-                                    RocketchatMessage::t eq null
-                                )
-                            )
-                            .descendingSort(RocketchatMessage::ts)
-                            .limit(1)
-                            .singleOrNull()
-
-                        val userDetails = UserDetails(databaseUser.username, message?.ts)
-
-                        call.respond(mapOf("user" to userDetails))
-                        client.close()
                     }
                 }
                 route("/version") {
