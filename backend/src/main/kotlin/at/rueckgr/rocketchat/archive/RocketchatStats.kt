@@ -3,7 +3,7 @@ package at.rueckgr.rocketchat.archive
 import org.litote.kmongo.*
 
 class RocketchatStats {
-    fun getChannelStats(channel: String) {
+    fun getChannelStats(channel: String): ChannelStats {
         val database = Mongo.getInstance().getDatabase()
 
         val users = database.getCollection<RocketchatUser>("users")
@@ -104,7 +104,7 @@ class RocketchatStats {
                 )
             }
 
-        ChannelStats(
+        return ChannelStats(
             userMessageCount,
             mapOf(
                 "messagesPerMonth" to TimebasedMessageCount(messagesPerMonth),

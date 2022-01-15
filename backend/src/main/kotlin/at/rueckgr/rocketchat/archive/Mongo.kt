@@ -24,7 +24,7 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
 
     fun parameter(name: String): String? = anyParameter(name) as String?
 
-    fun intParameter(name: String): Int? = anyParameter(name) as Int?
+    fun intParameter(name: String): Int? = parameter(name)?.toInt()
 
     private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {
