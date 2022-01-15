@@ -7,10 +7,11 @@ import io.ktor.http.*
 import io.ktor.response.*
 import io.ktor.util.pipeline.*
 import org.litote.kmongo.KMongo
+import kotlin.reflect.KClass
 
 class MongoOperation(private val pipelineContext: PipelineContext<*, ApplicationCall>) {
     var result: () -> Any = {}
-    var parameters = mutableMapOf<String, Parameter>()
+    val parameters = mutableMapOf<String, Parameter>()
 
     fun result(result: () -> Any) {
         this.result = result
@@ -21,15 +22,19 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
             .forEach { parameters[it.name] = it }
     }
 
-    fun parameter(name: String): String? {
+    fun parameter(name: String): String? = anyParameter(name) as String?
+
+    fun intParameter(name: String): Int? = anyParameter(name) as Int?
+
+    private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {
-            ParameterType.URL -> pipelineContext.call.parameters[name]
-            ParameterType.QUERY -> pipelineContext.call.request.queryParameters[name]
+            ParameterType.URL -> pipelineContext.call.parameters[name] ?: parameters[name]?.default
+            ParameterType.QUERY -> pipelineContext.call.request.queryParameters[name] ?: parameters[name]?.default
         }
     }
 }
 
-class Parameter(var type: ParameterType, var name: String, var required: Boolean)
+class Parameter(val type: ParameterType, val name: String, val required: Boolean, val datatype: KClass<*>, val default: Any?)
 
 class Parameters : ArrayList<Parameter>() {
     fun urlParameter(parameterBuilder: ParameterBuilder.() -> Unit) {
@@ -41,11 +46,13 @@ class Parameters : ArrayList<Parameter>() {
     }
 }
 
-class ParameterBuilder(val type: ParameterType) {
+class ParameterBuilder(private val type: ParameterType) {
     var name: String = ""
     var required: Boolean = false
+    var datatype: KClass<*> = String::class
+    var default: Any? = null
 
-    fun build(): Parameter = Parameter(type, name, required)
+    fun build(): Parameter = Parameter(type, name, required, datatype, default)
 }
 
 enum class ParameterType {
