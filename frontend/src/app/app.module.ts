@@ -20,11 +20,13 @@ import {PanelModule} from "primeng/panel";
 import {DropdownModule} from "primeng/dropdown";
 import { StatsTableComponent } from './stats-table/stats-table.component';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
+import {ReportsComponent} from "./reports/reports.component";
 
 @NgModule({
   declarations: [
     AppComponent,
     MainComponent,
+    ReportsComponent,
     StatsComponent,
     StatsTableComponent
   ],

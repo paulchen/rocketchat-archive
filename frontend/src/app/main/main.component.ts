@@ -238,6 +238,11 @@ export class MainComponent implements OnInit {
     this.router.navigate(['/stats']);
   }
 
+  navigateToReports() {
+    clearTimeout(this.timeout);
+    this.router.navigate(['/reports']);
+  }
+
   getUserId(username: string): string {
     var userId = '';
     this.users.forEach(user => {

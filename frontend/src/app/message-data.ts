@@ -5,6 +5,7 @@ export class MessageData {
 
 export class Message {
   id: string;
+  rid: string;
   message: string;
   timestamp: Date;
   username: string;
@@ -15,3 +16,4 @@ export class MessagePage {
   message: string;
   page: number;
 }
+
