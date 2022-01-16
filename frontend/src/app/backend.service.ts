@@ -5,6 +5,7 @@ import {Channel, ChannelData, ChannelStats} from "./channel-data";
 import {MessageData, MessagePage} from "./message-data";
 import {UserData} from "./user-data";
 import {VersionData} from "./version-data";
+import {ReportData} from "./report-data";
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,11 @@ export class BackendService {
 
   getChannelStats(channel: Channel): Observable<ChannelStats>{
     return this.http.get<ChannelStats>("./services/channels/" + encodeURIComponent(channel.id) + "/stats")
+  }
+
+  getReports(page: number, limit: number, sort: string): Observable<ReportData> {
+    const params = { page: page, limit: limit, sort: sort };
+    return this.http.get<ReportData>("./services/reports", { params });
   }
 }
 

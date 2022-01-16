@@ -94,7 +94,7 @@ class RestEndpointForFrontend : Logging {
 
                                 mapOf(
                                     "reports" to reports,
-                                    "reportsCount" to reportsCount
+                                    "reportCount" to reportsCount
                                 )
                             }
                         }

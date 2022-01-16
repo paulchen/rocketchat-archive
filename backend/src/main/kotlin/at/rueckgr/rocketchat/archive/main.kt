@@ -18,7 +18,7 @@ data class RocketchatReport(val _id: String, val message: RocketchatMessage, val
 
 data class Channel(val name: String, val id: String)
 
-data class Message(val id: String, val message: String, val timestamp: ZonedDateTime, val username: String)
+data class Message(val id: String, val rid: String, val message: String, val timestamp: ZonedDateTime, val username: String)
 
 data class User(val id: String, val name: String, val username: String)
 

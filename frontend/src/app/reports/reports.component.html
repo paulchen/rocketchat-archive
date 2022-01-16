@@ -1,0 +1,45 @@
+<div class="archive">
+  <div style="text-align: center;">
+    <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
+  </div>
+
+  <div style="height: 85vh;">
+    <p-table *ngIf="reportData != null" [value]="reportData['reports']" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
+             [paginator]="true" [rows]="limit" [totalRecords]="reportData['reportCount']" [autoLayout]="true"
+             [lazy]="true" (onLazyLoad)="handleTableChange($event)" [loading]="loading"
+             [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reports"
+             [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
+             dataKey="id" responsiveLayout="scroll">
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="timestamp">
+            Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
+          </th>
+          <th>Reporter</th>
+          <th>Message timestamp</th>
+          <th>Message author</th>
+          <th>Message</th>
+          <th>Reason</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-report>
+        <tr>
+          <td style="white-space: nowrap;">{{report.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+          <td style="white-space: nowrap;" class="username">{{report.reporter.username}}</td>
+          <td>
+            <button pButton type="button" class="p-button-link" (click)="navigateToMessage(report);" label="{{report.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
+
+          </td>
+          <td>{{report.message.username}}</td>
+          <td>{{report.message.message}}</td>
+          <td>{{report.description}}</td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6">No reports found.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
