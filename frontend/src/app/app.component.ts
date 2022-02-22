@@ -19,7 +19,18 @@ export class AppComponent implements OnInit {
   private checkVersion(): void {
     this.backendService.getVersion().subscribe(response => {
       const backendVersion = response.version;
+
+      console.log("Frontend revision: " + gitData.shortSHA);
+      console.log("Backend revision: " + backendVersion);
+
       this.versionError = gitData.shortSHA != backendVersion;
+
+      if (this.versionError) {
+        console.log("Frontend and backend revision do NOT match!");
+      }
+      else {
+        console.log("Frontend and backend revision match");
+      }
     });
   }
 }
