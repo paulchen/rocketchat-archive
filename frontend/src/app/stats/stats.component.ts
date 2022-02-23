@@ -22,7 +22,8 @@ export class StatsComponent implements OnInit {
   ngOnInit(): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
-      this.selectChannel(this.channelData.channels[0])
+      this.channelData.channels.unshift.apply(this.channelData.channels, [{ name: "all", id: "all" }])
+      this.selectChannel(this.channelData.channels[1])
     });
   }
 

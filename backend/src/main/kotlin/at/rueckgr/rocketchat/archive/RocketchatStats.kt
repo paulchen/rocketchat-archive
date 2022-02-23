@@ -10,10 +10,17 @@ class RocketchatStats {
             .find()
             .associate { it._id to it.username }
 
+        val matchConditions = if (channel == "all") {
+            arrayOf(RocketchatMessage::t eq null)
+        }
+        else {
+            arrayOf(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null)
+        }
+
         val userMessageCount = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .aggregate<StatsResult>(
-                match(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null),
+                match(*matchConditions),
                 project(
                     StatsResult::key from RocketchatMessage::u / UserData::_id,
                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
@@ -33,7 +40,7 @@ class RocketchatStats {
         val messagesPerMonth = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .aggregate<StatsResult>(
-                match(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null),
+                match(*matchConditions),
                 project(
                     StatsResult::key from month(RocketchatMessage::ts),
                     StatsResult::additionalKey1 from year(RocketchatMessage::ts),
@@ -53,7 +60,7 @@ class RocketchatStats {
         val messagesPerYear = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .aggregate<StatsResult>(
-                match(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null),
+                match(*matchConditions),
                 project(
                     StatsResult::key from year(RocketchatMessage::ts),
                     StatsResult::value from cond(RocketchatMessage::rid, 1, 0)
@@ -73,7 +80,7 @@ class RocketchatStats {
         val topDays = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .aggregate<StatsResult>(
-                match(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null),
+                match(*matchConditions),
                 project(
                     StatsResult::key from dayOfMonth(RocketchatMessage::ts),
                     StatsResult::additionalKey1 from month(RocketchatMessage::ts),
