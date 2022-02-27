@@ -1,0 +1,8 @@
+build.gradle.kts
+Dockerfile
+gradle
+gradle.properties
+gradlew
+gradlew.bat
+settings.gradle.kts
+src
