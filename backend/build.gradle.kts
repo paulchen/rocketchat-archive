@@ -56,6 +56,7 @@ application {
         "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
         "--add-opens", "java.base/java.nio=ALL-UNNAMED",
         "-Dio.netty.tryReflectionSetAccessible=true",
+        "-agentlib:jdwp=transport=dt_socket,server=y,address=*:5005,suspend=n",
     )
 }
 

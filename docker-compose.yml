@@ -4,6 +4,7 @@ services:
     build: frontend
     ports:
       - "127.0.0.1:42773:80"
+      - "127.0.0.1:42775:5005"
     networks:
       - backend
     logging:

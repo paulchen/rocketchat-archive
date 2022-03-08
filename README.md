@@ -207,3 +207,18 @@ In order to run the application on your local machine, take the following steps:
 * Start the backend (e.g., import the Gradle project into IntelliJ IDEA and invoke `MainKt`).
 * Start the frontend (e.g., run `npm install` and `ROCKETCHAT_URL='...' npm run start`) from the `frontend` directory.
 * Point your browser to http://localhost:4200.
+
+## Remote debugging
+
+The backend opens a debug port on port `5005` which is forwarded to port `42775` in `docker-compose.yml`.
+
+This is intended to be used in combination with SSH's port forwarding feature
+when connecting from your local machine to the Docker host:
+
+```
+ssh -L 42775:127.0.0.1:42775 <host>
+```
+
+You can then connect your debugger to `localhost:42775` to debug the running bot instance remotely.
+
+
