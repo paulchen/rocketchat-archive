@@ -53,15 +53,17 @@ export class ReportsComponent implements OnInit {
   }
 
   loadData(page: number, limit: number, sort: string) {
-    const component = this;
-    this.backendService.getReports(page, limit, sort).subscribe(response => {
-      this.reportData = response;
-      this.loading = false;
-      clearTimeout(this.timeout);
-    }, error => {
-      this.loading = false;
+    this.backendService.getReports(page, limit, sort).subscribe({
+      next: response => {
+        this.reportData = response;
+        this.loading = false;
+        clearTimeout(this.timeout);
+      },
+      error: () => {
+        this.loading = false;
 
-      clearTimeout(this.timeout);
+        clearTimeout(this.timeout);
+      }
     });
   }
 }

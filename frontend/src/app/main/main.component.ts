@@ -81,13 +81,16 @@ export class MainComponent implements OnInit {
   }
 
   private getPageForMessage(channel: string, message: string) {
-    this.backendService.getMessage(channel, message).subscribe(response => {
-      this.first = (response.page - 1) * this.limit;
-      this.getChannels(response.channel);
-    }, () => {
-      this.messageNotFound = true;
-      this.channelNotFound = false;
-      this.loading = false;
+    this.backendService.getMessage(channel, message).subscribe({
+      next: response => {
+        this.first = (response.page - 1) * this.limit;
+        this.getChannels(response.channel);
+      },
+      error: () => {
+        this.messageNotFound = true;
+        this.channelNotFound = false;
+        this.loading = false;
+      }
     });
   }
 
@@ -183,27 +186,30 @@ export class MainComponent implements OnInit {
     }
 
     const component = this;
-    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe(response => {
-      this.messageData = response;
-      this.loading = false;
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe({
+      next: response => {
+        this.messageData = response;
+        this.loading = false;
 
-      if (response.messages.filter(m => m.id == this.highlightedMessage).length == 0) {
-        this.highlightedMessage = null;
+        if (response.messages.filter(m => m.id == this.highlightedMessage).length == 0) {
+          this.highlightedMessage = null;
+        }
+        this.updateUrl();
+
+        if (this.highlightedMessage && !reload) {
+          setTimeout(function() { component.scrollToMessage() }, 100);
+        }
+
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
+      },
+      error: () => {
+        this.loading = false;
+
+        clearTimeout(this.timeout);
+        this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
       }
-      this.updateUrl();
-
-      if (this.highlightedMessage && !reload) {
-        setTimeout(function() { component.scrollToMessage() }, 100);
-      }
-
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
-    }, error => {
-      this.loading = false;
-
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
-    });
+    })
   }
 
   private scrollToMessage(): void {
