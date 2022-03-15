@@ -7,7 +7,7 @@ val log4jVersion = "2.17.2"
 plugins {
     kotlin("jvm") version "1.6.10"
     application
-    id("com.palantir.docker") version "0.31.0"
+    id("com.palantir.docker") version "0.32.0"
 }
 
 group = "at.rueckgr.rocketchat"
@@ -62,7 +62,7 @@ application {
 
 distributions {
     main {
-        version = ""
+        version = "1.0-SNAPSHOT"
     }
 }
 
