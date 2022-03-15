@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {Channel, ChannelData} from "../channel-data";
 import {Message, MessageData} from "../message-data";
 import {User} from "../user-data";
@@ -7,6 +7,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
 import {MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
+import {Table} from "primeng/table";
 
 @Component({
   selector: 'app-main',
@@ -17,7 +18,7 @@ import clientConfiguration from '../../client-configuration.json'
 export class MainComponent implements OnInit {
   channelData: ChannelData;
   selectedChannel: Channel;
-  messageData: MessageData;
+  messageData: MessageData = { messages: [], messageCount: 0 };
   users: User[] = [];
   limit = 100;
   loading = true;
@@ -29,6 +30,10 @@ export class MainComponent implements OnInit {
   selectedMessage: Message;
   channelNotFound: boolean = true;
   messageNotFound: boolean = false;
+  private userIdFilter: string[];
+  private messageFilter: string;
+
+  @ViewChild("table") table: Table;
 
   constructor(
     private backendService: BackendService,
@@ -37,7 +42,8 @@ export class MainComponent implements OnInit {
     private locationStrategy: LocationStrategy,
     private messageService: MessageService,
     private viewportScroller: ViewportScroller,
-    private router: Router
+    private router: Router,
+    private changeDetectorRef: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
@@ -49,6 +55,8 @@ export class MainComponent implements OnInit {
     let page = null;
     let channel = null;
     let message = null;
+    let userIds: string[] = [];
+    let regex = null;
     this.route.pathFromRoot[1].url.subscribe(val => {
       if (val.length > 0) {
         channel = val[0];
@@ -68,6 +76,14 @@ export class MainComponent implements OnInit {
         this.highlightedMessage = val[2].path;
       }
     });
+    this.route.pathFromRoot[1].queryParams.subscribe(params => {
+      if (params.hasOwnProperty('users')) {
+        userIds = params['users'].split(",").filter((id: string) => id);
+      }
+      if (params.hasOwnProperty('regex')) {
+        regex = params['regex'];
+      }
+    });
 
     if (channel && message && !page) {
       this.getPageForMessage(channel, message);
@@ -76,7 +92,7 @@ export class MainComponent implements OnInit {
       if (!page) {
         page = 1
       }
-      this.getChannels(channel);
+      this.getChannels(channel, regex, userIds);
     }
   }
 
@@ -109,7 +125,7 @@ export class MainComponent implements OnInit {
     });
   }
 
-  private getChannels(channel: String | null): void {
+  private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = []): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
 
@@ -138,13 +154,21 @@ export class MainComponent implements OnInit {
 
       this.messageData = new MessageData();
 
-      this.getUsers();
+      this.changeDetectorRef.detectChanges();
+      if (regex) {
+        this.table.filter(regex, 'message', 'equals');
+      }
+      this.getUsers(userIds);
     });
   }
 
-  private getUsers(): void {
+  private getUsers(userIds: string[]): void {
     this.backendService.getUsers().subscribe(response => {
       this.users = response.users;
+
+      if (userIds.length > 0) {
+        this.table.filter(userIds, 'username', 'equals');
+      }
     });
   }
 
@@ -184,6 +208,9 @@ export class MainComponent implements OnInit {
         message = filters["message"]["value"]
       }
     }
+
+    this.userIdFilter = userIds;
+    this.messageFilter = message;
 
     const component = this;
     this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe({
@@ -236,21 +263,35 @@ export class MainComponent implements OnInit {
       url += '/' + this.highlightedMessage;
     }
 
+    if (this.userIdFilter.length > 0 || this.messageFilter) {
+      url += '?';
+      if (this.userIdFilter.length > 0) {
+        url += 'users=' + this.userIdFilter.map(id => encodeURIComponent(id)).join(',');
+        if (this.messageFilter) {
+          url += '&';
+        }
+      }
+
+      if (this.messageFilter) {
+        url += 'regex=' + encodeURIComponent(this.messageFilter);
+      }
+    }
+
     this.location.go(url);
   }
 
   navigateToStats() {
     clearTimeout(this.timeout);
-    this.router.navigate(['/stats']);
+    this.router.navigate(['/stats']).then();
   }
 
   navigateToReports() {
     clearTimeout(this.timeout);
-    this.router.navigate(['/reports']);
+    this.router.navigate(['/reports']).then();
   }
 
   getUserId(username: string): string {
-    var userId = '';
+    let userId = '';
     this.users.forEach(user => {
       if(user.username == username) {
         userId = user.id
