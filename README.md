@@ -194,7 +194,7 @@ In order to run the application on your local machine, take the following steps:
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:5.0.5 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:5.0.6 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 
