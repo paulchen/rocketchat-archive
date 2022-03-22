@@ -54,7 +54,7 @@
                   <td style="white-space: nowrap;" class="username">
                     <button pButton type="button" class="p-button-link" (click)="table.filter([ getUserId(message.username) ], 'username', 'equals')" label="{{message.username}}"></button>
                   </td>
-                  <td>{{message.message}}</td>
+                  <td [innerHTML]="message.message"></td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">

@@ -27,6 +27,15 @@ body {
   max-width: 100vw;
 }
 
+a {
+  text-decoration: none;
+  color: #0b7ad1;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
 @media screen and (max-width: 60rem) {
   .archive {
     .p-tabview .p-tabview-panels {
