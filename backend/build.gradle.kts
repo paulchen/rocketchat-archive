@@ -63,7 +63,7 @@ application {
 
 distributions {
     main {
-        version = "1.0-SNAPSHOT"
+        version = "latest"
     }
 }
 
