@@ -32,6 +32,7 @@ export class MainComponent implements OnInit {
   messageNotFound: boolean = false;
   private userIdFilter: string[];
   private messageFilter: string;
+  rocketchatUrl: string;
 
   @ViewChild("table") table: Table;
 
@@ -47,6 +48,8 @@ export class MainComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.rocketchatUrl = clientConfiguration.rocketchatUrl;
+
     this.contextMenuItems = [
       { label: 'Link to archive', command: () => this.createLink(false, this.selectedMessage) },
       { label: 'Link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },

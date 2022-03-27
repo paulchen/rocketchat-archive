@@ -144,7 +144,17 @@ class RocketchatDatabase : Logging {
     private fun mapChannel(channel: RocketchatRoom) = Channel(channel.name!!, channel._id)
 
     private fun mapMessage(message: RocketchatMessage) =
-        Message(message._id, message.rid, message.msg, message.ts, message.u.username)
+        Message(
+            message._id,
+            message.rid,
+            message.msg,
+            message.ts,
+            message.u.username,
+            message.attachments?.filter { it.type != null }?.map { mapAttachment(it) } ?: emptyList()
+        )
+
+    private fun mapAttachment(attachment: RocketchatAttachment) =
+        Attachment(attachment.type!!, attachment.title, attachment.title_link, attachment.description)
 
     private fun mapReport(report: RocketchatReport, users: Map<String, User>) =
         Report(report._id, mapMessage(report.message), report.description, report.ts, users[report.userId]!!)

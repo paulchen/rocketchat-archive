@@ -74,7 +74,7 @@ class RestEndpointForFrontend : Logging {
                                     RocketchatDatabase().getMessages(channel, userIds, text, paginationParameters)
 
                                 val processedMessages = messages
-                                    .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username) }
+                                    .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username, it.attachments) }
 
                                 mapOf(
                                     "messages" to processedMessages,

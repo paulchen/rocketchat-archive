@@ -54,7 +54,20 @@
                   <td style="white-space: nowrap;" class="username">
                     <button pButton type="button" class="p-button-link" (click)="table.filter([ getUserId(message.username) ], 'username', 'equals')" label="{{message.username}}"></button>
                   </td>
-                  <td [innerHTML]="message.message"></td>
+                  <td>
+                    <div [innerHTML]="message.message"></div>
+                    <div *ngIf="message.attachments.length > 0">
+                      <strong *ngIf="message.attachments.length == 1">Attachment</strong>
+                      <strong *ngIf="message.attachments.length > 1">Attachments</strong>
+                      <br />
+                      <ul>
+                        <li *ngFor="let attachment of message.attachments">
+                          <a *ngIf="attachment.description" href="{{rocketchatUrl}}{{attachment.titleLink}}" target="_blank">{{attachment.description}}</a>
+                          <a *ngIf="!attachment.description" href="{{rocketchatUrl}}{{attachment.titleLink}}" target="_blank">{{attachment.title}}</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage">

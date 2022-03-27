@@ -9,6 +9,14 @@ export class Message {
   message: string;
   timestamp: Date;
   username: string;
+  attachments: Attachment[];
+}
+
+export class Attachment {
+  type: string;
+  title: string;
+  titleLink: string;
+  description: string;
 }
 
 export class MessagePage {
