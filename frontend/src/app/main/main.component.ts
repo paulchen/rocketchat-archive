@@ -307,8 +307,6 @@ export class MainComponent implements OnInit {
   }
 
   showOverlay(attachment: Attachment) {
-    this.showImageOverlay = true;
-
     this.overlayImage = this.rocketchatUrl + attachment.titleLink;
     if (attachment.description) {
       this.overlayTitle = attachment.description;
@@ -316,5 +314,7 @@ export class MainComponent implements OnInit {
     else {
       this.overlayTitle = attachment.title;
     }
+
+    this.showImageOverlay = true;
   }
 }

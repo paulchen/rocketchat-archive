@@ -2,7 +2,7 @@
   <p-toast></p-toast>
 
   <p-dialog [header]="overlayTitle" [(visible)]="showImageOverlay">
-    <img [src]="overlayImage" [alt]="overlayTitle" />
+    <img [src]="overlayImage" [alt]="overlayTitle" style="max-width: 70vh; max-height: 70vh;" />
   </p-dialog>
 
   <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
@@ -66,7 +66,8 @@
                       <br />
                       <ul>
                         <li *ngFor="let attachment of message.attachments">
-                          <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)" label="{{attachment.title}}"></button>
+                          <button *ngIf="attachment.description" pButton type="button" class="p-button-link" (click)="showOverlay(attachment)" label="{{attachment.description}}"></button>
+                          <button *ngIf="!attachment.description" pButton type="button" class="p-button-link" (click)="showOverlay(attachment)" label="{{attachment.title}}"></button>
                         </li>
                       </ul>
                     </div>
