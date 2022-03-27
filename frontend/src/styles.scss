@@ -36,6 +36,16 @@ a:hover {
   text-decoration: underline;
 }
 
+.p-datatable-tbody {
+  td {
+    vertical-align: top;
+
+    button {
+      padding: 0;
+    }
+  }
+}
+
 @media screen and (max-width: 60rem) {
   .archive {
     .p-tabview .p-tabview-panels {
