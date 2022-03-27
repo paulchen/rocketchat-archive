@@ -1,6 +1,10 @@
 <div class="archive">
   <p-toast></p-toast>
 
+  <p-dialog [header]="overlayTitle" [(visible)]="showImageOverlay">
+    <img [src]="overlayImage" [alt]="overlayTitle" />
+  </p-dialog>
+
   <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
   <div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
@@ -62,8 +66,7 @@
                       <br />
                       <ul>
                         <li *ngFor="let attachment of message.attachments">
-                          <a *ngIf="attachment.description" href="{{rocketchatUrl}}{{attachment.titleLink}}" target="_blank">{{attachment.description}}</a>
-                          <a *ngIf="!attachment.description" href="{{rocketchatUrl}}{{attachment.titleLink}}" target="_blank">{{attachment.title}}</a>
+                          <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)" label="{{attachment.title}}"></button>
                         </li>
                       </ul>
                     </div>

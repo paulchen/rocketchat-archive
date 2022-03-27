@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {Channel, ChannelData} from "../channel-data";
-import {Message, MessageData} from "../message-data";
+import {Attachment, Message, MessageData} from "../message-data";
 import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -33,6 +33,9 @@ export class MainComponent implements OnInit {
   private userIdFilter: string[];
   private messageFilter: string;
   rocketchatUrl: string;
+  showImageOverlay: boolean = false;
+  overlayTitle: string;
+  overlayImage: string;
 
   @ViewChild("table") table: Table;
 
@@ -116,7 +119,7 @@ export class MainComponent implements OnInit {
   private createLink(rocketchat: boolean, selectedMessage: Message) {
     let url;
     if(rocketchat) {
-      url = clientConfiguration.rocketchatUrl + "channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
+      url = this.rocketchatUrl + "channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
       url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(selectedMessage.id);
@@ -301,5 +304,17 @@ export class MainComponent implements OnInit {
       }
     });
     return userId;
+  }
+
+  showOverlay(attachment: Attachment) {
+    this.showImageOverlay = true;
+
+    this.overlayImage = this.rocketchatUrl + attachment.titleLink;
+    if (attachment.description) {
+      this.overlayTitle = attachment.description;
+    }
+    else {
+      this.overlayTitle = attachment.title;
+    }
   }
 }

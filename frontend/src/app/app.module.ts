@@ -21,6 +21,7 @@ import {DropdownModule} from "primeng/dropdown";
 import { StatsTableComponent } from './stats-table/stats-table.component';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ReportsComponent} from "./reports/reports.component";
+import {DialogModule} from "primeng/dialog";
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import {ReportsComponent} from "./reports/reports.component";
         ToastModule,
         PanelModule,
         DropdownModule,
-        ProgressSpinnerModule
+        ProgressSpinnerModule,
+        DialogModule
     ],
   providers: [{
       provide: HTTP_INTERCEPTORS,
