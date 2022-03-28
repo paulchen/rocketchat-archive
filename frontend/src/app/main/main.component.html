@@ -1,7 +1,7 @@
 <div class="archive">
   <p-toast></p-toast>
 
-  <p-dialog [header]="overlayTitle" [(visible)]="showImageOverlay" modal="true" dismissableMask="true" blockScroll="true">
+  <p-dialog [header]="overlayTitle" [(visible)]="showImageOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
     <img [src]="overlayImage" [alt]="overlayTitle" style="max-width: 70vw; max-height: 70vh;" (click)="showImageOverlay = false;" />
   </p-dialog>
 
