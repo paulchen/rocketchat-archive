@@ -6,6 +6,7 @@ import {ReportsComponent} from "./reports/reports.component";
 
 const routes: Routes = [
   { path: 'stats', component: StatsComponent },
+  { path: 'stats/:channel', component: StatsComponent },
   { path: 'reports', component: ReportsComponent },
   { path: '**', component: MainComponent }
 ];

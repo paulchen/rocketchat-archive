@@ -288,7 +288,7 @@ export class MainComponent implements OnInit {
 
   navigateToStats() {
     clearTimeout(this.timeout);
-    this.router.navigate(['/stats']).then();
+    this.router.navigate(['/stats', this.selectedChannel.id ]).then();
   }
 
   navigateToReports() {

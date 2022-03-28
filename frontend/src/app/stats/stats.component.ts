@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData, ChannelStats} from "../channel-data";
 
@@ -10,12 +10,14 @@ import {Channel, ChannelData, ChannelStats} from "../channel-data";
 })
 export class StatsComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
-  selectedChannel: string;
+  selectedChannel: Channel;
   stats: ChannelStats;
   dataLoaded: boolean;
+  channelNotFound: true;
 
   constructor(
     public router: Router,
+    private route: ActivatedRoute,
     private backendService: BackendService
   ) { }
 
@@ -23,17 +25,35 @@ export class StatsComponent implements OnInit {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
       this.channelData.channels.unshift.apply(this.channelData.channels, [{ name: "all", id: "all" }])
-      this.selectChannel(this.channelData.channels[1])
+      const channel = this.route.snapshot.paramMap.get('channel');
+      if (channel == undefined) {
+        this.router.navigate(["/stats", this.channelData.channels[1].id]).then();
+      }
+      else {
+        this.selectChannel(this.route.snapshot.paramMap.get('channel') ?? '');
+      }
     });
   }
 
-  private selectChannel(channel: Channel): void {
-    this.selectedChannel = channel.name;
-    this.loadStats(this.selectedChannel);
+  navigateToChannel(channel: Channel): void {
+    this.router.navigate(['/stats', channel.id ]).then(() => {
+      this.loadStats(channel);
+    });
   }
 
-  loadStats(channelName: string) {
-    let channel = this.findChannel(channelName);
+  private selectChannel(channelId: string): void {
+    let channel = this.findChannel(channelId);
+    if (channel == undefined) {
+      this.channelNotFound = true;
+      this.dataLoaded = true;
+      return;
+    }
+
+    this.loadStats(channel);
+  }
+
+  private loadStats(channel: Channel) {
+    this.selectedChannel = channel;
     this.dataLoaded = false;
     this.backendService.getChannelStats(channel).subscribe(response => {
       this.stats = response;
@@ -41,12 +61,16 @@ export class StatsComponent implements OnInit {
     });
   }
 
-  private findChannel(channelName: string): Channel {
-    for (let i = 0; i < this.channelData.channels.length; i++) {
-      if (this.channelData.channels[i].name == channelName) {
-        return this.channelData.channels[i];
-      }
+  private findChannel(channelId: string): Channel | undefined {
+    return this.channelData.channels.find((item) => { return item.id == channelId } );
+  }
+
+  navigateToArchive(): void {
+    if (this.selectedChannel.id == 'all') {
+      this.router.navigate(['/']).then();
     }
-    return this.channelData.channels[0];
+    else {
+      this.router.navigate(['/' + this.selectedChannel.id]).then();
+    }
   }
 }

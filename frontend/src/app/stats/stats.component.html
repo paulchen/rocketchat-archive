@@ -1,20 +1,22 @@
+<div *ngIf="channelNotFound">Channel not found.</div>
+
 <div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
   <div style="height: 100px; width: 100px;">
     <p-progressSpinner></p-progressSpinner>
   </div>
 </div>
 
-<div class="stats" *ngIf="dataLoaded">
+<div class="stats" *ngIf="dataLoaded && !channelNotFound">
   <div>
-    <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
+    <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
   </div>
 
   <p-panel header="Channel selection">
     <div>
       Channel:
-      <p-dropdown [options]="channelData.channels" optionLabel="name" optionValue="name" [(ngModel)]="selectedChannel" (onChange)="loadStats($event.value)">
+      <p-dropdown [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
         <ng-template pTemplate="selectedItem">
-          <div><ng-container *ngIf="selectedChannel != 'all'">#</ng-container>{{selectedChannel}}</div>
+          <div><ng-container *ngIf="selectedChannel.id != 'all'">#</ng-container>{{selectedChannel.name}}</div>
         </ng-template>
         <ng-template let-channel pTemplate="item">
           <ng-container *ngIf="channel.id != 'all'">#</ng-container>{{channel.name}}
