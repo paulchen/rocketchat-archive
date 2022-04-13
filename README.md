@@ -16,7 +16,7 @@ Finally, fire up everything
 * Git
 * Docker
 * Docker-Compose
-* Node.js (recently enough; Node 16.5.0 was used for development)
+* Node.js (recently enough; Node 16.14.2 with npm 8.5.0 was used for development)
 
 ### Build frontend
 
@@ -194,7 +194,7 @@ In order to run the application on your local machine, take the following steps:
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:5.0.6 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:5.0.7 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 
