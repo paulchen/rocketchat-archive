@@ -5,7 +5,7 @@ val ktorVersion = "1.6.8"
 val log4jVersion = "2.17.2"
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
     application
     id("com.palantir.docker") version "0.32.0"
     id("com.github.ben-manes.versions") version "0.42.0"
@@ -43,7 +43,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
 }
 
 tasks.test {
