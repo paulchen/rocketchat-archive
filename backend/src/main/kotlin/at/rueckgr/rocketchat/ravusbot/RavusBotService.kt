@@ -1,11 +1,11 @@
 package at.rueckgr.rocketchat.ravusbot
 
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
-import io.ktor.client.features.auth.*
-import io.ktor.client.features.auth.providers.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
-import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import java.net.URLEncoder
 
@@ -22,10 +22,9 @@ class RavusBotService(private val ravusBotUsername: String, private val ravusBot
                         }
                     }
                 }
-            }.request<String> {
+            }.get {
                 url("https://ondrahosek.com/ravusbot/aliases?nick=$encodedUsername")
-                method = HttpMethod.Get
-            }
+            }.body<String>()
         }
         return response
             .lines()
