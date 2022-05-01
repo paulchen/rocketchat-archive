@@ -15,7 +15,7 @@ fi
 . ~/.nvm/nvm.sh || exit 1
 nvm install lts/gallium || exit 1
 
-docker pull openjdk:17-jdk-slim || exit 1
+docker pull eclipse-temurin:17-jdk || exit 1
 docker pull nginx:latest || exit 1
 
 cd "$BASE_DIR"
