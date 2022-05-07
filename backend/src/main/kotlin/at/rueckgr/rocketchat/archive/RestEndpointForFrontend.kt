@@ -121,7 +121,7 @@ class RestEndpointForFrontend : Logging {
                     }
                 }
             }
-        }.start()
+        }.start(wait = true)
     }
 
     private fun paginationParameters(parameters: Parameters) {

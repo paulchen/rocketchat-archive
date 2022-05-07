@@ -40,16 +40,6 @@ fun main() {
         return
     }
 
-    runBlocking {
-        val restEndpointForBot = async {
-            RestEndpointForBot(ravusBotService).start()
-        }
-        val restEndpointForFrontend = async {
-            RestEndpointForFrontend().start()
-        }
-
-        restEndpointForBot.await()
-        restEndpointForFrontend.await()
-    }
-
+    RestEndpointForBot(ravusBotService).start()
+    RestEndpointForFrontend().start()
 }
