@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.0.0"
+val ktorVersion = "2.0.1"
 val log4jVersion = "2.17.2"
 
 plugins {
-    kotlin("jvm") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
     application
-    id("com.palantir.docker") version "0.32.0"
+    id("com.palantir.docker") version "0.33.0"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
@@ -27,7 +27,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.litote.kmongo:kmongo:4.5.0")
+    implementation("org.litote.kmongo:kmongo:4.5.1")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
@@ -44,7 +44,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.20")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
 }
 
 tasks.test {
