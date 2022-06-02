@@ -15,6 +15,7 @@ fi
 . ~/.nvm/nvm.sh || exit 1
 nvm install lts/gallium || exit 1
 
+docker pull debian:bullseye-slim || exit 1
 docker pull eclipse-temurin:17-jdk || exit 1
 docker pull nginx:latest || exit 1
 
@@ -33,7 +34,7 @@ cd "$BASE_DIR/backend"
 
 cd "$BASE_DIR"
 
-docker-compose build || exit 1
+docker-compose build --no-cache || exit 1
 
 sudo systemctl restart "$SYSTEMD_UNIT" || exit 1
 
