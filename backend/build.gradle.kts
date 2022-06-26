@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.0.1"
+val ktorVersion = "2.0.2"
 val log4jVersion = "2.17.2"
 
 plugins {
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
     application
-    id("com.palantir.docker") version "0.33.0"
+    id("com.palantir.docker") version "0.34.0"
     id("com.github.ben-manes.versions") version "0.42.0"
 }
 
@@ -27,7 +27,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.litote.kmongo:kmongo:4.5.1")
+    implementation("org.litote.kmongo:kmongo:4.6.1")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
@@ -38,13 +38,11 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     implementation("org.slf4j:slf4j-api:1.7.36")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2")
-    // CVE-2020-36518 - remove when updating to 2.13.3 or 2.14.0
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.2.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("org.apache.commons:commons-lang3:3.12.0")
     implementation("org.apache.commons:commons-text:1.9")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.0")
 }
 
 tasks.test {
