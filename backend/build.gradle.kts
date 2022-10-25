@@ -1,14 +1,14 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.1.1"
-val log4jVersion = "2.18.0"
+val ktorVersion = "2.1.2"
+val log4jVersion = "2.19.0"
 
 plugins {
-    kotlin("jvm") version "1.7.10"
+    kotlin("jvm") version "1.7.20"
     application
     id("com.palantir.docker") version "0.34.0"
-    id("com.github.ben-manes.versions") version "0.42.0"
+    id("com.github.ben-manes.versions") version "0.43.0"
 }
 
 group = "at.rueckgr.rocketchat"
@@ -28,6 +28,7 @@ sourceSets {
 
 dependencies {
     implementation("org.litote.kmongo:kmongo:4.7.1")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-serialization-gson:$ktorVersion")
@@ -36,13 +37,13 @@ dependencies {
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("org.slf4j:slf4j-api:2.0.3")
     implementation("org.apache.logging.log4j:log4j-slf4j-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
     implementation("org.apache.commons:commons-lang3:3.12.0")
-    implementation("org.apache.commons:commons-text:1.9")
+    implementation("org.apache.commons:commons-text:1.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.7.20")
 }
 
 tasks.test {
