@@ -13,7 +13,7 @@ export class ReportsComponent implements OnInit {
   reportData: ReportData;
   limit = 100;
   loading = true;
-  private timeout: number;
+  private timeout: NodeJS.Timeout;
   first: number = 0;
 
   constructor(

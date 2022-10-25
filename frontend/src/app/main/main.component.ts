@@ -22,7 +22,7 @@ export class MainComponent implements OnInit {
   users: User[] = [];
   limit = 100;
   loading = true;
-  private timeout: number;
+  private timeout: NodeJS.Timeout;
   tabIndex: number;
   first: number = 0;
   highlightedMessage: string | null = null;
