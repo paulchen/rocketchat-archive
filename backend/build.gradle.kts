@@ -11,6 +11,16 @@ plugins {
     id("com.github.ben-manes.versions") version "0.43.0"
 }
 
+tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
+    gradleReleaseChannel = "current"
+}
+
+tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
+    rejectVersionIf {
+        candidate.version.toLowerCase().contains("alpha") || candidate.version.toLowerCase().contains("beta")
+    }
+}
+
 group = "at.rueckgr.rocketchat"
 version = "1.0-SNAPSHOT"
 
