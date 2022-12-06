@@ -13,7 +13,7 @@ fi
 . deploy.conf
 
 . ~/.nvm/nvm.sh || exit 1
-nvm install lts/gallium || exit 1
+nvm install lts/hydrogen || exit 1
 
 docker pull debian:bullseye-slim || exit 1
 docker pull eclipse-temurin:17-jdk || exit 1
