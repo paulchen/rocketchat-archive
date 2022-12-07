@@ -10,6 +10,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Suppress("ExtractKtorModule")
 class RestEndpointForBot(private val ravusBotService: RavusBotService) {
     fun start() {
         embeddedServer(Netty, 8081) {
@@ -43,6 +44,29 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                 route("/version") {
                     get {
                         call.respond(mapOf("version" to VersionHelper.instance.getVersion()))
+                    }
+                }
+                route("/channel/{channelId}") {
+                    get {
+                        mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "channelId"; required = true }
+                            }
+                            result {
+                                val channelId = parameter("channelId")!!
+                                val paginationParameters = RocketchatDatabase.PaginationParameters(1, 1, false)
+                                val (messages, _) = RocketchatDatabase().getMessages(channelId, emptyList(), "", paginationParameters)
+
+                                val lastActivity = when (messages.any()) {
+                                    true -> messages.first().timestamp
+                                    false -> null
+                                }
+                                mapOf(
+                                    "id" to channelId,
+                                    "lastActivity" to lastActivity
+                                )
+                            }
+                        }
                     }
                 }
             }

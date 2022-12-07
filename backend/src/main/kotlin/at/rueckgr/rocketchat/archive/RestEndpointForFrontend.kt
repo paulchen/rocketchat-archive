@@ -10,6 +10,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
+@Suppress("ExtractKtorModule")
 class RestEndpointForFrontend : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
