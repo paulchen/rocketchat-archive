@@ -25,6 +25,9 @@ export class MainComponent implements OnInit {
   private timeout: number;
   tabIndex: number;
   first: number = 0;
+  private initialFirst: number | null = null;
+  private reloadCount: number = 0;
+  private filterInUrl: boolean = false;
   highlightedMessage: string | null = null;
   contextMenuItems: MenuItem[];
   selectedMessage: Message;
@@ -71,7 +74,6 @@ export class MainComponent implements OnInit {
         if (isNaN(Number(val[1]))) {
           message = val[1];
           this.highlightedMessage = message.path;
-          page = null;
         }
         else {
           page = Number(val[1]);
@@ -84,9 +86,11 @@ export class MainComponent implements OnInit {
     });
     this.route.pathFromRoot[1].queryParams.subscribe(params => {
       if (params.hasOwnProperty('users')) {
+        this.filterInUrl = true;
         userIds = params['users'].split(",").filter((id: string) => id);
       }
       if (params.hasOwnProperty('regex')) {
+        this.filterInUrl = true;
         regex = params['regex'];
       }
     });
@@ -95,9 +99,7 @@ export class MainComponent implements OnInit {
       this.getPageForMessage(channel, message);
     }
     else {
-      if (!page) {
-        page = 1
-      }
+      this.initialFirst = this.first
       this.getChannels(channel, regex, userIds);
     }
   }
@@ -197,8 +199,16 @@ export class MainComponent implements OnInit {
       this.loading = true;
     }
 
+    this.reloadCount++;
+
     const limit = event.rows;
-    const first = event.first;
+    const first = (this.initialFirst != null) ? this.initialFirst : event.first
+    // this is a workaround to get around the problem of p-table
+    // resetting the pagination when applying a filter
+    if (this.initialFirst != null && ((this.filterInUrl && this.reloadCount == 2) || (!this.filterInUrl && this.reloadCount == 1))) {
+      this.initialFirst = null;
+      this.first = first;
+    }
     const page = (first / limit) + 1;
 
     const sort = (event.sortOrder == -1) ? "desc" : "asc";
