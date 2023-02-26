@@ -23,10 +23,10 @@
 
           <div style="height: 85vh;">
             <p-table #table *ngIf="messageData != null" [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
-                     [paginator]="true" [rows]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
+                     [paginator]="true" [(rows)]="limit" [totalRecords]="messageData.messageCount" [autoLayout]="true"
                      [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
                      [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
-                     [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
+                     [rowsPerPageOptions]="rowsPerPageOptions" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
                      [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
                      responsiveLayout="scroll">
               <ng-template pTemplate="header">

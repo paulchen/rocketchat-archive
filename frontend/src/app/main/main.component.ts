@@ -39,6 +39,7 @@ export class MainComponent implements OnInit {
   showImageOverlay: boolean = false;
   overlayTitle: string;
   overlayImage: string;
+  rowsPerPageOptions = [100, 500, 1000];
 
   @ViewChild("table") table: Table;
 
@@ -66,6 +67,22 @@ export class MainComponent implements OnInit {
     let message = null;
     let userIds: string[] = [];
     let regex = null;
+    this.route.pathFromRoot[1].queryParams.subscribe(params => {
+      if (params.hasOwnProperty('users')) {
+        this.filterInUrl = true;
+        userIds = params['users'].split(",").filter((id: string) => id);
+      }
+      if (params.hasOwnProperty('regex')) {
+        this.filterInUrl = true;
+        regex = params['regex'];
+      }
+      if (params.hasOwnProperty('limit')) {
+        const limit = Number(params['limit']);
+        if (!isNaN(limit) && this.rowsPerPageOptions.indexOf(limit) !== -1) {
+          this.limit = limit;
+        }
+      }
+    });
     this.route.pathFromRoot[1].url.subscribe(val => {
       if (val.length > 0) {
         channel = val[0];
@@ -82,16 +99,6 @@ export class MainComponent implements OnInit {
       }
       if (val.length > 2) {
         this.highlightedMessage = val[2].path;
-      }
-    });
-    this.route.pathFromRoot[1].queryParams.subscribe(params => {
-      if (params.hasOwnProperty('users')) {
-        this.filterInUrl = true;
-        userIds = params['users'].split(",").filter((id: string) => id);
-      }
-      if (params.hasOwnProperty('regex')) {
-        this.filterInUrl = true;
-        regex = params['regex'];
       }
     });
 
@@ -279,18 +286,19 @@ export class MainComponent implements OnInit {
       url += '/' + this.highlightedMessage;
     }
 
-    if (this.userIdFilter.length > 0 || this.messageFilter) {
+    let parameters: string[] = [];
+    if (this.userIdFilter.length > 0) {
+      parameters.push('users=' + this.userIdFilter.map(id => encodeURIComponent(id)).join(','));
+    }
+    if (this.messageFilter) {
+      parameters.push('regex=' + encodeURIComponent(this.messageFilter));
+    }
+    if (this.limit != this.rowsPerPageOptions[0]) {
+      parameters.push('limit=' + this.limit);
+    }
+    if (parameters.length > 0) {
       url += '?';
-      if (this.userIdFilter.length > 0) {
-        url += 'users=' + this.userIdFilter.map(id => encodeURIComponent(id)).join(',');
-        if (this.messageFilter) {
-          url += '&';
-        }
-      }
-
-      if (this.messageFilter) {
-        url += 'regex=' + encodeURIComponent(this.messageFilter);
-      }
+      url += parameters.join("&")
     }
 
     this.location.go(url);
