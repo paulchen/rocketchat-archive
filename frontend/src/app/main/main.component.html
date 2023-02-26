@@ -36,7 +36,7 @@
                   </th>
                   <th>
                     Username
-                    <p-columnFilter type="text" field="username">
+                    <p-columnFilter type="text" field="username" [matchModeOptions]="matchModeOptions">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                         <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" appendTo="body">
                         </p-multiSelect>
@@ -45,7 +45,7 @@
                   </th>
                   <th>
                     Message
-                    <p-columnFilter type="text" field="message" placeholder="Regular expression"></p-columnFilter>
+                    <p-columnFilter type="text" field="message" placeholder="Regular expression" [matchModeOptions]="matchModeOptions"></p-columnFilter>
                   </th>
                 </tr>
               </ng-template>

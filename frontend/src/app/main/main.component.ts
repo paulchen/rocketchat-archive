@@ -5,7 +5,7 @@ import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
-import {MenuItem, MessageService} from "primeng/api";
+import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
 import {Table} from "primeng/table";
 
@@ -40,6 +40,7 @@ export class MainComponent implements OnInit {
   overlayTitle: string;
   overlayImage: string;
   rowsPerPageOptions = [100, 500, 1000];
+  matchModeOptions = [{ label: 'Filter', value: FilterMatchMode.EQUALS }];
 
   @ViewChild("table") table: Table;
 
