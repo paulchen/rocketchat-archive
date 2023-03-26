@@ -194,11 +194,11 @@ In order to run the application on your local machine, take the following steps:
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:5.0.7 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --name mongo -p 127.0.0.1:27017:27017 mongo:6.0.4 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 
-```docker exec -it mongo mongo localhost/rocketchat --eval "rs.initiate({ _id: 'rs0', members: [ { _id: 0, host: 'localhost:27017' } ]})"```
+```docker exec -it mongo mongosh localhost/rocketchat --eval "rs.initiate({ _id: 'rs0', members: [ { _id: 0, host: 'localhost:27017' } ]})"```
 
 * Use `mongodump` to create a dump
   of your production installation of Rocket.Chat (into a directory named `dump`).
