@@ -3,6 +3,7 @@ package at.rueckgr.rocketchat.archive
 import com.mongodb.client.model.Filters
 import io.ktor.http.*
 import org.apache.commons.lang3.tuple.ImmutablePair
+import org.bson.Document
 import org.litote.kmongo.*
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
@@ -137,6 +138,12 @@ class RocketchatDatabase : Logging {
             .singleOrNull()
 
         return UserDetails(databaseUser.username, message?.ts)
+    }
+
+    fun getVersion(): String {
+        val database = Mongo.getInstance().getDatabase()
+        val result = database.runCommand(Document("buildInfo", 1))
+        return result["version"].toString()
     }
 
     private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username)

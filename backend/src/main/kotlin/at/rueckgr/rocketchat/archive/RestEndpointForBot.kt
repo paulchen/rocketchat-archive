@@ -43,7 +43,14 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                 }
                 route("/version") {
                     get {
-                        call.respond(mapOf("version" to VersionHelper.instance.getVersion()))
+                        mongoOperation(this) {
+                            result {
+                                mapOf(
+                                    "version" to VersionHelper.instance.getVersion(),
+                                    "mongoDbVersion" to RocketchatDatabase().getVersion()
+                                )
+                            }
+                        }
                     }
                 }
                 route("/channel/{channelId}") {
