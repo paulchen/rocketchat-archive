@@ -125,12 +125,14 @@ class RocketchatDatabase : Logging {
         }
         val databaseUser = databaseUsers[0]
 
+        val channelIds = getChannels().map { it.id }
         val message = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .find(
                 and(
                     RocketchatMessage::u / UserData::_id eq databaseUser.id,
-                    RocketchatMessage::t eq null
+                    RocketchatMessage::t eq null,
+                    RocketchatMessage::rid `in` channelIds
                 )
             )
             .descendingSort(RocketchatMessage::ts)
