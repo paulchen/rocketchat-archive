@@ -18,9 +18,9 @@ tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("
 
 tasks.withType<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask> {
     rejectVersionIf {
-        candidate.version.toLowerCase().contains("alpha") ||
-                candidate.version.toLowerCase().contains("beta") ||
-                candidate.version.toLowerCase().contains("rc")
+        candidate.version.lowercase().contains("alpha") ||
+                candidate.version.lowercase().contains("beta") ||
+                candidate.version.lowercase().contains("rc")
     }
 }
 
