@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 RUN apt-get update
 RUN apt-get -y dist-upgrade
 RUN apt-get -y autoremove

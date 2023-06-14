@@ -15,7 +15,7 @@ fi
 . ~/.nvm/nvm.sh || exit 1
 nvm install lts/hydrogen || exit 1
 
-docker pull debian:bullseye-slim || exit 1
+docker pull debian:bookworm-slim || exit 1
 docker pull eclipse-temurin:17-jdk || exit 1
 docker pull nginx:latest || exit 1
 
