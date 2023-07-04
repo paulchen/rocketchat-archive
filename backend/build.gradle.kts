@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.3.1"
+val ktorVersion = "2.3.2"
 val log4jVersion = "2.20.0"
 val jacksonVersion = "2.15.2"
 
@@ -9,7 +9,7 @@ plugins {
     kotlin("jvm") version "1.8.22"
     application
     id("com.palantir.docker") version "0.35.0"
-    id("com.github.ben-manes.versions") version "0.46.0"
+    id("com.github.ben-manes.versions") version "0.47.0"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
