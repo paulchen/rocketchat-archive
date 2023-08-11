@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.3.2"
+val ktorVersion = "2.3.3"
 val log4jVersion = "2.20.0"
 val jacksonVersion = "2.15.2"
 
 plugins {
-    kotlin("jvm") version "1.8.22"
+    kotlin("jvm") version "1.9.0"
     application
     id("com.palantir.docker") version "0.35.0"
     id("com.github.ben-manes.versions") version "0.47.0"
@@ -40,7 +40,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.litote.kmongo:kmongo:4.9.0")
+    implementation("org.litote.kmongo:kmongo:4.10.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
@@ -53,10 +53,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.7")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("org.apache.commons:commons-lang3:3.13.0")
     implementation("org.apache.commons:commons-text:1.10.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.8.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.0")
 }
 
 tasks.test {
