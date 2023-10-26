@@ -45,8 +45,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "1.2mb",
-                  "maximumError": "1.5mb"
+                  "maximumWarning": "1.5mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -114,6 +114,5 @@
         }
       }
     }
-  },
-  "defaultProject": "rocketchat-archive"
+  }
 }
