@@ -11,6 +11,10 @@ services:
       driver: "journald"
       options:
         tag: "{{.ImageName}}"
+    healthcheck:
+      test: curl http://localhost/ || exit 1
+      interval: 1m
+      timeout: 10s 
   backend:
     environment:
       - DATABASE
@@ -24,6 +28,10 @@ services:
       driver: "journald"
       options:
         tag: "{{.ImageName}}"
+    healthcheck:
+      test: curl http://localhost:8080/version || exit 1
+      interval: 1m
+      timeout: 10s 
 
 networks:
   backend:

@@ -1,6 +1,7 @@
 FROM debian:bookworm-slim
 RUN apt-get update
 RUN apt-get -y dist-upgrade
+RUN apt-get -y install --no-install-recommends curl
 RUN apt-get -y autoremove
 RUN apt-get -y purge $(dpkg -l | grep '^rc' | awk '{print $2}')
 RUN apt-get clean
