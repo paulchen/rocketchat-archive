@@ -107,12 +107,16 @@ RemainAfterExit=true
 WorkingDirectory=/opt/rocketchat-archive/
 ExecStart=/usr/local/bin/docker-compose up -d --remove-orphans
 ExecStop=/usr/local/bin/docker-compose down
-Environment=RAVUSBOT_USERNAME=...
-Environment=RAVUSBOT_PASSWORD=...
-Environment=DATABASE=...
+EnvironmentFile=/etc/default/rocketchat-archive
 
 [Install]
 WantedBy=multi-user.target
+```
+* This snippet references the file `/etc/default/rocketchat-archive` which contains the environment variables required for running the archive:
+```
+RAVUSBOT_USERNAME=...
+RAVUSBOT_PASSWORD=...
+DATABASE=...
 ```
 * This application does not involve any authentication.
   Therefore, without taking any additional measures, all messages in all channels would be exposed to the public.
