@@ -34,7 +34,7 @@ cd "$BASE_DIR/backend"
 
 cd "$BASE_DIR"
 
-docker-compose build --no-cache || exit 1
+docker compose build --no-cache || exit 1
 
 if [ "$1" != "--no-systemd" ]; then
 	sudo systemctl restart "$SYSTEMD_UNIT" || exit 1
