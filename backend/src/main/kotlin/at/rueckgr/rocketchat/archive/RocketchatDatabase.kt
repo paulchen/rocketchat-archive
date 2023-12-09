@@ -139,7 +139,7 @@ class RocketchatDatabase : Logging {
             .limit(1)
             .singleOrNull()
 
-        return UserDetails(databaseUser.username, message?.ts)
+        return UserDetails(databaseUser.id, databaseUser.username, message?.ts)
     }
 
     fun getVersion(): String {
