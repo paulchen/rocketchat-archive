@@ -1,5 +1,6 @@
 package at.rueckgr.rocketchat.archive
 
+import com.mongodb.client.MongoDatabase
 import com.mongodb.client.model.Filters
 import io.ktor.http.*
 import org.apache.commons.lang3.tuple.ImmutablePair
@@ -114,7 +115,7 @@ class RocketchatDatabase : Logging {
         return ImmutablePair(reports, reportsCount)
     }
 
-    fun getUserDetails(usernames: List<String>): UserDetails {
+    fun getUserByUsernames(usernames: List<String>): UserDetails {
         val database = Mongo.getInstance().getDatabase()
         val databaseUsers = database.getCollection<RocketchatUser>("users")
             .find()
@@ -125,12 +126,26 @@ class RocketchatDatabase : Logging {
         }
         val databaseUser = databaseUsers[0]
 
+        val message = getMostRecentMessage(database, databaseUser.id)
+        return UserDetails(databaseUser.id, databaseUser.username, message?.ts)
+    }
+
+    fun getUserById(userId: String): UserDetails {
+        val database = Mongo.getInstance().getDatabase()
+        val databaseUser = database.getCollection<RocketchatUser>("users")
+            .findOneById(userId) ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
+
+        val message = getMostRecentMessage(database, databaseUser._id)
+        return UserDetails(databaseUser._id, databaseUser.username, message?.ts)
+    }
+
+    private fun getMostRecentMessage(database: MongoDatabase, userId: String): RocketchatMessage? {
         val channelIds = getChannels().map { it.id }
         val message = database
             .getCollection<RocketchatMessage>("rocketchat_message")
             .find(
                 and(
-                    RocketchatMessage::u / UserData::_id eq databaseUser.id,
+                    RocketchatMessage::u / UserData::_id eq userId,
                     RocketchatMessage::t eq null,
                     RocketchatMessage::rid `in` channelIds
                 )
@@ -138,8 +153,7 @@ class RocketchatDatabase : Logging {
             .descendingSort(RocketchatMessage::ts)
             .limit(1)
             .singleOrNull()
-
-        return UserDetails(databaseUser.id, databaseUser.username, message?.ts)
+        return message
     }
 
     fun getVersion(): String {
