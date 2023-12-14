@@ -119,7 +119,7 @@ class RocketchatDatabase : Logging {
         val database = Mongo.getInstance().getDatabase()
         val databaseUsers = database.getCollection<RocketchatUser>("users")
             .find()
-            .map { User(it._id, it.name, it.username) }
+            .map { User(it._id, it.name, it.username ?: it.name) }
             .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
         if (databaseUsers.isEmpty()) {
             throw MongoOperationException("Unknown username", status = HttpStatusCode.NotFound)
@@ -136,7 +136,7 @@ class RocketchatDatabase : Logging {
             .findOneById(userId) ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
 
         val message = getMostRecentMessage(database, databaseUser._id)
-        return UserDetails(databaseUser._id, databaseUser.username, message?.ts)
+        return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.ts)
     }
 
     private fun getMostRecentMessage(database: MongoDatabase, userId: String): RocketchatMessage? {
@@ -162,7 +162,7 @@ class RocketchatDatabase : Logging {
         return result["version"].toString()
     }
 
-    private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username)
+    private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username ?: user.name)
 
     private fun mapChannel(channel: RocketchatRoom) = Channel(channel.name!!, channel._id)
 
