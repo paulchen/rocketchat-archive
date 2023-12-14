@@ -14,7 +14,7 @@ data class RocketchatMessage(val _id: String, val rid: String, val msg: String, 
 
 data class RocketchatAttachment(val type: String?, val title: String?, val title_link: String?, val description: String?)
 
-data class RocketchatUser(val _id: String, val name: String, val username: String?)
+data class RocketchatUser(val _id: String, val name: String, val username: String?, val __rooms: List<String>?)
 
 data class RocketchatReport(val _id: String, val message: RocketchatMessage, val description: String, val ts: ZonedDateTime, val userId: String)
 
@@ -24,9 +24,9 @@ data class Message(val id: String, val rid: String, val message: String, val tim
 
 data class Attachment(val type: String, val title: String?, val titleLink: String?, val description: String?)
 
-data class User(val id: String, val name: String, val username: String)
+data class User(val id: String, val name: String, val username: String, val rooms: List<String>)
 
-data class UserDetails(val id: String, val username: String, val timestamp: ZonedDateTime?)
+data class UserDetails(val id: String, val username: String, val timestamp: ZonedDateTime?, val rooms: List<String>)
 
 data class Report(val id: String, val message: Message, val description: String, val timestamp: ZonedDateTime, val reporter: User)
 

@@ -119,7 +119,7 @@ class RocketchatDatabase : Logging {
         val database = Mongo.getInstance().getDatabase()
         val databaseUsers = database.getCollection<RocketchatUser>("users")
             .find()
-            .map { User(it._id, it.name, it.username ?: it.name) }
+            .map { User(it._id, it.name, it.username ?: it.name, it.__rooms ?: emptyList()) }
             .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
         if (databaseUsers.isEmpty()) {
             throw MongoOperationException("Unknown username", status = HttpStatusCode.NotFound)
@@ -127,7 +127,7 @@ class RocketchatDatabase : Logging {
         val databaseUser = databaseUsers[0]
 
         val message = getMostRecentMessage(database, databaseUser.id)
-        return UserDetails(databaseUser.id, databaseUser.username, message?.ts)
+        return UserDetails(databaseUser.id, databaseUser.username, message?.ts, databaseUser.rooms)
     }
 
     fun getUserById(userId: String): UserDetails {
@@ -136,7 +136,7 @@ class RocketchatDatabase : Logging {
             .findOneById(userId) ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
 
         val message = getMostRecentMessage(database, databaseUser._id)
-        return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.ts)
+        return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.ts, databaseUser.__rooms ?: emptyList())
     }
 
     private fun getMostRecentMessage(database: MongoDatabase, userId: String): RocketchatMessage? {
@@ -162,7 +162,7 @@ class RocketchatDatabase : Logging {
         return result["version"].toString()
     }
 
-    private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username ?: user.name)
+    private fun mapUser(user: RocketchatUser) = User(user._id, user.name, user.username ?: user.name, user.__rooms ?: emptyList())
 
     private fun mapChannel(channel: RocketchatRoom) = Channel(channel.name!!, channel._id)
 
