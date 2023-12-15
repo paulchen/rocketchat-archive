@@ -1,15 +1,15 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.3.5"
-val log4jVersion = "2.21.1"
-val jacksonVersion = "2.15.3"
+val ktorVersion = "2.3.7"
+val log4jVersion = "2.22.0"
+val jacksonVersion = "2.16.0"
 
 plugins {
-    kotlin("jvm") version "1.9.10"
+    kotlin("jvm") version "1.9.21"
     application
     id("com.palantir.docker") version "0.35.0"
-    id("com.github.ben-manes.versions") version "0.49.0"
+    id("com.github.ben-manes.versions") version "0.50.0"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
@@ -40,7 +40,7 @@ sourceSets {
 }
 
 dependencies {
-    implementation("org.litote.kmongo:kmongo:4.10.0")
+    implementation("org.litote.kmongo:kmongo:4.11.0")
     implementation("com.fasterxml.jackson.core:jackson-databind:$jacksonVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
@@ -53,10 +53,10 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.9")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("org.apache.commons:commons-lang3:3.13.0")
-    implementation("org.apache.commons:commons-text:1.10.0")
+    implementation("org.apache.commons:commons-lang3:3.14.0")
+    implementation("org.apache.commons:commons-text:1.11.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.10")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.21")
 }
 
 tasks.test {
