@@ -237,8 +237,13 @@ export class MainComponent implements OnInit {
     this.messageFilter = message;
 
     const component = this;
+    let currentReloadCount = this.reloadCount;
     this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe({
       next: response => {
+        if (currentReloadCount != this.reloadCount) {
+          // during the backend, reloadData() was called another time (for pagination, filtering etc.)
+          return;
+        }
         this.messageData = response;
         this.loading = false;
 
