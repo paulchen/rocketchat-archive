@@ -11,10 +11,17 @@ class RocketchatStats {
             .associate { it._id to it.username }
 
         val matchConditions = if (channel == "all") {
-            arrayOf(RocketchatMessage::t eq null)
+            arrayOf(
+                RocketchatMessage::t eq null,
+                RocketchatMessage::_hidden eq null
+            )
         }
         else {
-            arrayOf(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null)
+            arrayOf(
+                RocketchatMessage::rid eq channel,
+                RocketchatMessage::t eq null,
+                RocketchatMessage::_hidden eq null
+            )
         }
 
         val userMessageCount = database

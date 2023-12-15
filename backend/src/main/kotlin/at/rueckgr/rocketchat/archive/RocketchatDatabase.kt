@@ -35,7 +35,8 @@ class RocketchatDatabase : Logging {
         val filterConditions = and(
             RocketchatMessage::rid eq channel,
             RocketchatMessage::ts gt timestamp,
-            RocketchatMessage::t eq null
+            RocketchatMessage::t eq null,
+            RocketchatMessage::_hidden eq null
         )
 
         val count = Mongo.getInstance().getDatabase()
@@ -48,7 +49,11 @@ class RocketchatDatabase : Logging {
 
     fun getMessages(channel: String, userIds: List<String>, text: String, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Int> {
-        val filterConditions = mutableListOf(RocketchatMessage::rid eq channel, RocketchatMessage::t eq null)
+        val filterConditions = mutableListOf(
+            RocketchatMessage::rid eq channel,
+            RocketchatMessage::t eq null,
+            RocketchatMessage::_hidden eq null
+        )
         if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
             filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
         }
