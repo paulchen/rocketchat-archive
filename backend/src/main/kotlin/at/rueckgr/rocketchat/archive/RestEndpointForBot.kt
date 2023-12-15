@@ -7,7 +7,6 @@ import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("ExtractKtorModule")
@@ -34,9 +33,21 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                                 val usernames = usernamesFromRavusBot
                                     .ifEmpty { listOf(username) }
                                     .map { it.lowercase() }
-                                val userDetails = RocketchatDatabase().getUserDetails(usernames)
+                                val userDetails = RocketchatDatabase().getUserByUsernames(usernames)
 
                                 mapOf("user" to userDetails)
+                            }
+                        }
+                    }
+                }
+                route("/user/id/{id}") {
+                    get {
+                        mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "id"; required = true }
+                            }
+                            result {
+                                mapOf("user" to RocketchatDatabase().getUserById(parameter("id")!!))
                             }
                         }
                     }
