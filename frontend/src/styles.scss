@@ -64,9 +64,6 @@ a:hover {
 
     .p-datatable {
       &.p-datatable {
-        .p-datatable-thead > tr > th:first-child {
-          display: none;
-        }
         .p-datatable-thead > tr > th,
         .p-datatable-tfoot > tr > td,
         .p-datatable-tbody > tr > td {

@@ -33,6 +33,11 @@
                 <tr>
                   <th pSortableColumn="timestamp">
                     Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
+                    <p-columnFilter type="date" field="timestamp" [matchModeOptions]="matchModeOptions" (click)="$event.stopPropagation();">
+                      <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                        <p-calendar [ngModel]="value" (onSelect)="filter($event)" dateFormat="yy-mm-dd"></p-calendar>
+                      </ng-template>
+                    </p-columnFilter>
                   </th>
                   <th>
                     Username

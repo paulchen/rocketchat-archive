@@ -6,9 +6,13 @@ import io.ktor.http.*
 import org.apache.commons.lang3.tuple.ImmutablePair
 import org.bson.Document
 import org.litote.kmongo.*
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.regex.Pattern
 import java.util.regex.PatternSyntaxException
 import kotlin.math.ceil
+
 
 class RocketchatDatabase : Logging {
     fun getUsers() = Mongo.getInstance().getDatabase()
@@ -47,7 +51,7 @@ class RocketchatDatabase : Logging {
         return ceil((count + 1) / 100.0).toInt()
     }
 
-    fun getMessages(channel: String, userIds: List<String>, text: String, paginationParameters: PaginationParameters):
+    fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Int> {
         val filterConditions = mutableListOf(
             RocketchatMessage::rid eq channel,
@@ -65,6 +69,11 @@ class RocketchatDatabase : Logging {
                 logger().info("Invalid regular expression in request: {}", text)
                 throw MongoOperationException("Invalid regular expression", status = HttpStatusCode.BadRequest)
             }
+        }
+        if (date != null) {
+            val zonedDateTime: ZonedDateTime = ZonedDateTime.of(date.atStartOfDay(), ZoneId.systemDefault())
+            filterConditions.add(Filters.gte("ts", zonedDateTime))
+            filterConditions.add(Filters.lt("ts", zonedDateTime.plusDays(1)))
         }
 
         val messages = if (paginationParameters.sortAscending) {

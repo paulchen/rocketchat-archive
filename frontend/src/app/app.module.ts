@@ -22,6 +22,7 @@ import { StatsTableComponent } from './stats-table/stats-table.component';
 import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ReportsComponent} from "./reports/reports.component";
 import {DialogModule} from "primeng/dialog";
+import {CalendarModule} from "primeng/calendar";
 
 @NgModule({
   declarations: [
@@ -31,24 +32,25 @@ import {DialogModule} from "primeng/dialog";
     StatsComponent,
     StatsTableComponent
   ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        AppRoutingModule,
-        HttpClientModule,
-        CommonModule,
-        TabViewModule,
-        TableModule,
-        MultiSelectModule,
-        FormsModule,
-        ContextMenuModule,
-        ButtonModule,
-        ToastModule,
-        PanelModule,
-        DropdownModule,
-        ProgressSpinnerModule,
-        DialogModule
-    ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
+    HttpClientModule,
+    CommonModule,
+    TabViewModule,
+    TableModule,
+    MultiSelectModule,
+    FormsModule,
+    ContextMenuModule,
+    ButtonModule,
+    ToastModule,
+    PanelModule,
+    DropdownModule,
+    ProgressSpinnerModule,
+    DialogModule,
+    CalendarModule
+  ],
   providers: [{
       provide: HTTP_INTERCEPTORS,
       useClass: EncodeUrlParamsSafelyInterceptor,

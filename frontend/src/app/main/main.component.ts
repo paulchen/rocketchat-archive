@@ -35,6 +35,7 @@ export class MainComponent implements OnInit {
   messageNotFound: boolean = false;
   private userIdFilter: string[];
   private messageFilter: string;
+  private dateFilter: string;
   rocketchatUrl: string;
   showImageOverlay: boolean = false;
   overlayTitle: string;
@@ -68,6 +69,7 @@ export class MainComponent implements OnInit {
     let message = null;
     let userIds: string[] = [];
     let regex = null;
+    let date = null;
     this.route.pathFromRoot[1].queryParams.subscribe(params => {
       if (params.hasOwnProperty('users')) {
         this.filterInUrl = true;
@@ -76,6 +78,10 @@ export class MainComponent implements OnInit {
       if (params.hasOwnProperty('regex')) {
         this.filterInUrl = true;
         regex = params['regex'];
+      }
+      if (params.hasOwnProperty('date')) {
+        this.filterInUrl = true;
+        date = new Date(params['date']);
       }
       if (params.hasOwnProperty('limit')) {
         const limit = Number(params['limit']);
@@ -108,7 +114,7 @@ export class MainComponent implements OnInit {
     }
     else {
       this.initialFirst = this.first
-      this.getChannels(channel, regex, userIds);
+      this.getChannels(channel, regex, userIds, date);
     }
   }
 
@@ -141,7 +147,7 @@ export class MainComponent implements OnInit {
     });
   }
 
-  private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = []): void {
+  private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
 
@@ -173,6 +179,9 @@ export class MainComponent implements OnInit {
       this.changeDetectorRef.detectChanges();
       if (regex) {
         this.table.filter(regex, 'message', 'equals');
+      }
+      if (date) {
+        this.table.filter(date, 'timestamp', 'equals')
       }
       this.getUsers(userIds);
     });
@@ -224,6 +233,7 @@ export class MainComponent implements OnInit {
     const filters = event.filters
     let userIds = [];
     let message = "";
+    let date: string = "";
     if (filters) {
       if ("username" in filters && "value" in filters["username"] && filters["username"]["value"]) {
         userIds = filters["username"]["value"]
@@ -231,14 +241,19 @@ export class MainComponent implements OnInit {
       if ("message" in filters && "value" in filters["message"] && filters["message"]["value"]) {
         message = filters["message"]["value"]
       }
+      if ("timestamp" in filters && "value" in filters["timestamp"] && filters["timestamp"]["value"]) {
+        let timestamp = filters["timestamp"]["value"]
+        date = new Date(timestamp.getTime() - timestamp.getTimezoneOffset()*60000).toISOString().split('T')[0]
+      }
     }
 
     this.userIdFilter = userIds;
     this.messageFilter = message;
+    this.dateFilter = date;
 
     const component = this;
     let currentReloadCount = this.reloadCount;
-    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message).subscribe({
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message, date).subscribe({
       next: response => {
         if (currentReloadCount != this.reloadCount) {
           // during the backend, reloadData() was called another time (for pagination, filtering etc.)
@@ -298,6 +313,9 @@ export class MainComponent implements OnInit {
     }
     if (this.messageFilter) {
       parameters.push('regex=' + encodeURIComponent(this.messageFilter));
+    }
+    if (this.dateFilter) {
+      parameters.push('date=' + encodeURIComponent(this.dateFilter));
     }
     if (this.limit != this.rowsPerPageOptions[0]) {
       parameters.push('limit=' + this.limit);

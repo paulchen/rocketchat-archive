@@ -9,6 +9,7 @@ import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import java.time.LocalDate
 
 @Suppress("ExtractKtorModule")
 class RestEndpointForFrontend : Logging {
@@ -63,6 +64,7 @@ class RestEndpointForFrontend : Logging {
                                 urlParameter { name = "channel"; required = true }
                                 queryParameter { name = "userIds" }
                                 queryParameter { name = "text" }
+                                queryParameter { name = "date" }
                                 paginationParameters(this)
                             }
                             result {
@@ -70,9 +72,16 @@ class RestEndpointForFrontend : Logging {
                                 val channel = parameter("channel")!!
                                 val userIds = parameter("userIds")?.trim()?.split(",") ?: emptyList()
                                 val text = parameter("text")?.trim() ?: ""
+                                val dateParameter = parameter("date")
+                                val date = if (!dateParameter.isNullOrBlank()) {
+                                    LocalDate.parse(dateParameter.trim())
+                                }
+                                else {
+                                    null
+                                }
 
                                 val (messages, messageCount) =
-                                    RocketchatDatabase().getMessages(channel, userIds, text, paginationParameters)
+                                    RocketchatDatabase().getMessages(channel, userIds, text, date, paginationParameters)
 
                                 val processedMessages = messages
                                     .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username, it.attachments) }
