@@ -1,6 +1,8 @@
 package at.rueckgr.rocketchat.archive
 
-data class ChannelStats(val userMessageCount: List<MessageCount>, val timebasedMessageCounts: Map<String, TimebasedMessageCount>)
+import java.time.ZonedDateTime
+
+data class ChannelStats(val firstMessageDate: ZonedDateTime, val userMessageCount: List<MessageCount>, val timebasedMessageCounts: Map<String, TimebasedMessageCount>)
 
 data class TimebasedMessageCount(val messageCounts: List<MessageCount>)
 

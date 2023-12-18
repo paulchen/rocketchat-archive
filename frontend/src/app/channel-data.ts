@@ -8,6 +8,7 @@ export class Channel {
 }
 
 export class ChannelStats {
+  firstMessageDate: Date;
   userMessageCount: MessageCount[];
   timebasedMessageCounts: {[key: string]: TimebasedMessageCount};
 }

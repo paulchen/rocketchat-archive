@@ -1,6 +1,7 @@
 package at.rueckgr.rocketchat.archive
 
 import org.litote.kmongo.*
+import java.time.ZonedDateTime
 
 class RocketchatStats {
     fun getChannelStats(channel: String): ChannelStats {
@@ -9,6 +10,13 @@ class RocketchatStats {
         val users = database.getCollection<RocketchatUser>("users")
             .find()
             .associate { it._id to it.username }
+
+        val firstMessageTimestamp = database.getCollection<RocketchatMessage>("rocketchat_message")
+            .find(RocketchatMessage::rid eq channel)
+            .ascendingSort(RocketchatMessage::ts)
+            .limit(1)
+            .singleOrNull()
+            ?.ts ?: ZonedDateTime.now()
 
         val matchConditions = if (channel == "all") {
             arrayOf(
@@ -119,6 +127,7 @@ class RocketchatStats {
             }
 
         return ChannelStats(
+            firstMessageTimestamp,
             userMessageCount,
             mapOf(
                 "messagesPerMonth" to TimebasedMessageCount(messagesPerMonth),

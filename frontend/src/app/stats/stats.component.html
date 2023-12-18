@@ -22,6 +22,11 @@
           <ng-container *ngIf="channel.id != 'all'">#</ng-container>{{channel.name}}
         </ng-template>
       </p-dropdown>
+      From:
+      <p-calendar [(ngModel)]="startDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-calendar>
+      To:
+      <p-calendar [(ngModel)]="endDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-calendar>
+      <p-button (onClick)="resetDateRange();">Reset</p-button>
     </div>
   </p-panel>
 

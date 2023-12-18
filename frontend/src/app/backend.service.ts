@@ -34,8 +34,9 @@ export class BackendService {
     return this.http.get<MessagePage>("./services/channels/" + encodeURIComponent(channel) + "/messages/" + encodeURIComponent(message));
   }
 
-  getChannelStats(channel: Channel): Observable<ChannelStats>{
-    return this.http.get<ChannelStats>("./services/channels/" + encodeURIComponent(channel.id) + "/stats")
+  getChannelStats(channel: Channel, startDate: string, endDate: string ): Observable<ChannelStats>{
+    let params = { startDate: startDate, endDate: endDate };
+    return this.http.get<ChannelStats>("./services/channels/" + encodeURIComponent(channel.id) + "/stats", { params })
   }
 
   getReports(page: number, limit: number, sort: string): Observable<ReportData> {

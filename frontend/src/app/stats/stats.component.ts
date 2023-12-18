@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData, ChannelStats} from "../channel-data";
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-stats',
@@ -11,6 +12,8 @@ import {Channel, ChannelData, ChannelStats} from "../channel-data";
 export class StatsComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
   selectedChannel: Channel;
+  startDate: Date;
+  endDate: Date = new Date();
   stats: ChannelStats;
   dataLoaded: boolean;
   channelNotFound: true;
@@ -18,7 +21,8 @@ export class StatsComponent implements OnInit {
   constructor(
     public router: Router,
     private route: ActivatedRoute,
-    private backendService: BackendService
+    private backendService: BackendService,
+    private location: Location
   ) { }
 
   ngOnInit(): void {
@@ -30,6 +34,15 @@ export class StatsComponent implements OnInit {
         this.router.navigate(["/stats", this.channelData.channels[1].id]).then();
       }
       else {
+        this.route.pathFromRoot[1].queryParams.subscribe(params => {
+          if (params.hasOwnProperty('startDate')) {
+            this.startDate = new Date(params['startDate']);
+          }
+          if (params.hasOwnProperty('endDate')) {
+            this.endDate = new Date(params['endDate']);
+          }
+        });
+
         this.selectChannel(this.route.snapshot.paramMap.get('channel') ?? '');
       }
     });
@@ -49,15 +62,22 @@ export class StatsComponent implements OnInit {
       return;
     }
 
-    this.loadStats(channel);
+    this.loadStats(channel, this.startDate, this.endDate);
   }
 
-  private loadStats(channel: Channel) {
+  private loadStats(channel: Channel, startDate: Date | null = null, endDate: Date | null = null) {
     this.selectedChannel = channel;
     this.dataLoaded = false;
-    this.backendService.getChannelStats(channel).subscribe(response => {
+    let startDateString = this.formatDate(startDate);
+    let endDateString = this.formatDate(endDate);
+    this.backendService.getChannelStats(channel, startDateString, endDateString).subscribe(response => {
+      if (startDate == null) {
+        this.startDate = new Date(response.firstMessageDate);
+        this.endDate = new Date();
+      }
       this.stats = response;
       this.dataLoaded = true;
+      this.updateUrl();
     });
   }
 
@@ -71,6 +91,43 @@ export class StatsComponent implements OnInit {
     }
     else {
       this.router.navigate(['/' + this.selectedChannel.id]).then();
+    }
+  }
+
+  reloadData() {
+    this.loadStats(this.selectedChannel, this.startDate, this.endDate);
+  }
+
+  resetDateRange() {
+    this.startDate = new Date(this.stats.firstMessageDate);
+    this.endDate = new Date();
+    this.loadStats(this.selectedChannel);
+  }
+
+  private updateUrl(): void {
+    let url = '/stats/' + this.selectedChannel.id;
+
+    let parameters: string[] = [];
+    if (this.formatDate(this.startDate) != this.formatDate(new Date(this.stats.firstMessageDate))) {
+      parameters.push('startDate=' + encodeURIComponent(this.formatDate(this.startDate)));
+    }
+    if (this.formatDate(this.endDate) != this.formatDate(new Date())) {
+      parameters.push('endDate=' + encodeURIComponent(this.formatDate(this.endDate)));
+    }
+    if (parameters.length > 0) {
+      url += '?';
+      url += parameters.join("&")
+    }
+
+    this.location.go(url);
+  }
+
+  private formatDate(date: Date | null): string {
+    if (date == null) {
+      return "";
+    }
+    else {
+      return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0]
     }
   }
 }
