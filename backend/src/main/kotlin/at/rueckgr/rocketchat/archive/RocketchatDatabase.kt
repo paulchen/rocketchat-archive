@@ -1,11 +1,12 @@
 package at.rueckgr.rocketchat.archive
 
-import com.mongodb.client.MongoDatabase
-import com.mongodb.client.model.Filters
+import com.mongodb.client.model.Filters.*
+import com.mongodb.client.model.Sorts.ascending
+import com.mongodb.client.model.Sorts.descending
+import com.mongodb.kotlin.client.MongoDatabase
 import io.ktor.http.*
 import org.apache.commons.lang3.tuple.ImmutablePair
 import org.bson.Document
-import org.litote.kmongo.*
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -19,51 +20,52 @@ class RocketchatDatabase : Logging {
         .getCollection<RocketchatUser>("users")
         .find()
         .map { mapUser(it) }
+        .toList()
         .sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.username })
 
     fun getChannels() = Mongo.getInstance().getDatabase()
         .getCollection<RocketchatRoom>("rocketchat_room")
-        .find()
-        .filter { it.t == "c" }
+        .find(eq(RocketchatRoom::t.name, "c"))
         .map { mapChannel(it) }
+        .toList()
 
     fun getPageForMessage(message: String, channel: String): Int {
         val dbMessage = Mongo.getInstance().getDatabase()
             .getCollection<RocketchatMessage>("rocketchat_message")
-            .findOneById(message) ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
+            .find(eq(RocketchatMessage::_id.name, message))
+            .firstOrNull() ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
         if (dbMessage.t != null) {
             throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
         }
         val timestamp = dbMessage.ts
 
         val filterConditions = and(
-            RocketchatMessage::rid eq channel,
-            RocketchatMessage::ts gt timestamp,
-            RocketchatMessage::t eq null,
-            RocketchatMessage::_hidden eq null
+            eq(RocketchatMessage::rid.name, channel),
+            gt(RocketchatMessage::ts.name, timestamp),
+            eq(RocketchatMessage::t.name, null),
+            eq(RocketchatMessage::_hidden.name, null)
         )
 
         val count = Mongo.getInstance().getDatabase()
             .getCollection<RocketchatMessage>("rocketchat_message")
-            .find(filterConditions)
-            .count()
+            .countDocuments(filterConditions)
 
         return ceil((count + 1) / 100.0).toInt()
     }
 
     fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, paginationParameters: PaginationParameters):
-            ImmutablePair<Iterable<Message>, Int> {
+            ImmutablePair<Iterable<Message>, Long> {
         val filterConditions = mutableListOf(
-            RocketchatMessage::rid eq channel,
-            RocketchatMessage::t eq null,
-            RocketchatMessage::_hidden eq null
+            eq(RocketchatMessage::rid.name, channel),
+            eq(RocketchatMessage::t.name, null),
+            eq(RocketchatMessage::_hidden.name, null)
         )
         if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
-            filterConditions.add(RocketchatMessage::u / UserData::_id `in` userIds)
+            filterConditions.add(`in`("u._id", userIds))
         }
         if (text.isNotBlank()) {
             try {
-                filterConditions.add(Filters.regex("msg", Pattern.compile(text, Pattern.CASE_INSENSITIVE)))
+                filterConditions.add(regex("msg", Pattern.compile(text, Pattern.CASE_INSENSITIVE)))
             }
             catch (e: PatternSyntaxException) {
                 logger().info("Invalid regular expression in request: {}", text)
@@ -72,59 +74,58 @@ class RocketchatDatabase : Logging {
         }
         if (date != null) {
             val zonedDateTime: ZonedDateTime = ZonedDateTime.of(date.atStartOfDay(), ZoneId.systemDefault())
-            filterConditions.add(Filters.gte("ts", zonedDateTime))
-            filterConditions.add(Filters.lt("ts", zonedDateTime.plusDays(1)))
+            filterConditions.add(gte(RocketchatMessage::ts.name, zonedDateTime))
+            filterConditions.add(lt(RocketchatMessage::ts.name, zonedDateTime.plusDays(1)))
         }
 
         val messages = if (paginationParameters.sortAscending) {
             Mongo.getInstance().getDatabase()
                 .getCollection<RocketchatMessage>("rocketchat_message")
                 .find(and(filterConditions))
-                .ascendingSort(RocketchatMessage::ts)
+                .sort(ascending(RocketchatMessage::ts.name))
         }
         else {
             Mongo.getInstance().getDatabase()
                 .getCollection<RocketchatMessage>("rocketchat_message")
                 .find(and(filterConditions))
-                .descendingSort(RocketchatMessage::ts)
+                .sort(descending(RocketchatMessage::ts.name))
 
         }
             .skip((paginationParameters.page - 1) * paginationParameters.limit)
             .limit(paginationParameters.limit)
             .map { mapMessage(it) }
+            .toList()
         val messageCount = Mongo.getInstance().getDatabase()
             .getCollection<RocketchatMessage>("rocketchat_message")
-            .find(and(filterConditions))
-            .count()
+            .countDocuments(and(filterConditions))
 
         return ImmutablePair(messages, messageCount)
     }
 
-    fun getReports(paginationParameters: PaginationParameters): ImmutablePair<Iterable<Report>, Int> {
+    fun getReports(paginationParameters: PaginationParameters): ImmutablePair<Iterable<Report>, Long> {
         val database = Mongo.getInstance().getDatabase()
         val users = RocketchatDatabase().getUsers().associateBy(User::id)
         val channels = RocketchatDatabase().getChannels().map { it.id }
         val reports = if (paginationParameters.sortAscending) {
             database
                 .getCollection<RocketchatReport>("rocketchat_reports")
-                .find()
-                .ascendingSort(RocketchatReport::ts)
+                .find(`in`("message.rid", channels))
+                .sort(ascending(RocketchatMessage::ts.name))
         }
         else {
             database
                 .getCollection<RocketchatReport>("rocketchat_reports")
-                .find()
-                .descendingSort(RocketchatReport::ts)
+                .find(`in`("message.rid", channels))
+                .sort(descending(RocketchatMessage::ts.name))
         }
             .skip((paginationParameters.page - 1) * paginationParameters.limit)
             .limit(paginationParameters.limit)
-            .filter { channels.contains(it.message.rid) }
             .map { mapReport(it, users) }
+            .toList()
 
         val reportsCount = database
             .getCollection<RocketchatReport>("rocketchat_reports")
-            .find()
-            .count()
+            .countDocuments()
 
         return ImmutablePair(reports, reportsCount)
     }
@@ -134,6 +135,7 @@ class RocketchatDatabase : Logging {
         val databaseUsers = database.getCollection<RocketchatUser>("users")
             .find()
             .map { User(it._id, it.name, it.username ?: it.name, it.__rooms ?: emptyList()) }
+            .toList()
             .filter { usernames.contains(it.name.lowercase()) || usernames.contains(it.username.lowercase()) }
         if (databaseUsers.isEmpty()) {
             throw MongoOperationException("Unknown username", status = HttpStatusCode.NotFound)
@@ -147,7 +149,8 @@ class RocketchatDatabase : Logging {
     fun getUserById(userId: String): UserDetails {
         val database = Mongo.getInstance().getDatabase()
         val databaseUser = database.getCollection<RocketchatUser>("users")
-            .findOneById(userId) ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
+            .find(eq(RocketchatUser::_id.name, userId))
+            .firstOrNull() ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
 
         val message = getMostRecentMessage(database, databaseUser._id)
         return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.ts, databaseUser.__rooms ?: emptyList())
@@ -159,14 +162,14 @@ class RocketchatDatabase : Logging {
             .getCollection<RocketchatMessage>("rocketchat_message")
             .find(
                 and(
-                    RocketchatMessage::u / UserData::_id eq userId,
-                    RocketchatMessage::t eq null,
-                    RocketchatMessage::rid `in` channelIds
+                    eq("u._id", userId),
+                    eq(RocketchatMessage::t.name, null),
+                    `in`(RocketchatMessage::rid.name, channelIds)
                 )
             )
-            .descendingSort(RocketchatMessage::ts)
+            .sort(descending(RocketchatMessage::ts.name))
             .limit(1)
-            .singleOrNull()
+            .firstOrNull()
         return message
     }
 

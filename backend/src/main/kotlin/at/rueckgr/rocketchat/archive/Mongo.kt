@@ -1,13 +1,22 @@
 package at.rueckgr.rocketchat.archive
 
-import com.mongodb.client.MongoClient
-import com.mongodb.client.MongoDatabase
+import com.mongodb.MongoClientSettings
+import com.mongodb.kotlin.client.MongoClient
+import com.mongodb.kotlin.client.MongoDatabase
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
-import org.litote.kmongo.KMongo
+import org.bson.BsonReader
+import org.bson.BsonWriter
+import org.bson.codecs.Codec
+import org.bson.codecs.DecoderContext
+import org.bson.codecs.EncoderContext
+import org.bson.codecs.configuration.CodecRegistries
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import kotlin.reflect.KClass
 
 class MongoOperation(private val pipelineContext: PipelineContext<*, ApplicationCall>) {
@@ -96,9 +105,21 @@ suspend fun mongoOperation(pipelineContext: PipelineContext<*, ApplicationCall>,
     database.close()
 }
 
+class ZonedDateTimeCodec : Codec<ZonedDateTime> {
+    override fun encode(writer: BsonWriter, zonedDateTime: ZonedDateTime, encoderContext: EncoderContext) {
+        writer.writeDateTime(zonedDateTime.toInstant().toEpochMilli())
+    }
+
+
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext) =
+        ZonedDateTime.ofInstant(Instant.ofEpochMilli(reader.readDateTime()), ZoneId.systemDefault())
+
+    override fun getEncoderClass() = ZonedDateTime::class.java
+}
+
 class Mongo private constructor() {
-    private val client: MongoClient = KMongo.createClient(ConfigurationProvider.getConfiguration().mongoUrl)
-    private val database: MongoDatabase = this.client.getDatabase(ConfigurationProvider.getConfiguration().database)
+    private val client: MongoClient = MongoClient.create(ConfigurationProvider.getConfiguration().mongoUrl)
+    private val database: MongoDatabase
     private var closed = false
 
     companion object {
@@ -110,6 +131,14 @@ class Mongo private constructor() {
             }
             return instance.get()
         }
+    }
+
+    init {
+        val codecRegistry = CodecRegistries.fromRegistries(
+            CodecRegistries.fromCodecs(ZonedDateTimeCodec()),
+            MongoClientSettings.getDefaultCodecRegistry()
+        )
+        database = this.client.getDatabase(ConfigurationProvider.getConfiguration().database).withCodecRegistry(codecRegistry)
     }
 
     fun getDatabase() = this.database
