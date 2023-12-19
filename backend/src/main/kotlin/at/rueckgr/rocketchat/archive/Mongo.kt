@@ -7,6 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.util.pipeline.*
 import org.litote.kmongo.KMongo
+import java.time.LocalDate
 import kotlin.reflect.KClass
 
 class MongoOperation(private val pipelineContext: PipelineContext<*, ApplicationCall>) {
@@ -25,6 +26,16 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
     fun parameter(name: String): String? = anyParameter(name) as String?
 
     fun intParameter(name: String): Int? = parameter(name)?.toInt()
+
+    fun dateParameter(name: String): LocalDate? {
+        val date = parameter(name)
+        return if (!date.isNullOrBlank()) {
+            LocalDate.parse(date.trim())
+        }
+        else {
+            null
+        }
+    }
 
     private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {

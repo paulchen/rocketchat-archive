@@ -1,10 +1,14 @@
 package at.rueckgr.rocketchat.archive
 
+import com.mongodb.client.model.Filters
+import org.bson.conversions.Bson
 import org.litote.kmongo.*
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.ZonedDateTime
 
 class RocketchatStats {
-    fun getChannelStats(channel: String): ChannelStats {
+    fun getChannelStats(channel: String, startDate: LocalDate?, endDate: LocalDate?): ChannelStats {
         val database = Mongo.getInstance().getDatabase()
 
         val users = database.getCollection<RocketchatUser>("users")
@@ -18,19 +22,21 @@ class RocketchatStats {
             .singleOrNull()
             ?.ts ?: ZonedDateTime.now()
 
-        val matchConditions = if (channel == "all") {
-            arrayOf(
-                RocketchatMessage::t eq null,
-                RocketchatMessage::_hidden eq null
-            )
+        val matchConditionsList = mutableListOf<Bson>()
+        matchConditionsList.add(RocketchatMessage::t eq null)
+        matchConditionsList.add(RocketchatMessage::_hidden eq null)
+        if (channel != "all") {
+            matchConditionsList.add(RocketchatMessage::rid eq channel)
         }
-        else {
-            arrayOf(
-                RocketchatMessage::rid eq channel,
-                RocketchatMessage::t eq null,
-                RocketchatMessage::_hidden eq null
-            )
+        if (startDate != null) {
+            val zonedDateTime: ZonedDateTime = ZonedDateTime.of(startDate.atStartOfDay(), ZoneId.systemDefault())
+            matchConditionsList.add(RocketchatMessage::ts gte zonedDateTime)
         }
+        if (endDate != null) {
+            val zonedDateTime: ZonedDateTime = ZonedDateTime.of(endDate.atStartOfDay(), ZoneId.systemDefault()).plusDays(1)
+            matchConditionsList.add(RocketchatMessage::ts lt zonedDateTime)
+        }
+        val matchConditions = matchConditionsList.toTypedArray()
 
         val userMessageCount = database
             .getCollection<RocketchatMessage>("rocketchat_message")
