@@ -72,7 +72,7 @@ class ParameterBuilder(private val type: ParameterType) {
     var datatype: KClass<*> = String::class
     var default: Any? = null
 
-    fun build(): Parameter = Parameter(type, name, required, datatype, default)
+    fun build(): Parameter = Parameter(type, name, required, datatype, default?.toString())
 }
 
 enum class ParameterType {
