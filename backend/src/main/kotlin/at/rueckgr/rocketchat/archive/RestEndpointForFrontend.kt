@@ -56,6 +56,27 @@ class RestEndpointForFrontend : Logging {
                         }
                     }
                 }
+                route("/channels/{channel}/messages/{message}/history") {
+                    get {
+                        mongoOperation(this) {
+                            parameters {
+                                urlParameter { name = "channel"; required = true }
+                                urlParameter { name = "message"; required = true }
+                            }
+                            result {
+                                val message = parameter("message")!!
+                                val channel = parameter("channel")!!
+                                val history = RocketchatDatabase().getMessageHistory(message, channel)
+
+                                mapOf(
+                                    "channel" to parameter("channel"),
+                                    "message" to parameter("message"),
+                                    "history" to history
+                                )
+                            }
+                        }
+                    }
+                }
                 route("/channels/{channel}/messages") {
                     get {
                         mongoOperation(this) {
@@ -77,7 +98,7 @@ class RestEndpointForFrontend : Logging {
                                     RocketchatDatabase().getMessages(channel, userIds, text, date, paginationParameters)
 
                                 val processedMessages = messages
-                                    .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username, it.attachments) }
+                                    .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username, it.attachments, it.editedAt, it.editedBy) }
 
                                 mapOf(
                                     "messages" to processedMessages,

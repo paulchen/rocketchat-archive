@@ -30,14 +30,7 @@ class RocketchatDatabase : Logging {
         .toList()
 
     fun getPageForMessage(message: String, channel: String): Int {
-        val dbMessage = Mongo.getInstance().getDatabase()
-            .getCollection<RocketchatMessage>("rocketchat_message")
-            .find(eq(RocketchatMessage::_id.name, message))
-            .firstOrNull() ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
-        if (dbMessage.t != null) {
-            throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
-        }
-        val timestamp = dbMessage.ts
+        val timestamp = getMessage(message).ts
 
         val filterConditions = and(
             eq(RocketchatMessage::rid.name, channel),
@@ -52,6 +45,23 @@ class RocketchatDatabase : Logging {
 
         return ceil((count + 1) / 100.0).toInt()
     }
+
+    private fun getMessageByField(identifier: String, field: String): RocketchatMessage? {
+        val dbMessage = Mongo.getInstance().getDatabase()
+            .getCollection<RocketchatMessage>("rocketchat_message")
+            .find(eq(field, identifier))
+            .firstOrNull() ?: return null
+        if (dbMessage.t != null) {
+            return null
+        }
+        return dbMessage
+    }
+
+    private fun getMessage(message: String) =
+        getMessageByField(message, RocketchatMessage::_id.name)
+            ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
+
+    private fun getMessageByParent(parent: String) = getMessageByField(parent, RocketchatMessage::parent.name)
 
     fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Long> {
@@ -100,6 +110,22 @@ class RocketchatDatabase : Logging {
             .countDocuments(and(filterConditions))
 
         return ImmutablePair(messages, messageCount)
+    }
+
+    fun getMessageHistory(message: String, channel: String): Iterable<Message> {
+        val currentMessage = getMessage(message)
+        if (currentMessage.rid != channel) {
+            throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
+        }
+
+        val history = mutableListOf(mapMessage(currentMessage))
+        var parentId = currentMessage._id
+        while (true) {
+            val historyMessage = getMessageByParent(parentId) ?: break
+            history.add(mapMessage(historyMessage))
+            parentId = historyMessage._id
+        }
+        return history
     }
 
     fun getReports(paginationParameters: PaginationParameters): ImmutablePair<Iterable<Report>, Long> {
@@ -190,7 +216,9 @@ class RocketchatDatabase : Logging {
             message.msg,
             message.ts,
             message.u.username,
-            message.attachments?.filter { it.type != null }?.map { mapAttachment(it) } ?: emptyList()
+            message.attachments?.filter { it.type != null }?.map { mapAttachment(it) } ?: emptyList(),
+            message.editedAt,
+            message.editedBy?.username
         )
 
     private fun mapAttachment(attachment: RocketchatAttachment) =
