@@ -46,22 +46,23 @@ class RocketchatDatabase : Logging {
         return ceil((count + 1) / 100.0).toInt()
     }
 
-    private fun getMessageByField(identifier: String, field: String): RocketchatMessage? {
-        val dbMessage = Mongo.getInstance().getDatabase()
+    private fun getMessagesByField(identifier: String, field: String): List<RocketchatMessage> {
+        val dbMessages = Mongo.getInstance().getDatabase()
             .getCollection<RocketchatMessage>("rocketchat_message")
             .find(eq(field, identifier))
-            .firstOrNull() ?: return null
-        if (dbMessage.t != null) {
-            return null
+            .sort(descending(RocketchatMessage::editedAt.name))
+            .toList()
+        if (dbMessages.any { it.t != null }) {
+            return emptyList()
         }
-        return dbMessage
+        return dbMessages
     }
 
     private fun getMessage(message: String) =
-        getMessageByField(message, RocketchatMessage::_id.name)
+        getMessagesByField(message, RocketchatMessage::_id.name).firstOrNull()
             ?: throw MongoOperationException("Not found", status = HttpStatusCode.NotFound)
 
-    private fun getMessageByParent(parent: String) = getMessageByField(parent, RocketchatMessage::parent.name)
+    private fun getMessagesByParent(parent: String) = getMessagesByField(parent, RocketchatMessage::parent.name)
 
     fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Long> {
@@ -119,18 +120,12 @@ class RocketchatDatabase : Logging {
         }
 
         val history = mutableListOf(mapMessage(currentMessage))
-        var parentId = currentMessage._id
-        while (true) {
-            val historyMessage = getMessageByParent(parentId) ?: break
-            history.add(mapMessage(historyMessage))
-            parentId = historyMessage._id
-        }
-
-        val last = history.last()
-        history.remove(last)
-        val newLast = Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username)
-        history.add(newLast)
-
+        val historyFromDatabase = getMessagesByParent(currentMessage._id).map { mapMessage(it) }
+        historyFromDatabase
+            .zipWithNext()
+            .forEach { history.add(Message(it.first.id, it.first.rid, it.first.message, it.first.timestamp, it.first.username, it.first.attachments, it.second.editedAt, it.second.editedBy)) }
+        val last = historyFromDatabase.last()
+        history.add(Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username))
         return history
     }
 
