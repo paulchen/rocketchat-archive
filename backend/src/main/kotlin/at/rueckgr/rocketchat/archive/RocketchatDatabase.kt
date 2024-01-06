@@ -125,6 +125,12 @@ class RocketchatDatabase : Logging {
             history.add(mapMessage(historyMessage))
             parentId = historyMessage._id
         }
+
+        val last = history.last()
+        history.remove(last)
+        val newLast = Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username)
+        history.add(newLast)
+
         return history
     }
 
