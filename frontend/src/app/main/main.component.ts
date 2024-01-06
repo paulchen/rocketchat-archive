@@ -40,6 +40,8 @@ export class MainComponent implements OnInit {
   showImageOverlay: boolean = false;
   overlayTitle: string;
   overlayImage: string;
+  showHistoryOverlay: boolean = false;
+  messageHistory: Message[] = []
   rowsPerPageOptions = [100, 500, 1000];
   matchModeOptions = [{ label: 'Filter', value: FilterMatchMode.EQUALS }];
 
@@ -358,5 +360,14 @@ export class MainComponent implements OnInit {
     }
 
     this.showImageOverlay = true;
+  }
+
+  showHistory(message: Message) {
+    this.backendService.getMessageHistory(this.selectedChannel.id, message.id).subscribe({
+        next: response => {
+          this.messageHistory = response.history;
+          this.showHistoryOverlay = true;
+        }
+    });
   }
 }

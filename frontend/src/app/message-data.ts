@@ -10,6 +10,8 @@ export class Message {
   timestamp: Date;
   username: string;
   attachments: Attachment[];
+  editedAt: Date;
+  editedBy: string;
 }
 
 export class Attachment {
@@ -23,5 +25,11 @@ export class MessagePage {
   channel: string;
   message: string;
   page: number;
+}
+
+export class MessageHistory {
+  channel: string;
+  message: string;
+  history: Message[];
 }
 

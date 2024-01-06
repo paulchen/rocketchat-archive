@@ -5,6 +5,25 @@
     <img [src]="overlayImage" [alt]="overlayTitle" style="max-width: 70vw; max-height: 70vh;" (click)="showImageOverlay = false;" />
   </p-dialog>
 
+  <p-dialog header="Message history" [(visible)]="showHistoryOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
+    <p-table [value]="messageHistory">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Timestamp</th>
+          <th>Editor</th>
+          <th>Text</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-message>
+        <tr>
+          <td>{{message.editedAt|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+          <td>{{message.editedBy}}</td>
+          <td>{{message.message}}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-dialog>
+
   <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
   <div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
@@ -59,6 +78,9 @@
                   <td style="white-space: nowrap;">
                     <a id="{{message.id}}"></a>
                     <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();" label="{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
+                    <span *ngIf="message.editedBy != null">
+                      <button pButton type="button" class="p-button-link" (click)="showHistory(message); $event.stopPropagation();">&#9998;</button>
+                    </span>
                   </td>
                   <td style="white-space: nowrap;" class="username">
                     <button pButton type="button" class="p-button-link" (click)="table.filter([ getUserId(message.username) ], 'username', 'equals')" label="{{message.username}}"></button>
