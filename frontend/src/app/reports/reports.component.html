@@ -12,14 +12,14 @@
              dataKey="id" responsiveLayout="scroll">
       <ng-template pTemplate="header">
         <tr>
-          <th pSortableColumn="timestamp">
+          <th pSortableColumn="timestamp" scope="col">
             Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
           </th>
-          <th>Reporter</th>
-          <th>Message timestamp</th>
-          <th>Message author</th>
-          <th>Message</th>
-          <th>Reason</th>
+          <th scope="col">Reporter</th>
+          <th scope="col">Message timestamp</th>
+          <th scope="col">Message author</th>
+          <th scope="col">Message</th>
+          <th scope="col">Reason</th>
         </tr>
       </ng-template>
       <ng-template pTemplate="body" let-report>

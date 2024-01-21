@@ -2,8 +2,8 @@
   <p-table [value]="stats" responsiveLayout="scroll">
     <ng-template pTemplate="header">
       <tr>
-        <th>{{firstColumn}}</th>
-        <th>Messages</th>
+        <th scope="col">{{firstColumn}}</th>
+        <th scope="col">Messages</th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-item>
