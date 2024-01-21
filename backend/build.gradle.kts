@@ -8,7 +8,6 @@ val jacksonVersion = "2.16.0"
 plugins {
     kotlin("jvm") version "1.9.21"
     application
-    id("com.palantir.docker") version "0.35.0"
     id("com.github.ben-manes.versions") version "0.50.0"
 }
 
@@ -85,15 +84,6 @@ distributions {
     main {
         version = "latest"
     }
-}
-
-docker {
-    name = "${project.name}:latest"
-    files("build/distributions")
-}
-
-tasks.dockerPrepare {
-    dependsOn(tasks.build)
 }
 
 tasks.create("createVersionFile") {
