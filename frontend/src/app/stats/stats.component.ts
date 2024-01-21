@@ -35,10 +35,10 @@ export class StatsComponent implements OnInit {
       }
       else {
         this.route.pathFromRoot[1].queryParams.subscribe(params => {
-          if (params.hasOwnProperty('startDate')) {
+          if (Object.prototype.hasOwnProperty.call(params, 'startDate')) {
             this.startDate = new Date(params['startDate']);
           }
-          if (params.hasOwnProperty('endDate')) {
+          if (Object.prototype.hasOwnProperty.call(params, 'endDate')) {
             this.endDate = new Date(params['endDate']);
           }
         });

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {BackendService} from "../backend.service";
 import {Router} from "@angular/router";
-import {Location, LocationStrategy} from "@angular/common";
 import {Report, ReportData} from "../report-data";
 
 @Component({
@@ -18,8 +17,6 @@ export class ReportsComponent implements OnInit {
 
   constructor(
     private backendService: BackendService,
-    private location: Location,
-    private locationStrategy: LocationStrategy,
     public router: Router
   ) { }
 

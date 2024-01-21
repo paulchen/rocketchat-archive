@@ -73,19 +73,19 @@ export class MainComponent implements OnInit {
     let regex = null;
     let date = null;
     this.route.pathFromRoot[1].queryParams.subscribe(params => {
-      if (params.hasOwnProperty('users')) {
+      if (Object.prototype.hasOwnProperty.call(params, 'users')) {
         this.filterInUrl = true;
         userIds = params['users'].split(",").filter((id: string) => id);
       }
-      if (params.hasOwnProperty('regex')) {
+      if (Object.prototype.hasOwnProperty.call(params, 'regex')) {
         this.filterInUrl = true;
         regex = params['regex'];
       }
-      if (params.hasOwnProperty('date')) {
+      if (Object.prototype.hasOwnProperty.call(params, 'date')) {
         this.filterInUrl = true;
         date = new Date(params['date']);
       }
-      if (params.hasOwnProperty('limit')) {
+      if (Object.prototype.hasOwnProperty.call(params, 'limit')) {
         const limit = Number(params['limit']);
         if (!isNaN(limit) && this.rowsPerPageOptions.indexOf(limit) !== -1) {
           this.limit = limit;
