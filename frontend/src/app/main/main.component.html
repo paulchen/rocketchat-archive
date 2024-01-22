@@ -6,7 +6,10 @@
   </p-dialog>
 
   <p-dialog header="Message history" [(visible)]="showHistoryOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
-    <p-table [value]="messageHistory">
+    <div *ngIf="messageHistory.length <= 1">
+      Message history not available.
+    </div>
+    <p-table [value]="messageHistory" *ngIf="messageHistory.length > 1">
       <ng-template pTemplate="header">
         <tr>
           <th scope="col">Timestamp</th>
