@@ -4,6 +4,13 @@ SCRIPT_DIR=`dirname "$0"`
 SCRIPT_DIR=`realpath "$SCRIPT_DIR"`
 BASE_DIR=`realpath "$SCRIPT_DIR/.."`
 
+export JAVA_HOME=/usr/lib/jvm/java-21-openjdk/
+
+if [ ! -d "$JAVA_HOME" ]; then
+	echo "$JAVA_HOME not found"
+	exit 2
+fi
+
 cd "$SCRIPT_DIR"
 if [ ! -f deploy.conf ]; then
 	echo deploy.conf does not exist
