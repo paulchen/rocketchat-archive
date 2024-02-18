@@ -16,7 +16,7 @@ fi
 nvm install lts/iron || exit 1
 
 docker pull debian:bookworm-slim || exit 1
-docker pull eclipse-temurin:17-jdk || exit 1
+docker pull eclipse-temurin:21-jdk || exit 1
 docker pull nginx:latest || exit 1
 
 cd "$BASE_DIR"
