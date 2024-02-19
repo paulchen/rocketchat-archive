@@ -75,13 +75,19 @@ class RocketchatDatabase : Logging {
             filterConditions.add(`in`("u._id", userIds))
         }
         if (text.isNotBlank()) {
-            try {
-                filterConditions.add(regex("msg", Pattern.compile(text, Pattern.CASE_INSENSITIVE)))
+            val pattern = try {
+                Pattern.compile(text, Pattern.CASE_INSENSITIVE)
             }
             catch (e: PatternSyntaxException) {
                 logger().info("Invalid regular expression in request: {}", text)
                 throw MongoOperationException("Invalid regular expression", status = HttpStatusCode.BadRequest)
             }
+            filterConditions.add(
+                or(
+                    regex("msg", pattern),
+                    regex("attachments.description", pattern)
+                )
+            )
         }
         if (date != null) {
             val zonedDateTime: ZonedDateTime = ZonedDateTime.of(date.atStartOfDay(), ZoneId.systemDefault())
