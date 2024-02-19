@@ -7,7 +7,7 @@ RUN apt-get -y purge $(dpkg -l | grep '^rc' | awk '{print $2}')
 RUN apt-get clean
 
 ENV JAVA_HOME=/opt/java/openjdk
-COPY --from=eclipse-temurin:17-jdk $JAVA_HOME $JAVA_HOME
+COPY --from=eclipse-temurin:21-jdk $JAVA_HOME $JAVA_HOME
 
 RUN mkdir /app
 ADD build/distributions/rocketchat-archive-backend-latest.tar /app

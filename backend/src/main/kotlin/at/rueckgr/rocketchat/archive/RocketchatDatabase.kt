@@ -127,11 +127,13 @@ class RocketchatDatabase : Logging {
 
         val history = mutableListOf(mapMessage(currentMessage))
         val historyFromDatabase = getMessagesByParent(currentMessage._id).map { mapMessage(it) }
-        historyFromDatabase
-            .zipWithNext()
-            .forEach { history.add(Message(it.first.id, it.first.rid, it.first.message, it.first.timestamp, it.first.username, it.first.attachments, it.second.editedAt, it.second.editedBy)) }
-        val last = historyFromDatabase.last()
-        history.add(Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username))
+        if (historyFromDatabase.size > 0) {
+            historyFromDatabase
+                .zipWithNext()
+                .forEach { history.add(Message(it.first.id, it.first.rid, it.first.message, it.first.timestamp, it.first.username, it.first.attachments, it.second.editedAt, it.second.editedBy)) }
+            val last = historyFromDatabase.last()
+            history.add(Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username))
+        }
         return history
     }
 
