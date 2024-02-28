@@ -370,4 +370,14 @@ export class MainComponent implements OnInit {
         }
     });
   }
+
+  filterByUsername(username: string) {
+    // temporary fix until https://github.com/primefaces/primeng/issues/14904 has been dealt with
+    let userId = this.getUserId(username);
+    this.table.filters["username"] = { value: [userId], matchMode: 'equals' };
+    this.table.filterTimeout = setTimeout(() => {
+      this.table._filter();
+      this.table.filterTimeout = null;
+    }, this.table.filterDelay);
+  }
 }
