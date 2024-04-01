@@ -1,12 +1,12 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.3.8"
-val log4jVersion = "2.22.1"
-val jacksonVersion = "2.16.1"
+val ktorVersion = "2.3.9"
+val log4jVersion = "2.23.1"
+val jacksonVersion = "2.17.0"
 
 plugins {
-    kotlin("jvm") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
     application
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -53,9 +53,9 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.14.0")
     implementation("org.apache.commons:commons-text:1.11.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:4.11.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.0.0")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:1.9.23")
 }
 
 tasks.test {
