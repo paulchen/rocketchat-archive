@@ -46,6 +46,16 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
         }
     }
 
+    fun boolParameter(name: String): Boolean? {
+        val value = intParameter(name)
+        return if (value == null) {
+            null
+        }
+        else {
+            value == 1
+        }
+    }
+
     private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {
             ParameterType.URL -> pipelineContext.call.parameters[name] ?: parameters[name]?.default

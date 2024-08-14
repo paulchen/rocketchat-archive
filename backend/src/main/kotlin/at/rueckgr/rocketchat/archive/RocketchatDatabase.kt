@@ -64,7 +64,7 @@ class RocketchatDatabase : Logging {
 
     private fun getMessagesByParent(parent: String) = getMessagesByField(parent, RocketchatMessage::parent.name)
 
-    fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, paginationParameters: PaginationParameters):
+    fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, attachments: Boolean, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Long> {
         val filterConditions = mutableListOf(
             eq(RocketchatMessage::rid.name, channel),
@@ -93,6 +93,9 @@ class RocketchatDatabase : Logging {
             val zonedDateTime: ZonedDateTime = ZonedDateTime.of(date.atStartOfDay(), ZoneId.systemDefault())
             filterConditions.add(gte(RocketchatMessage::ts.name, zonedDateTime))
             filterConditions.add(lt(RocketchatMessage::ts.name, zonedDateTime.plusDays(1)))
+        }
+        if (attachments) {
+            filterConditions.add(exists("attachments.image_url"))
         }
 
         val messages = if (paginationParameters.sortAscending) {
