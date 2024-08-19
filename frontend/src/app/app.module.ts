@@ -23,6 +23,9 @@ import {ProgressSpinnerModule} from "primeng/progressspinner";
 import {ReportsComponent} from "./reports/reports.component";
 import {DialogModule} from "primeng/dialog";
 import {CalendarModule} from "primeng/calendar";
+import {GalleryComponent} from "./gallery/gallery.component";
+import {GalleriaModule} from "primeng/galleria";
+import {PaginatorModule} from "primeng/paginator";
 
 @NgModule({
   declarations: [
@@ -30,7 +33,8 @@ import {CalendarModule} from "primeng/calendar";
     MainComponent,
     ReportsComponent,
     StatsComponent,
-    StatsTableComponent
+    StatsTableComponent,
+    GalleryComponent
   ],
   imports: [
     BrowserModule,
@@ -49,7 +53,9 @@ import {CalendarModule} from "primeng/calendar";
     DropdownModule,
     ProgressSpinnerModule,
     DialogModule,
-    CalendarModule
+    CalendarModule,
+    GalleriaModule,
+    PaginatorModule
   ],
   providers: [{
       provide: HTTP_INTERCEPTORS,

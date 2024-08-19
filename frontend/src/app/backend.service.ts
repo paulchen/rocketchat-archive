@@ -1,5 +1,5 @@
 import {Injectable} from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {Observable} from "rxjs";
 import {Channel, ChannelData, ChannelStats} from "./channel-data";
 import {MessageData, MessageHistory, MessagePage} from "./message-data";
@@ -17,8 +17,8 @@ export class BackendService {
     return this.http.get<ChannelData>("./services/channels");
   }
 
-  getMessages(channel: Channel, page: number, limit: number, sort: string, userIds: string[], message: string, date: string): Observable<MessageData> {
-    const params = { page: page, limit: limit, sort: sort, userIds: userIds.join(","), text: message, date: date };
+  getMessages(channel: Channel, page: number, limit: number, sort: string, userIds: string[], message: string, date: string, attachments: boolean): Observable<MessageData> {
+    const params = { page: page, limit: limit, sort: sort, userIds: userIds.join(","), text: message, date: date, attachments: attachments ? 1 : 0 };
     return this.http.get<MessageData>("./services/channels/" + encodeURIComponent(channel.id) + "/messages", { params });
   }
 

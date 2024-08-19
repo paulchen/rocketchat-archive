@@ -1,0 +1,53 @@
+<div *ngIf="channelNotFound">Channel not found.</div>
+
+<div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
+  <div style="height: 100px; width: 100px;">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+</div>
+
+<div class="stats" *ngIf="dataLoaded && !channelNotFound">
+  <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
+    <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
+      <ng-template pTemplate="content">
+        <div style="text-align: center;">
+          <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
+        </div>
+
+        <!-- TODO filters -->
+
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalRecords"
+          [rowsPerPageOptions]="rowsPerPageOptions" />
+
+        <div class="grid">
+          <div *ngFor="let image of images; let index = index;" class="col-12 xl:col-2 lg:col-3 md:col-6 align-content-center" style="text-align: center;">
+            <img [src]="image.url" [alt]="image.alt" [title]="image.title" style="cursor: pointer; max-width: 80%; max-height: 200px;" (click)="imageClick(index)"/>
+          </div>
+        </div>
+
+        <p-galleria
+          [(visible)]="showGallery"
+          [(activeIndex)]="activeIndex"
+          [value]="images"
+          [responsiveOptions]="responsiveOptions"
+          [containerStyle]="{ 'max-width': '100%' }"
+          [fullScreen]="true"
+          [showThumbnails]="false"
+          [showItemNavigators]="true"
+          [numVisible]="5">
+          <ng-template pTemplate="item" let-item>
+            <img [src]="item.url" [alt]="item.alt" [title]="item.title" style="max-width: 90vh; max-height: 90vh;" />
+          </ng-template>
+          <ng-template pTemplate="caption" let-item>
+            <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
+            <p>{{item.description}}</p>
+          </ng-template>
+        </p-galleria>
+      </ng-template>
+    </p-tabPanel>
+  </p-tabView>
+</div>
