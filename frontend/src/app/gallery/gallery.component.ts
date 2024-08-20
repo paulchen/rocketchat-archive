@@ -226,7 +226,7 @@ export class GalleryComponent implements OnInit {
   }
 
   messageClick(message: Message) {
-      let url = location.origin + this.locationStrategy.getBaseHref() + "channel/" + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(message.id);
+      let url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(message.id);
       navigator.clipboard.writeText(url).then(() => {
         this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
       }).catch(() => {
