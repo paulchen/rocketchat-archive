@@ -6,6 +6,7 @@ import {ReportsComponent} from "./reports/reports.component";
 import {GalleryComponent} from "./gallery/gallery.component";
 
 const routes: Routes = [
+  { path: 'gallery/:channel/:page', component: GalleryComponent },
   { path: 'gallery/:channel', component: GalleryComponent },
   { path: 'stats', component: StatsComponent },
   { path: 'stats/:channel', component: StatsComponent },

@@ -1,3 +1,5 @@
+<p-toast></p-toast>
+
 <div *ngIf="channelNotFound">Channel not found.</div>
 
 <div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
@@ -14,14 +16,35 @@
           <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
         </div>
 
-        <!-- TODO filters -->
-
         <p-paginator
           (onPageChange)="onPageChange($event)"
           [first]="first"
           [rows]="rows"
           [totalRecords]="totalRecords"
           [rowsPerPageOptions]="rowsPerPageOptions" />
+
+        <div class="card flex flex-wrap gap-3 p-fluid pb-3">
+          <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
+            <label for="calendarFilter" class="font-bold block mb-2">Timestamp</label>
+            <p-calendar [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="calendarFilter" />
+          </div>
+          <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
+            <label for="userFilter" class="font-bold block mb-2">Users</label>
+            <p-multiSelect [options]="users" [(ngModel)]="selectedUsers" optionLabel="username" [showClear]="true" inputId="userFilter" />
+          </div>
+          <div class="flex-auto w-12 xl:w-5 lg:w-5 md:w-5">
+            <label for="messageFilter" class="font-bold block mb-2">Message</label>
+            <input type="text" pInputText [(ngModel)]="messageFilter" id="messageFilter"/>
+          </div>
+          <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
+            <label class="font-bold block mb-2">&nbsp;</label>
+            <p-button label="Apply" (onClick)="applyFilter()" />
+          </div>
+          <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
+            <label class="font-bold block mb-2">&nbsp;</label>
+            <p-button label="Clear" (onClick)="clearFilter()" />
+          </div>
+        </div>
 
         <div class="grid">
           <div *ngFor="let image of images; let index = index;" class="col-12 xl:col-2 lg:col-3 md:col-6 align-content-center" style="text-align: center;">
@@ -45,6 +68,10 @@
           <ng-template pTemplate="caption" let-item>
             <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
             <p>{{item.description}}</p>
+            <p>
+              <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
+              <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" label="{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}" style="padding: 0;"></button>
+            </p>
           </ng-template>
         </p-galleria>
       </ng-template>

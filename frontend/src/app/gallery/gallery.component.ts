@@ -1,15 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData} from "../channel-data";
-import {Location} from "@angular/common";
+import {Location, LocationStrategy} from "@angular/common";
 import clientConfiguration from '../../client-configuration.json'
 import {PaginatorState} from "primeng/paginator";
+import {User} from "../user-data";
+import {Message} from "../message-data";
+import {MessageService} from "primeng/api";
 
 @Component({
   selector: 'app-stats',
   templateUrl: './gallery.component.html',
-  styleUrls: ['./gallery.component.scss']
+  styleUrls: ['./gallery.component.scss'],
+  providers: [MessageService]
 })
 export class GalleryComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
@@ -25,12 +29,18 @@ export class GalleryComponent implements OnInit {
   rows: number = 100;
   totalRecords: unknown;
   rowsPerPageOptions = [100, 500, 1000];
+  selectedDate: Date | undefined;
+  selectedUsers: User[] = [];
+  users: User[] = [];
+  messageFilter: string = "";
 
   constructor(
     public router: Router,
     private route: ActivatedRoute,
     private backendService: BackendService,
-    private location: Location
+    private location: Location,
+    private locationStrategy: LocationStrategy,
+    private messageService: MessageService,
   ) { }
 
   ngOnInit(): void {
@@ -49,38 +59,86 @@ export class GalleryComponent implements OnInit {
       }
     ];
 
+    let userIds: string[] = [];
+
+    this.route.pathFromRoot[1].queryParams.subscribe(params => {
+      if (Object.prototype.hasOwnProperty.call(params, 'users')) {
+        userIds = params['users'].split(",").filter((id: string) => id);
+      }
+      if (Object.prototype.hasOwnProperty.call(params, 'regex')) {
+        this.messageFilter = params['regex'];
+      }
+      if (Object.prototype.hasOwnProperty.call(params, 'date')) {
+        this.selectedDate = new Date(params['date']);
+      }
+      if (Object.prototype.hasOwnProperty.call(params, 'limit')) {
+        const limit = Number(params['limit']);
+        if (!isNaN(limit) && this.rowsPerPageOptions.indexOf(limit) !== -1) {
+          this.rows = limit;
+        }
+      }
+    });
+    this.route.pathFromRoot[1].url.subscribe(val => {
+      if (val.length > 2) {
+        const page = Number(val[2]);
+        this.first = (page - 1) * this.rows;
+      }
+    });
+
+    this.getUsers(userIds);
+  }
+
+  private getUsers(userIds: string[]): void {
+    this.backendService.getUsers().subscribe(response => {
+      this.users = response.users;
+      this.selectedUsers = response.users.filter(user => { return userIds.indexOf(user.id) !== -1 })
+      this.getChannels();
+    });
+  }
+
+  private getChannels(): void {
     this.backendService.getChannels().subscribe(response => {
       this.channelData = response;
-      // this.channelData.channels.unshift.apply(this.channelData.channels, [{ name: "all", id: "all" }])
       const channel = this.route.snapshot.paramMap.get('channel');
       if (channel == undefined) {
         this.channelNotFound = true;
         this.dataLoaded = true;
       }
       else {
-        this.selectChannel(this.route.snapshot.paramMap.get('channel') ?? '');
+        this.selectChannel(channel);
       }
     });
   }
 
   private selectChannel(channelId: string): void {
-    let channel = this.findChannel(channelId);
+    let channel = this.channelData.channels.find((item) => { return item.id == channelId });
     if (channel == undefined) {
       this.channelNotFound = true;
       this.dataLoaded = true;
       return;
     }
-
-    this.loadData(channel);
+    else {
+      this.selectedChannel = channel;
+      this.tabIndex = this.channelData.channels.indexOf(channel);
+      this.loadData();
+    }
   }
 
-  private loadData(channel: Channel) {
-    this.selectedChannel = channel;
+  private getSelectedDate(): string {
+    if (this.selectedDate == undefined) {
+      return ""
+    }
+    return new Date(this.selectedDate.getTime() - this.selectedDate.getTimezoneOffset()*60000).toISOString().split('T')[0]
+  }
+
+  private loadData() {
     this.dataLoaded = false;
-    // TODO implement filters
 
     const page = (this.first / this.rows) + 1;
-    this.backendService.getMessages(channel, page, this.rows, "desc", [], "", "", true).subscribe(response => {
+    const userIds = this.selectedUsers.map(user => { return user.id });
+    const date = this.getSelectedDate();
+
+    this.backendService.getMessages(this.selectedChannel, page, this.rows, "desc", userIds, this.messageFilter, date, true).subscribe(response => {
       this.images = [];
       this.totalRecords = response.messageCount;
       response.messages.forEach(item => {
@@ -93,6 +151,7 @@ export class GalleryComponent implements OnInit {
             url: clientConfiguration.rocketchatUrl + filename,
             title: attachment.title,
             description: attachment.description,
+            message: item
           })
         });
       });
@@ -100,11 +159,6 @@ export class GalleryComponent implements OnInit {
       this.updateUrl();
     });
   }
-
-  private findChannel(channelId: string): Channel | undefined {
-    return this.channelData.channels.find((item) => { return item.id == channelId } );
-  }
-
   navigateToArchive(): void {
     if (this.selectedChannel.id == 'all') {
       this.router.navigate(['/']).then();
@@ -116,18 +170,26 @@ export class GalleryComponent implements OnInit {
 
   handleTabChange(event: any) {
     this.selectedChannel = this.channelData.channels[event.index];
-    this.reloadData()
-  }
-
-  reloadData() {
-    this.loadData(this.selectedChannel);
+    this.loadData();
   }
 
   private updateUrl(): void {
-    let url = '/gallery/' + this.selectedChannel.id;
+    const page = (this.first / this.rows) + 1;
+    let url = '/gallery/' + this.selectedChannel.id + '/' + page;
 
     let parameters: string[] = [];
-    // TODO
+    if (this.selectedUsers.length > 0) {
+      parameters.push('users=' + this.selectedUsers.map(user => encodeURIComponent(user.id)).join(','));
+    }
+    if (this.messageFilter) {
+      parameters.push('regex=' + encodeURIComponent(this.messageFilter));
+    }
+    if (this.selectedDate) {
+      parameters.push('date=' + encodeURIComponent(this.getSelectedDate()));
+    }
+    if (this.rows != this.rowsPerPageOptions[0]) {
+      parameters.push('limit=' + this.rows);
+    }
     if (parameters.length > 0) {
       url += '?';
       url += parameters.join("&")
@@ -146,7 +208,29 @@ export class GalleryComponent implements OnInit {
       this.first = event.first;
       this.rows = event.rows;
 
-      this.reloadData();
+      this.loadData();
     }
+  }
+
+  applyFilter() {
+    this.first = 0;
+    this.loadData();
+  }
+
+  clearFilter() {
+    this.selectedDate = undefined;
+    this.selectedUsers = [];
+    this.messageFilter = "";
+
+    this.applyFilter();
+  }
+
+  messageClick(message: Message) {
+      let url = location.origin + this.locationStrategy.getBaseHref() + "channel/" + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(message.id);
+      navigator.clipboard.writeText(url).then(() => {
+        this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
+      }).catch(() => {
+        this.messageService.add({ severity: 'error', summary: 'Error copying link to clipboard'});
+      });
   }
 }

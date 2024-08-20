@@ -26,6 +26,7 @@ import {CalendarModule} from "primeng/calendar";
 import {GalleryComponent} from "./gallery/gallery.component";
 import {GalleriaModule} from "primeng/galleria";
 import {PaginatorModule} from "primeng/paginator";
+import {InputTextModule} from "primeng/inputtext";
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import {PaginatorModule} from "primeng/paginator";
     DialogModule,
     CalendarModule,
     GalleriaModule,
-    PaginatorModule
+    PaginatorModule,
+    InputTextModule
   ],
   providers: [{
       provide: HTTP_INTERCEPTORS,
