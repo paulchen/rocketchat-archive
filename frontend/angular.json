@@ -80,7 +80,8 @@
               "browserTarget": "rocketchat-archive:build:production"
             },
             "development": {
-              "browserTarget": "rocketchat-archive:build:development"
+              "browserTarget": "rocketchat-archive:build:development",
+              "disableHostCheck": true
             }
           },
           "options": {

@@ -38,6 +38,8 @@
       <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
         <ng-template pTemplate="content">
           <div style="text-align: center;">
+            <button pButton type="button" class="p-button-link" (click)="navigateToGallery()" label="Gallery"></button>
+
             <button pButton type="button" class="p-button-link" (click)="navigateToStats()" label="Stats"></button>
 
             <button pButton type="button" class="p-button-link" (click)="navigateToReports()" label="Reports"></button>
