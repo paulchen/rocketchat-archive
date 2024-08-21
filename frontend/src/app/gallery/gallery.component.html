@@ -48,7 +48,7 @@
 
         <div class="grid">
           <div *ngFor="let image of images; let index = index;" class="col-12 xl:col-2 lg:col-3 md:col-6 align-content-center" style="text-align: center;">
-            <img [src]="image.url" [alt]="image.alt" [title]="image.title" style="cursor: pointer; max-width: 80%; max-height: 200px;" (click)="imageClick(index)"/>
+            <img [src]="image.url" [alt]="image.title" [title]="image.title" style="cursor: pointer; max-width: 80%; max-height: 200px;" (click)="imageClick(index)"/>
           </div>
         </div>
 
@@ -56,24 +56,34 @@
           [(visible)]="showGallery"
           [(activeIndex)]="activeIndex"
           [value]="images"
-          [responsiveOptions]="responsiveOptions"
           [containerStyle]="{ 'max-width': '100%' }"
           [fullScreen]="true"
           [showThumbnails]="false"
           [showItemNavigators]="true"
-          [numVisible]="5">
+          (keyup)="handleKeyUp($event)">
           <ng-template pTemplate="item" let-item>
-            <img [src]="item.url" [alt]="item.alt" [title]="item.title" style="max-width: 90vh; max-height: 90vh;" />
-          </ng-template>
-          <ng-template pTemplate="caption" let-item>
-            <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
-            <p>{{item.description}}</p>
-            <p>
-              <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
-              <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" label="{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}" style="padding: 0;"></button>
-            </p>
+            <div>
+              <div style="text-align: center;">
+                <img [src]="item.url" [alt]="item.title" [title]="item.title" style="max-width: 90vw; max-height: 80vh;" /><br />
+              </div>
+              <div style="margin-left: 1em; margin-right: 1em;">
+                <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
+                <p>{{item.description}}</p>
+                <p>
+                  <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
+                  <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" label="{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}" style="padding: 0;"></button>
+                </p>
+              </div>
+            </div>
           </ng-template>
         </p-galleria>
+
+        <p-paginator
+          (onPageChange)="onPageChange($event)"
+          [first]="first"
+          [rows]="rows"
+          [totalRecords]="totalRecords"
+          [rowsPerPageOptions]="rowsPerPageOptions" />
       </ng-template>
     </p-tabPanel>
   </p-tabView>

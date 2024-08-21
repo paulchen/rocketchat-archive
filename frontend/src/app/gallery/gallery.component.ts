@@ -22,7 +22,6 @@ export class GalleryComponent implements OnInit {
   channelNotFound: true;
   tabIndex: number;
   images: any[] | undefined;
-  responsiveOptions: any[] | undefined;
   showGallery: boolean = false;
   activeIndex: number;
   first: number = 0;
@@ -44,21 +43,6 @@ export class GalleryComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.responsiveOptions = [
-      {
-        breakpoint: '1024px',
-        numVisible: 5
-      },
-      {
-        breakpoint: '768px',
-        numVisible: 3
-      },
-      {
-        breakpoint: '560px',
-        numVisible: 1
-      }
-    ];
-
     let userIds: string[] = [];
 
     this.route.pathFromRoot[1].queryParams.subscribe(params => {
@@ -232,5 +216,25 @@ export class GalleryComponent implements OnInit {
       }).catch(() => {
         this.messageService.add({ severity: 'error', summary: 'Error copying link to clipboard'});
       });
+  }
+
+  handleKeyUp(event: KeyboardEvent) {
+    switch(event.key) {
+      case "Escape":
+        this.showGallery = false;
+        break;
+      case "ArrowLeft":
+        this.activeIndex--;
+        if (this.activeIndex < 0) {
+          this.activeIndex = 0;
+        }
+        break;
+      case "ArrowRight":
+        this.activeIndex++;
+        if (this.activeIndex == this.images?.length) {
+          this.activeIndex = this.images?.length - 1;
+        }
+        break;
+    }
   }
 }
