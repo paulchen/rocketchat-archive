@@ -5,9 +5,10 @@ import java.io.ByteArrayOutputStream
 val ktorVersion = "2.3.12"
 val log4jVersion = "2.23.1"
 val jacksonVersion = "2.17.2"
+val kotlinVersion = "2.0.20"
 
 plugins {
-    kotlin("jvm") version "2.0.0"
+    kotlin("jvm") version "2.0.20"
     application
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -49,14 +50,14 @@ dependencies {
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    implementation("org.slf4j:slf4j-api:2.0.13")
+    implementation("org.slf4j:slf4j-api:2.0.16")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
-    implementation("org.apache.commons:commons-lang3:3.15.0")
+    implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.1.2")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.1.3")
 
-    testImplementation("org.jetbrains.kotlin:kotlin-test:2.0.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
 
 tasks.test {
