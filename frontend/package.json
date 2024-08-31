@@ -28,7 +28,7 @@
     "vite": "^5.3.4"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "^17.3.8",
+    "@angular-devkit/build-angular": "^17.3.9",
     "@angular/cli": "^17.3.8",
     "@angular/compiler-cli": "^17.3.12",
     "@types/jasmine": "~5.1.4",
