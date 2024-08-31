@@ -255,7 +255,7 @@ export class MainComponent implements OnInit {
 
     const component = this;
     let currentReloadCount = this.reloadCount;
-    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message, date).subscribe({
+    this.backendService.getMessages(this.selectedChannel, page, limit, sort, userIds, message, date, false).subscribe({
       next: response => {
         if (currentReloadCount != this.reloadCount) {
           // during the backend, reloadData() was called another time (for pagination, filtering etc.)
@@ -338,6 +338,11 @@ export class MainComponent implements OnInit {
   navigateToReports() {
     clearTimeout(this.timeout);
     this.router.navigate(['/reports']).then();
+  }
+
+  navigateToGallery() {
+    clearTimeout(this.timeout);
+    this.router.navigate(['/gallery', this.selectedChannel.id ]).then();
   }
 
   getUserId(username: string): string {

@@ -85,6 +85,7 @@ class RestEndpointForFrontend : Logging {
                                 queryParameter { name = "userIds" }
                                 queryParameter { name = "text" }
                                 queryParameter { name = "date" }
+                                queryParameter { name = "attachments" }
                                 paginationParameters(this)
                             }
                             result {
@@ -93,9 +94,10 @@ class RestEndpointForFrontend : Logging {
                                 val userIds = parameter("userIds")?.trim()?.split(",") ?: emptyList()
                                 val text = parameter("text")?.trim() ?: ""
                                 val date = dateParameter("date")
+                                val attachments = boolParameter("attachments") ?: false
 
                                 val (messages, messageCount) =
-                                    RocketchatDatabase().getMessages(channel, userIds, text, date, paginationParameters)
+                                    RocketchatDatabase().getMessages(channel, userIds, text, date, attachments, paginationParameters)
 
                                 val processedMessages = messages
                                     .map { Message(it.id, it.rid, MessageProcessor.process(it.message), it.timestamp, it.username, it.attachments, it.editedAt, it.editedBy) }
