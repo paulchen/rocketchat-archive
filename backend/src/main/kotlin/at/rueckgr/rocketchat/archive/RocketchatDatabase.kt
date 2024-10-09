@@ -64,7 +64,7 @@ class RocketchatDatabase : Logging {
 
     private fun getMessagesByParent(parent: String) = getMessagesByField(parent, RocketchatMessage::parent.name)
 
-    fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, attachments: Boolean, paginationParameters: PaginationParameters):
+    fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, attachments: AttachmentType?, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Long> {
         val filterConditions = mutableListOf(
             eq(RocketchatMessage::rid.name, channel),
@@ -94,8 +94,24 @@ class RocketchatDatabase : Logging {
             filterConditions.add(gte(RocketchatMessage::ts.name, zonedDateTime))
             filterConditions.add(lt(RocketchatMessage::ts.name, zonedDateTime.plusDays(1)))
         }
-        if (attachments) {
-            filterConditions.add(exists("attachments.image_url"))
+        if (attachments != null) {
+            when (attachments) {
+                AttachmentType.ALL -> filterConditions.add(or(
+                    exists("attachments.title"),
+                    exists("attachments.message_link")
+                ))
+                AttachmentType.MESSAGE -> filterConditions.add(exists("attachments.message_link"))
+                AttachmentType.IMAGE -> filterConditions.add(exists("attachments.image_url"))
+                AttachmentType.AUDIO -> filterConditions.add(exists("attachments.audio_url"))
+                AttachmentType.VIDEO -> filterConditions.add(exists("attachments.video_url"))
+                AttachmentType.FILE -> filterConditions.add(and(
+                    eq("attachments.type", "file"),
+                    not(exists("attachments.message_link")),
+                    not(exists("attachments.image_url")),
+                    not(exists("attachments.audio_url")),
+                    not(exists("attachments.video_url"))
+                ))
+            }
         }
 
         val messages = if (paginationParameters.sortAscending) {
@@ -228,18 +244,28 @@ class RocketchatDatabase : Logging {
             message.msg,
             message.ts,
             message.u.username,
-            message.attachments?.filter { it.type != null }?.map { mapAttachment(it) } ?: emptyList(),
+            message.attachments?.map { mapAttachment(it) } ?: emptyList(),
             message.editedAt,
             message.editedBy?.username
         )
 
     private fun mapAttachment(attachment: RocketchatAttachment) =
-        Attachment(attachment.type!!, attachment.title, attachment.title_link, attachment.description)
+        Attachment(attachment.type, attachment.title, attachment.title_link, attachment.description, attachment.message_link)
 
     private fun mapReport(report: RocketchatReport, users: Map<String, User>) =
         Report(report._id, mapMessage(report.message), report.description, report.ts, users[report.userId]!!)
 
     data class PaginationParameters(val page: Int, val limit: Int, val sortAscending: Boolean)
+
+    enum class AttachmentType {
+        ALL,
+        MESSAGE,
+        IMAGE,
+        AUDIO,
+        VIDEO,
+        FILE
+        ;
+    }
 }
 
 

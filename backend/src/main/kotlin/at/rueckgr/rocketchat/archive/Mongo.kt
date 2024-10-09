@@ -17,6 +17,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
+import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
 
 class MongoOperation(private val pipelineContext: PipelineContext<*, ApplicationCall>) {
@@ -46,15 +47,8 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
         }
     }
 
-    fun boolParameter(name: String): Boolean? {
-        val value = intParameter(name)
-        return if (value == null) {
-            null
-        }
-        else {
-            value == 1
-        }
-    }
+    inline fun <reified T: Enum<T>> enumParameter(name: String) =
+        enumEntries<T>().find { it.name.equals(parameter(name), true) }
 
     private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {

@@ -122,7 +122,7 @@ export class GalleryComponent implements OnInit {
     const userIds = this.selectedUsers.map(user => { return user.id });
     const date = this.getSelectedDate();
 
-    this.backendService.getMessages(this.selectedChannel, page, this.rows, "desc", userIds, this.messageFilter, date, true).subscribe(response => {
+    this.backendService.getMessages(this.selectedChannel, page, this.rows, "desc", userIds, this.messageFilter, date, 'image').subscribe(response => {
       this.images = [];
       this.totalRecords = response.messageCount;
       response.messages.forEach(item => {

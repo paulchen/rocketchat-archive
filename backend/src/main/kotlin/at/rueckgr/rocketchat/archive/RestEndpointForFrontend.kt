@@ -94,7 +94,7 @@ class RestEndpointForFrontend : Logging {
                                 val userIds = parameter("userIds")?.trim()?.split(",") ?: emptyList()
                                 val text = parameter("text")?.trim() ?: ""
                                 val date = dateParameter("date")
-                                val attachments = boolParameter("attachments") ?: false
+                                val attachments = enumParameter<RocketchatDatabase.AttachmentType>("attachments")
 
                                 val (messages, messageCount) =
                                     RocketchatDatabase().getMessages(channel, userIds, text, date, attachments, paginationParameters)
