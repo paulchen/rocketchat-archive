@@ -249,9 +249,24 @@ class RocketchatDatabase : Logging {
             message.editedBy?.username
         )
 
-    private fun mapAttachment(attachment: RocketchatAttachment) =
-        Attachment(attachment.type, attachment.title, attachment.title_link, attachment.description, attachment.message_link)
-
+    private fun mapAttachment(attachment: RocketchatAttachment): Attachment {
+        val type = if (attachment.message_link != null) {
+            "message"
+        }
+        else if (attachment.image_url != null) {
+            "image"
+        }
+        else if (attachment.audio_url != null) {
+            "audio"
+        }
+        else if (attachment.video_url != null) {
+            "video"
+        }
+        else {
+            "file"
+        }
+        return Attachment(type, attachment.title, attachment.title_link, attachment.description, attachment.message_link)
+    }
     private fun mapReport(report: RocketchatReport, users: Map<String, User>) =
         Report(report._id, mapMessage(report.message), report.description, report.ts, users[report.userId]!!)
 
