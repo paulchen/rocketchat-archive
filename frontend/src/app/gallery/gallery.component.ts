@@ -126,7 +126,9 @@ export class GalleryComponent implements OnInit {
       this.images = [];
       this.totalRecords = response.messageCount;
       response.messages.forEach(item => {
-        item.attachments.forEach(attachment => {
+        item.attachments
+            .filter(attachment => attachment.titleLink != null)
+            .forEach(attachment => {
           let filename = attachment.titleLink;
           while(filename.startsWith("/")) {
             filename = filename.substring(1);
