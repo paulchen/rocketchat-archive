@@ -20,6 +20,7 @@ services:
       - RAVUSBOT_USERNAME
       - RAVUSBOT_PASSWORD
       - TZ
+      - FAVOURITE_CHANNELS
     build: backend
     networks:
       - backend

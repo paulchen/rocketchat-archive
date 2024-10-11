@@ -1,5 +1,6 @@
 export class ChannelData {
   channels: Channel[];
+  favouriteChannels: string[];
 }
 
 export class Channel {

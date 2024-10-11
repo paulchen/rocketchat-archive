@@ -11,7 +11,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 @Suppress("ExtractKtorModule")
-class RestEndpointForFrontend : Logging {
+class RestEndpointForFrontend(private val favouriteChannels: List<String>) : Logging {
     fun start() {
         embeddedServer(Netty, 8080) {
             install(ContentNegotiation) {
@@ -31,7 +31,12 @@ class RestEndpointForFrontend : Logging {
                 route("/channels") {
                     get {
                         mongoOperation(this) {
-                            result { mapOf("channels" to RocketchatDatabase().getChannels()) }
+                            result {
+                                mapOf(
+                                    "channels" to RocketchatDatabase().getChannels(),
+                                    "favouriteChannels" to favouriteChannels
+                                )
+                            }
                         }
                     }
                 }

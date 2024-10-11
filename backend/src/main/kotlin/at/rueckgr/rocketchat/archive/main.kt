@@ -40,6 +40,8 @@ fun main() {
         return
     }
 
+    val favouriteChannels = System.getenv("FAVOURITE_CHANNELS")?.split(",") ?: emptyList()
+
     RestEndpointForBot(ravusBotService).start()
-    RestEndpointForFrontend().start()
+    RestEndpointForFrontend(favouriteChannels).start()
 }
