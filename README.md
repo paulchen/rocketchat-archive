@@ -57,12 +57,16 @@ docker-compose build
 Finally, you are ready to start everything up:
 
 ```
-RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... docker-compose up
+RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... FAVORUITE_CHANNELS=... docker-compose up
 ```
 
 Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
 [RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
 Set `DATABASE` to the name of your MongoDB database (usually `rocketchat`).
+Set `FAVOURITE_CHANNELS` to a comma-separated list of channel names (without leading `#`) that should come first
+the channel list.
+You can add the `TZ` variable and set it to a time zone from the Olsen Database (e.g. `Europe/Vienna`) to get
+the timestamps right. 
 
 The frontend will listen on port `42773` locally, so you may want to point your browser to http://localhost:42773/.
 
@@ -117,6 +121,8 @@ WantedBy=multi-user.target
 RAVUSBOT_USERNAME=...
 RAVUSBOT_PASSWORD=...
 DATABASE=...
+TZ=...
+FAVOURITE_CHANNELS=...
 ```
 * This application does not involve any authentication.
   Therefore, without taking any additional measures, all messages in all channels would be exposed to the public.

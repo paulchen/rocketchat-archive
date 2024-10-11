@@ -8,6 +8,7 @@ import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
 import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
 import {Table} from "primeng/table";
+import {sortChannels} from "../util";
 
 @Component({
   selector: 'app-main',
@@ -151,7 +152,7 @@ export class MainComponent implements OnInit {
 
   private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
     this.backendService.getChannels().subscribe(response => {
-      this.channelData = response;
+      this.channelData = sortChannels(response);
 
       this.selectedChannel = this.channelData.channels[0];
       if (channel) {
