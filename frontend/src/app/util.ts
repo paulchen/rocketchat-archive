@@ -8,7 +8,7 @@ export function sortChannels(channelData: ChannelData): ChannelData {
       channels.push(channel);
     }
   });
-  channels.push(...(channelData.channels.filter(channel => !(channel.name in channelData.favouriteChannels))))
+  channels.push(...(channelData.channels.filter(channel => channelData.favouriteChannels.indexOf(channel.name) == -1)))
 
   return { channels: channels, favouriteChannels: channelData.favouriteChannels };
 }
