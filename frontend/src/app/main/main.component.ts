@@ -135,12 +135,17 @@ export class MainComponent implements OnInit {
   }
 
   private createLink(rocketchat: boolean, selectedMessage: Message) {
+    const channel = this.getChannel(selectedMessage.rid);
+    if (channel == null) {
+      this.messageService.add({ severity: 'error', summary: 'Error creating link'});
+      return;
+    }
     let url;
     if(rocketchat) {
-      url = this.rocketchatUrl + "channel/" + encodeURIComponent(this.selectedChannel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
+      url = this.rocketchatUrl + "channel/" + encodeURIComponent(channel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
-      url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(selectedMessage.id);
+      url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(channel.id) + "/" + encodeURIComponent(selectedMessage.id);
     }
     navigator.clipboard.writeText(url).then(() => {
       this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
@@ -151,9 +156,10 @@ export class MainComponent implements OnInit {
 
   private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
     this.backendService.getChannels().subscribe(response => {
+      response.channels.unshift({ name: 'all', id: 'all'});
       this.channelData = response;
 
-      this.selectedChannel = this.channelData.channels[0];
+      this.selectedChannel = this.channelData.channels[1];
       if (channel) {
         this.channelNotFound = true;
         for (let i = 0; i < this.channelData.channels.length; i++) {
@@ -165,9 +171,9 @@ export class MainComponent implements OnInit {
           }
         }
       }
-      else if (this.channelData.channels.length > 0) {
-        this.selectedChannel = this.channelData.channels[0];
-        this.tabIndex = 0;
+      else if (this.channelData.channels.length > 1) {
+        this.selectedChannel = this.channelData.channels[1];
+        this.tabIndex = 1;
         this.channelNotFound = false;
       }
 
@@ -342,7 +348,11 @@ export class MainComponent implements OnInit {
 
   navigateToGallery() {
     clearTimeout(this.timeout);
-    this.router.navigate(['/gallery', this.selectedChannel.id ]).then();
+    let channel = this.selectedChannel;
+    if (channel.id == 'all') {
+      channel = this.channelData.channels[1];
+    }
+    this.router.navigate(['/gallery', channel.id ]).then();
   }
 
   getUserId(username: string): string {
@@ -353,6 +363,16 @@ export class MainComponent implements OnInit {
       }
     });
     return userId;
+  }
+
+  getChannel(id: string): Channel | null {
+    let channel = null;
+    this.channelData.channels.forEach(item => {
+      if(item.id == id) {
+        channel = item;
+      }
+    });
+    return channel;
   }
 
   showOverlay(attachment: Attachment) {
@@ -368,7 +388,7 @@ export class MainComponent implements OnInit {
   }
 
   showHistory(message: Message) {
-    this.backendService.getMessageHistory(this.selectedChannel.id, message.id).subscribe({
+    this.backendService.getMessageHistory(message.rid, message.id).subscribe({
         next: response => {
           this.messageHistory = response.history;
           this.showHistoryOverlay = true;

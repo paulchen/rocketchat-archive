@@ -67,10 +67,16 @@ class RocketchatDatabase : Logging {
     fun getMessages(channel: String, userIds: List<String>, text: String, date: LocalDate?, attachments: AttachmentType?, paginationParameters: PaginationParameters):
             ImmutablePair<Iterable<Message>, Long> {
         val filterConditions = mutableListOf(
-            eq(RocketchatMessage::rid.name, channel),
             eq(RocketchatMessage::t.name, null),
             eq(RocketchatMessage::_hidden.name, null)
         )
+        if (channel == "all") {
+            val channelIds = getChannels().map { it.id }
+            filterConditions.add(`in`(RocketchatMessage::rid.name, channelIds))
+        }
+        else {
+            filterConditions.add(eq(RocketchatMessage::rid.name, channel))
+        }
         if (userIds.isNotEmpty() && !(userIds.size == 1 && userIds.first().isBlank())) {
             filterConditions.add(`in`("u._id", userIds))
         }

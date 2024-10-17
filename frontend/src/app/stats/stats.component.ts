@@ -86,12 +86,7 @@ export class StatsComponent implements OnInit {
   }
 
   navigateToArchive(): void {
-    if (this.selectedChannel.id == 'all') {
-      this.router.navigate(['/']).then();
-    }
-    else {
-      this.router.navigate(['/' + this.selectedChannel.id]).then();
-    }
+    this.router.navigate(['/' + this.selectedChannel.id]).then();
   }
 
   reloadData() {
