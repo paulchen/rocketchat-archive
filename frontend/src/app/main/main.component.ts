@@ -156,6 +156,7 @@ export class MainComponent implements OnInit {
 
   private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
     this.backendService.getChannels().subscribe(response => {
+      response.channels.forEach(channel => channel.name = '#' + channel.name)
       response.channels.unshift({ name: 'all', id: 'all'});
       this.channelData = response;
 

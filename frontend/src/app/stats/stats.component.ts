@@ -27,6 +27,7 @@ export class StatsComponent implements OnInit {
 
   ngOnInit(): void {
     this.backendService.getChannels().subscribe(response => {
+      response.channels.forEach(channel => channel.name = '#' + channel.name)
       this.channelData = response;
       this.channelData.channels.unshift.apply(this.channelData.channels, [{ name: "all", id: "all" }])
       const channel = this.route.snapshot.paramMap.get('channel');

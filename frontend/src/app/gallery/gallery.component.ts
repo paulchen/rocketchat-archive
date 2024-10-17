@@ -82,6 +82,7 @@ export class GalleryComponent implements OnInit {
 
   private getChannels(): void {
     this.backendService.getChannels().subscribe(response => {
+      response.channels.forEach(channel => channel.name = '#' + channel.name)
       response.channels.unshift({ name: 'all', id: 'all'});
       this.channelData = response;
       const channel = this.route.snapshot.paramMap.get('channel');

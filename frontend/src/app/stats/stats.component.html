@@ -16,10 +16,10 @@
       Channel:
       <p-dropdown [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
         <ng-template pTemplate="selectedItem">
-          <div><ng-container *ngIf="selectedChannel.id != 'all'">#</ng-container>{{selectedChannel.name}}</div>
+          <div>{{selectedChannel.name}}</div>
         </ng-template>
         <ng-template let-channel pTemplate="item">
-          <ng-container *ngIf="channel.id != 'all'">#</ng-container>{{channel.name}}
+          {{channel.name}}
         </ng-template>
       </p-dropdown>
       From:

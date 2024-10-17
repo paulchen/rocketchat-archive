@@ -10,7 +10,7 @@
 
 <div class="stats" *ngIf="dataLoaded && !channelNotFound">
   <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
-    <p-tabPanel *ngFor="let channel of channelData.channels" header="#{{channel.name}}" [cache]="false">
+    <p-tabPanel *ngFor="let channel of channelData.channels" header="{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
         <div style="text-align: center;">
           <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
