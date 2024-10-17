@@ -8,6 +8,7 @@ import {PaginatorState} from "primeng/paginator";
 import {User} from "../user-data";
 import {Message} from "../message-data";
 import {MessageService} from "primeng/api";
+import {sortChannels} from "../util";
 
 @Component({
   selector: 'app-stats',
@@ -82,9 +83,9 @@ export class GalleryComponent implements OnInit {
 
   private getChannels(): void {
     this.backendService.getChannels().subscribe(response => {
-      response.channels.forEach(channel => channel.name = '#' + channel.name)
-      response.channels.unshift({ name: 'all', id: 'all'});
-      this.channelData = response;
+      this.channelData = sortChannels(response);
+      this.channelData.channels.forEach(channel => channel.name = '#' + channel.name)
+      this.channelData.channels.unshift({ name: 'all', id: 'all'});
       const channel = this.route.snapshot.paramMap.get('channel');
       if (channel == undefined) {
         this.channelNotFound = true;
