@@ -142,7 +142,7 @@ export class MainComponent implements OnInit {
     }
     let url;
     if(rocketchat) {
-      url = this.rocketchatUrl + "channel/" + encodeURIComponent(channel.name) + "?msg=" + encodeURIComponent(selectedMessage.id);
+      url = this.rocketchatUrl + "channel/" + encodeURIComponent(channel.name.substring(1)) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
       url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(channel.id) + "/" + encodeURIComponent(selectedMessage.id);
