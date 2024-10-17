@@ -348,11 +348,7 @@ export class MainComponent implements OnInit {
 
   navigateToGallery() {
     clearTimeout(this.timeout);
-    let channel = this.selectedChannel;
-    if (channel.id == 'all') {
-      channel = this.channelData.channels[1];
-    }
-    this.router.navigate(['/gallery', channel.id ]).then();
+    this.router.navigate(['/gallery', this.selectedChannel.id ]).then();
   }
 
   getUserId(username: string): string {

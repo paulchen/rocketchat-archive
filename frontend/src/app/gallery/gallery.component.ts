@@ -82,6 +82,7 @@ export class GalleryComponent implements OnInit {
 
   private getChannels(): void {
     this.backendService.getChannels().subscribe(response => {
+      response.channels.unshift({ name: 'all', id: 'all'});
       this.channelData = response;
       const channel = this.route.snapshot.paramMap.get('channel');
       if (channel == undefined) {
@@ -147,12 +148,7 @@ export class GalleryComponent implements OnInit {
     });
   }
   navigateToArchive(): void {
-    if (this.selectedChannel.id == 'all') {
-      this.router.navigate(['/']).then();
-    }
-    else {
-      this.router.navigate(['/' + this.selectedChannel.id]).then();
-    }
+    this.router.navigate(['/' + this.selectedChannel.id]).then();
   }
 
   handleTabChange(event: any) {
@@ -213,7 +209,7 @@ export class GalleryComponent implements OnInit {
   }
 
   messageClick(message: Message) {
-      let url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(this.selectedChannel.id) + "/" + encodeURIComponent(message.id);
+      let url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(message.rid) + "/" + encodeURIComponent(message.id);
       navigator.clipboard.writeText(url).then(() => {
         this.messageService.add({ severity: 'success', summary: 'Link copied to clipboard'});
       }).catch(() => {
