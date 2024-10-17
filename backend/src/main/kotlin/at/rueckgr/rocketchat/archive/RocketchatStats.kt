@@ -25,7 +25,10 @@ class RocketchatStats {
             .associate { it._id to it.username }
 
         val firstMessageTimestamp = database.getCollection<RocketchatMessage>("rocketchat_message")
-            .find(eq(RocketchatMessage::rid.name, channel))
+            .find(when (channel) {
+                "all" -> `in`(RocketchatMessage::rid.name, RocketchatDatabase().getChannels().map { it.id })
+                else -> eq(RocketchatMessage::rid.name, channel)
+            })
             .sort(ascending(RocketchatMessage::ts.name))
             .limit(1)
             .firstOrNull()
