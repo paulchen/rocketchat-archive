@@ -39,8 +39,10 @@ export class MainComponent implements OnInit {
   private dateFilter: string;
   rocketchatUrl: string;
   showImageOverlay: boolean = false;
+  showAudioOverlay: boolean = false;
+  showVideoOverlay: boolean = false;
   overlayTitle: string;
-  overlayImage: string;
+  overlayFile: string;
   showHistoryOverlay: boolean = false;
   messageHistory: Message[] = []
   rowsPerPageOptions = [100, 500, 1000];
@@ -269,7 +271,7 @@ export class MainComponent implements OnInit {
           // during the backend, reloadData() was called another time (for pagination, filtering etc.)
           return;
         }
-        this.messageData = response;
+        this.messageData = this.filterAttachments(response);
         this.loading = false;
 
         if (response.messages.filter(m => m.id == this.highlightedMessage).length == 0) {
@@ -291,6 +293,13 @@ export class MainComponent implements OnInit {
         this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
       }
     })
+  }
+
+  private filterAttachments(messageData: MessageData): MessageData {
+    messageData.messages.forEach(message => {
+      message.attachments = message.attachments.filter(attachment => attachment.type != "message");
+    });
+    return messageData;
   }
 
   private scrollToMessage(): void {
@@ -374,7 +383,13 @@ export class MainComponent implements OnInit {
   }
 
   showOverlay(attachment: Attachment) {
-    this.overlayImage = this.rocketchatUrl + attachment.titleLink;
+    let url = this.rocketchatUrl + attachment.titleLink;
+    if (attachment.type == 'file') {
+      window.open(url, '_blank');
+      return;
+    }
+
+    this.overlayFile = url;
     if (attachment.description) {
       this.overlayTitle = attachment.description;
     }
@@ -382,7 +397,15 @@ export class MainComponent implements OnInit {
       this.overlayTitle = attachment.title;
     }
 
-    this.showImageOverlay = true;
+    if (attachment.type == 'image') {
+      this.showImageOverlay = true;
+    }
+    else if (attachment.type == 'audio') {
+      this.showAudioOverlay = true;
+    }
+    else if (attachment.type == 'video') {
+      this.showVideoOverlay = true;
+    }
   }
 
   showHistory(message: Message) {
