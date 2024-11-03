@@ -2,7 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
-val ktorVersion = "2.3.12"
+val ktorVersion = "3.0.1"
 val log4jVersion = "2.24.1"
 val jacksonVersion = "2.18.1"
 val kotlinVersion = "2.0.21"

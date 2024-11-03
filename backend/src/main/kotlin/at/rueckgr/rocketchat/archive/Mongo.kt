@@ -4,9 +4,8 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.kotlin.client.MongoClient
 import com.mongodb.kotlin.client.MongoDatabase
 import io.ktor.http.*
-import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.util.pipeline.*
+import io.ktor.server.routing.*
 import org.bson.BsonReader
 import org.bson.BsonWriter
 import org.bson.codecs.Codec
@@ -20,7 +19,7 @@ import java.time.ZonedDateTime
 import kotlin.enums.enumEntries
 import kotlin.reflect.KClass
 
-class MongoOperation(private val pipelineContext: PipelineContext<*, ApplicationCall>) {
+class MongoOperation(private val routingContext: RoutingContext) {
     var result: () -> Any = {}
     val parameters = mutableMapOf<String, Parameter>()
 
@@ -52,8 +51,8 @@ class MongoOperation(private val pipelineContext: PipelineContext<*, Application
 
     private fun anyParameter(name: String): Any? {
         return when (parameters[name]!!.type) {
-            ParameterType.URL -> pipelineContext.call.parameters[name] ?: parameters[name]?.default
-            ParameterType.QUERY -> pipelineContext.call.request.queryParameters[name] ?: parameters[name]?.default
+            ParameterType.URL -> routingContext.call.parameters[name] ?: parameters[name]?.default
+            ParameterType.QUERY -> routingContext.call.request.queryParameters[name] ?: parameters[name]?.default
         }
     }
 }
@@ -84,26 +83,26 @@ enum class ParameterType {
     QUERY
 }
 
-suspend fun mongoOperation(pipelineContext: PipelineContext<*, ApplicationCall>, lambda: MongoOperation.() -> Any) {
+suspend fun mongoOperation(routingContext: RoutingContext, lambda: MongoOperation.() -> Any) {
     val database = Mongo.getInstance()
 
-    val m = MongoOperation(pipelineContext)
+    val m = MongoOperation(routingContext)
     m.lambda()
     m.parameters
         .values
         .filter { it.required }
         .forEach {
             when (it.type) {
-                ParameterType.URL -> pipelineContext.call.parameters[it.name]
-                ParameterType.QUERY -> pipelineContext.call.request.queryParameters[it.name]
-            } ?: pipelineContext.call.respond(HttpStatusCode.BadRequest, "Missing parameter '${it.name}'")
+                ParameterType.URL -> routingContext.call.parameters[it.name]
+                ParameterType.QUERY -> routingContext.call.request.queryParameters[it.name]
+            } ?: routingContext.call.respond(HttpStatusCode.BadRequest, "Missing parameter '${it.name}'")
         }
 
     try {
-        pipelineContext.call.respond(m.result())
+        routingContext.call.respond(m.result())
     }
     catch (e: MongoOperationException) {
-        pipelineContext.call.respond(e.status, e.message)
+        routingContext.call.respond(e.status, e.message)
     }
 
     database.close()
@@ -115,7 +114,7 @@ class ZonedDateTimeCodec : Codec<ZonedDateTime> {
     }
 
 
-    override fun decode(reader: BsonReader, decoderContext: DecoderContext) =
+    override fun decode(reader: BsonReader, decoderContext: DecoderContext): ZonedDateTime =
         ZonedDateTime.ofInstant(Instant.ofEpochMilli(reader.readDateTime()), ZoneId.systemDefault())
 
     override fun getEncoderClass() = ZonedDateTime::class.java
