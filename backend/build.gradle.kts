@@ -4,11 +4,11 @@ import java.io.ByteArrayOutputStream
 
 val ktorVersion = "2.3.12"
 val log4jVersion = "2.24.1"
-val jacksonVersion = "2.18.0"
-val kotlinVersion = "2.0.20"
+val jacksonVersion = "2.18.1"
+val kotlinVersion = "2.0.21"
 
 plugins {
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.0.21"
     application
     id("com.github.ben-manes.versions") version "0.51.0"
 }
