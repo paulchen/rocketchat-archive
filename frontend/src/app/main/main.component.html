@@ -2,7 +2,15 @@
   <p-toast></p-toast>
 
   <p-dialog [header]="overlayTitle" [(visible)]="showImageOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
-    <img [src]="overlayImage" [alt]="overlayTitle" style="max-width: 70vw; max-height: 70vh;" (click)="showImageOverlay = false;" />
+    <img [src]="overlayFile" [alt]="overlayTitle" style="max-width: 70vw; max-height: 70vh;" (click)="showImageOverlay = false;" />
+  </p-dialog>
+
+  <p-dialog [header]="overlayTitle" [(visible)]="showVideoOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
+    <video style="max-width: 70vw; max-height: 70vh;" controls [src]="overlayFile"></video>
+  </p-dialog>
+
+  <p-dialog [header]="overlayTitle" [(visible)]="showAudioOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
+    <audio controls [src]="overlayFile"></audio>
   </p-dialog>
 
   <p-dialog header="Message history" [(visible)]="showHistoryOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
