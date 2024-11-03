@@ -26,7 +26,7 @@ data class Attachment(val type: String?, val title: String?, val titleLink: Stri
 
 data class User(val id: String, val name: String, val username: String, val rooms: List<String>)
 
-data class UserDetails(val id: String, val username: String, val timestamp: ZonedDateTime?, val rooms: List<String>)
+data class UserDetails(val id: String, val username: String, val mostRecentMessage: Message?, val rooms: List<String>)
 
 data class Report(val id: String, val message: Message, val description: String, val timestamp: ZonedDateTime, val reporter: User)
 

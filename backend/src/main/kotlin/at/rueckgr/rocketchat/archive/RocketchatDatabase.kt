@@ -203,7 +203,7 @@ class RocketchatDatabase : Logging {
         val databaseUser = databaseUsers[0]
 
         val message = getMostRecentMessage(database, databaseUser.id)
-        return UserDetails(databaseUser.id, databaseUser.username, message?.ts, databaseUser.rooms)
+        return UserDetails(databaseUser.id, databaseUser.username, message?.let { mapMessage(message) }, databaseUser.rooms)
     }
 
     fun getUserById(userId: String): UserDetails {
@@ -213,7 +213,7 @@ class RocketchatDatabase : Logging {
             .firstOrNull() ?: throw MongoOperationException("Unknown user id", status = HttpStatusCode.NotFound)
 
         val message = getMostRecentMessage(database, databaseUser._id)
-        return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.ts, databaseUser.__rooms ?: emptyList())
+        return UserDetails(databaseUser._id, databaseUser.username ?: databaseUser.name, message?.let { mapMessage(message) }, databaseUser.__rooms ?: emptyList())
     }
 
     private fun getMostRecentMessage(database: MongoDatabase, userId: String): RocketchatMessage? {
