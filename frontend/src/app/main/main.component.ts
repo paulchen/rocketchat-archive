@@ -160,7 +160,10 @@ export class MainComponent implements OnInit {
 
   private navigateToMessage(selectedMessage: Message) {
     clearTimeout(this.timeout);
-    this.router.navigateByUrl('/' + encodeURIComponent(selectedMessage.rid) + "/" + encodeURIComponent(selectedMessage.id)).then();
+    // https://stackoverflow.com/questions/40983055/how-to-reload-the-current-route-with-the-angular-2-router
+    this.router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
+      this.router.navigateByUrl('/' + encodeURIComponent(selectedMessage.rid) + "/" + encodeURIComponent(selectedMessage.id)).then();
+    });
   }
 
   private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
