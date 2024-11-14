@@ -65,8 +65,9 @@ export class MainComponent implements OnInit {
     this.rocketchatUrl = clientConfiguration.rocketchatUrl;
 
     this.contextMenuItems = [
-      { label: 'Link to archive', command: () => this.createLink(false, this.selectedMessage) },
-      { label: 'Link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },
+      { label: 'Copy link to archive', command: () => this.createLink(false, this.selectedMessage) },
+      { label: 'Copy link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },
+      { label: 'Navigate to message', command: () => this.navigateToMessage(this.selectedMessage) },
     ];
 
     let page = null;
@@ -155,6 +156,11 @@ export class MainComponent implements OnInit {
     }).catch(() => {
       this.messageService.add({ severity: 'error', summary: 'Error copying link to clipboard'});
     });
+  }
+
+  private navigateToMessage(selectedMessage: Message) {
+    clearTimeout(this.timeout);
+    this.router.navigateByUrl('/' + encodeURIComponent(selectedMessage.rid) + "/" + encodeURIComponent(selectedMessage.id)).then();
   }
 
   private getChannels(channel: String | null, regex: String | null = null, userIds: string[] = [], date: Date | null = null): void {
