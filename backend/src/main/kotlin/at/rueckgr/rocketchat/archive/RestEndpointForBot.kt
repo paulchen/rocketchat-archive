@@ -73,7 +73,7 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                             result {
                                 val channelId = parameter("channelId")!!
                                 val paginationParameters = RocketchatDatabase.PaginationParameters(1, 1, false)
-                                val channelName = RocketchatDatabase().getChannels().find { it.id == channelId }
+                                val channelName = RocketchatDatabase().getChannels().find { it.id == channelId }?.name
                                 val (messages, _) = RocketchatDatabase().getMessages(channelId, emptyList(), "", null, null, paginationParameters)
 
                                 val lastActivity = when (messages.any()) {
