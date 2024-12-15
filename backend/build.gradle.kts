@@ -101,14 +101,13 @@ tasks.create("createVersionFile") {
     }
 }
 
-fun runGit(vararg args: String): String {
-    val outputStream = ByteArrayOutputStream()
-    project.exec {
-        commandLine(*args)
-        standardOutput = outputStream
-    }
-    return outputStream.toString().split("\n")[0].trim()
-}
+fun runGit(vararg args: String) =
+    project
+        .providers.exec {
+            commandLine(*args)
+        }
+        .standardOutput.asText.get()
+        .split("\n")[0].trim()
 
 tasks.processResources {
     dependsOn("createVersionFile")
