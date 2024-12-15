@@ -1,14 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
 
-val ktorVersion = "3.0.1"
-val log4jVersion = "2.24.1"
-val jacksonVersion = "2.18.1"
-val kotlinVersion = "2.0.21"
+val ktorVersion = "3.0.2"
+val log4jVersion = "2.24.3"
+val jacksonVersion = "2.18.2"
+val kotlinVersion = "2.1.0"
 
 plugins {
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.1.0"
     application
     id("com.github.ben-manes.versions") version "0.51.0"
 }
@@ -54,8 +53,8 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.17.0")
-    implementation("org.apache.commons:commons-text:1.12.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.2.0")
+    implementation("org.apache.commons:commons-text:1.13.0")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.2.1")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
