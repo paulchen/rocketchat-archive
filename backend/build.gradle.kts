@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val ktorVersion = "3.0.2"
+val ktorVersion = "3.0.3"
 val log4jVersion = "2.24.3"
 val jacksonVersion = "2.18.2"
 val kotlinVersion = "2.1.0"
@@ -54,7 +54,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.17.0")
     implementation("org.apache.commons:commons-text:1.13.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.2.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.3.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
