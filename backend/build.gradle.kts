@@ -89,7 +89,7 @@ distributions {
     }
 }
 
-tasks.create("createVersionFile") {
+tasks.register("createVersionFile") {
     doLast {
         val file = File("build/generated/resources/git-revision")
         project.mkdir(file.parentFile.path)
