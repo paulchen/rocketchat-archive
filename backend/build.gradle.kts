@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.nio.file.Files
 
 val ktorVersion = "3.0.3"
 val log4jVersion = "2.24.3"
@@ -91,9 +92,8 @@ distributions {
 
 tasks.register("createVersionFile") {
     doLast {
-        val file = File("build/generated/resources/git-revision")
-        project.mkdir(file.parentFile.path)
-        file.delete()
+        val file = file("build/generated/resources/git-revision")
+        Files.createDirectories(file.parentFile.toPath())
 
         file.appendText(String.format("revision = %s\n", runGit("git", "rev-parse", "--short", "HEAD")))
         file.appendText(String.format("commitMessage = %s\n", runGit("git", "log", "-1", "--pretty=%B")))
