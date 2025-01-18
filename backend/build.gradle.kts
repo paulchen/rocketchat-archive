@@ -94,6 +94,7 @@ tasks.register("createVersionFile") {
     doLast {
         val file = file("build/generated/resources/git-revision")
         Files.createDirectories(file.parentFile.toPath())
+        Files.deleteIfExists(file.toPath())
 
         file.appendText(String.format("revision = %s\n", runGit("git", "rev-parse", "--short", "HEAD")))
         file.appendText(String.format("commitMessage = %s\n", runGit("git", "log", "-1", "--pretty=%B")))
