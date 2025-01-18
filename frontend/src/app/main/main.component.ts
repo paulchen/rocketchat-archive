@@ -239,7 +239,7 @@ export class MainComponent implements OnInit {
     this.reloadCount++;
 
     const limit = event.rows;
-    const first = (this.initialFirst != null) ? this.initialFirst : event.first
+    const first = (this.initialFirst != null) ? this.initialFirst : this.first
     // this is a workaround to get around the problem of p-table
     // resetting the pagination when applying a filter
     if (this.initialFirst != null && ((this.filterInUrl && this.reloadCount == 2) || (!this.filterInUrl && this.reloadCount == 1))) {
