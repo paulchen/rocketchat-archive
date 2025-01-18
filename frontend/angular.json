@@ -77,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "rocketchat-archive:build:production"
+              "buildTarget": "rocketchat-archive:build:production"
             },
             "development": {
-              "browserTarget": "rocketchat-archive:build:development",
+              "buildTarget": "rocketchat-archive:build:development",
               "disableHostCheck": true
             }
           },
@@ -92,7 +92,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "rocketchat-archive:build"
+            "buildTarget": "rocketchat-archive:build"
           }
         },
         "test": {
