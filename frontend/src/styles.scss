@@ -141,3 +141,11 @@ p-columnfilterformelement > p-multiselect { width: 100%; }
 .p-tablist-content { display: inline }
 
 .p-tablist-tab-list { white-space: nowrap !important; overflow: hidden !important; position: static !important; display: flex !important; }
+
+div.flex-auto > p-multiselect { width: 100%; }
+
+div.flex-auto > input { width: 100%; }
+
+div.flex-auto > p-button { width: 100%; }
+
+div.flex-auto > p-button > button { width: 100%; }
