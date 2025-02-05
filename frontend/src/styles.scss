@@ -91,7 +91,7 @@ a:hover {
           }
 
           &:last-child {
-            border-bottom: 1px solid var(--surface-d);
+            border-bottom: 1px solid var(--p-datatable-body-cell-border-color);
           }
 
           .p-button-link {
@@ -100,16 +100,6 @@ a:hover {
         }
       }
     }
-  }
-
-  .p-datatable-tbody > tr > td {
-    border-color: var(--p-datatable-body-cell-border-color) !important;
-    border-style: solid !important;
-    border-width: 0 0 1px 0 !important;
-  }
-
-  .p-datatable-tbody > tr > td.username {
-    border-style: none !important;
   }
 }
 
