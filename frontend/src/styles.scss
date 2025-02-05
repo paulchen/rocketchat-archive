@@ -29,7 +29,7 @@ body {
 
 a {
   text-decoration: none;
-  color: #0b7ad1;
+  color: var(--p-button-link-color);
 }
 
 a:hover {
@@ -101,6 +101,16 @@ a:hover {
       }
     }
   }
+
+  .p-datatable-tbody > tr > td {
+    border-color: var(--p-datatable-body-cell-border-color) !important;
+    border-style: solid !important;
+    border-width: 0 0 1px 0 !important;
+  }
+
+  .p-datatable-tbody > tr > td.username {
+    border-style: none !important;
+  }
 }
 
 .stats {
@@ -114,4 +124,20 @@ a:hover {
 
 .p-contextmenu .p-menuitem-text { white-space: nowrap; }
 
-.p-button-link { text-align: left; }
+.p-button-link { text-align: left; position: static !important; }
+
+p-columnfilterformelement { width: 100%; }
+
+p-columnfilterformelement > input { width: 100%; }
+
+p-columnfilterformelement > p-calendar { width: 100%; }
+
+p-columnfilterformelement > p-multiselect { width: 100%; }
+
+.p-tabs { display: inline }
+
+.p-tablist { display: inline !important; }
+
+.p-tablist-content { display: inline }
+
+.p-tablist-tab-list { white-space: nowrap !important; overflow: hidden !important; position: static !important; display: flex !important; }

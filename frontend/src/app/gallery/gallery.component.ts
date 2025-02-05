@@ -2,18 +2,44 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData} from "../channel-data";
-import {Location, LocationStrategy} from "@angular/common";
+import {Location, LocationStrategy, NgForOf, NgIf} from "@angular/common";
 import clientConfiguration from '../../client-configuration.json'
-import {PaginatorState} from "primeng/paginator";
+import {Paginator, PaginatorState} from "primeng/paginator";
 import {User} from "../user-data";
 import {Message} from "../message-data";
 import {MessageService} from "primeng/api";
 import {sortChannels} from "../util";
+import {Toast} from "primeng/toast";
+import {ProgressSpinner} from "primeng/progressspinner";
+import {TabPanel, TabView} from "primeng/tabview";
+import {Calendar} from "primeng/calendar";
+import {MultiSelect} from "primeng/multiselect";
+import {FormsModule} from "@angular/forms";
+import {Button, ButtonDirective, ButtonLabel} from "primeng/button";
+import {GalleriaModule} from "primeng/galleria";
+import {InputText} from "primeng/inputtext";
 
 @Component({
   selector: 'app-stats',
   templateUrl: './gallery.component.html',
   styleUrls: ['./gallery.component.scss'],
+  imports: [
+    Toast,
+    ProgressSpinner,
+    NgIf,
+    TabView,
+    TabPanel,
+    NgForOf,
+    Paginator,
+    Calendar,
+    MultiSelect,
+    FormsModule,
+    Button,
+    GalleriaModule,
+    ButtonDirective,
+    ButtonLabel,
+    InputText
+  ],
   providers: [MessageService]
 })
 export class GalleryComponent implements OnInit {

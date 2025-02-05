@@ -2,12 +2,31 @@ import { Component, OnInit } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData, ChannelStats} from "../channel-data";
-import {Location} from "@angular/common";
+import {Location, NgIf} from "@angular/common";
 import {sortChannels} from "../util";
+import {ProgressSpinner} from "primeng/progressspinner";
+import {Panel} from "primeng/panel";
+import {DropdownModule} from "primeng/dropdown";
+import {FormsModule} from "@angular/forms";
+import {Calendar} from "primeng/calendar";
+import {Button, ButtonDirective, ButtonLabel} from "primeng/button";
+import {StatsTableComponent} from "../stats-table/stats-table.component";
 
 @Component({
   selector: 'app-stats',
   templateUrl: './stats.component.html',
+  imports: [
+    ProgressSpinner,
+    Panel,
+    DropdownModule,
+    FormsModule,
+    Calendar,
+    Button,
+    StatsTableComponent,
+    ButtonDirective,
+    ButtonLabel,
+    NgIf
+  ],
   styleUrls: ['./stats.component.scss']
 })
 export class StatsComponent implements OnInit {

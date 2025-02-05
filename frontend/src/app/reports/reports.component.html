@@ -1,6 +1,8 @@
 <div class="archive">
   <div style="text-align: center;">
-    <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);" label="Back to archive"></button>
+    <button pButton type="button" class="p-button-link" (click)="this.router.navigate(['/']);">
+      <span pButtonLabel>Back to archive</span>
+    </button>
   </div>
 
   <div style="height: 85vh;">
@@ -27,7 +29,9 @@
           <td style="white-space: nowrap;">{{report.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</td>
           <td style="white-space: nowrap;" class="username">{{report.reporter.username}}</td>
           <td>
-            <button pButton type="button" class="p-button-link" (click)="navigateToMessage(report);" label="{{report.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}"></button>
+            <button pButton type="button" class="p-button-link" (click)="navigateToMessage(report);">
+              <span pButtonLabel>{{report.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
+            </button>
 
           </td>
           <td>{{report.message.username}}</td>

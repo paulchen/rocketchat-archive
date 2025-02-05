@@ -4,20 +4,53 @@ import {Attachment, Message, MessageData} from "../message-data";
 import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Location, LocationStrategy, ViewportScroller} from "@angular/common";
+import {
+  DatePipe,
+  Location,
+  LocationStrategy,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  ViewportScroller
+} from "@angular/common";
 import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
-import {Table} from "primeng/table";
+import {Table, TableModule} from "primeng/table";
 import {sortChannels} from "../util";
+import {Dialog} from "primeng/dialog";
+import {ContextMenu} from "primeng/contextmenu";
+import {TabPanel, TabView} from "primeng/tabview";
+import {ButtonDirective, ButtonLabel} from "primeng/button";
+import {Calendar} from "primeng/calendar";
+import {MultiSelect} from "primeng/multiselect";
+import {FormsModule} from "@angular/forms";
+import {Toast} from "primeng/toast";
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.scss'],
+  imports: [
+    Dialog,
+    TableModule,
+    DatePipe,
+    ContextMenu,
+    NgIf,
+    TabView,
+    TabPanel,
+    NgForOf,
+    ButtonDirective,
+    ButtonLabel,
+    Calendar,
+    MultiSelect,
+    FormsModule,
+    NgStyle,
+    Toast
+  ],
   providers: [MessageService]
 })
 export class MainComponent implements OnInit {
-  channelData: ChannelData;
+  channelData: ChannelData = { channels: [], favouriteChannels: []};
   selectedChannel: Channel;
   messageData: MessageData = { messages: [], messageCount: 0 };
   users: User[] = [];
@@ -292,13 +325,13 @@ export class MainComponent implements OnInit {
         }
 
         clearTimeout(this.timeout);
-        this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
+        // this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
       },
       error: () => {
         this.loading = false;
 
         clearTimeout(this.timeout);
-        this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
+        // this.timeout = setTimeout(function() { component.handleTableChange(event, true) }, 5000);
       }
     })
   }

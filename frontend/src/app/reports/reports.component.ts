@@ -2,14 +2,24 @@ import { Component, OnInit } from '@angular/core';
 import {BackendService} from "../backend.service";
 import {Router} from "@angular/router";
 import {Report, ReportData} from "../report-data";
+import {TableModule} from "primeng/table";
+import {ButtonDirective, ButtonLabel} from "primeng/button";
+import {DatePipe, NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-main',
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss'],
+  imports: [
+    TableModule,
+    ButtonDirective,
+    ButtonLabel,
+    NgIf,
+    DatePipe
+  ]
 })
 export class ReportsComponent implements OnInit {
-  reportData: ReportData;
+  reportData: ReportData | null;
   limit = 100;
   loading = true;
   private timeout: number;

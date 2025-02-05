@@ -8,7 +8,9 @@
 
 <div class="stats" *ngIf="dataLoaded && !channelNotFound">
   <div>
-    <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
+    <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
+      <span pButtonLabel>Back to archive</span>
+    </button>
   </div>
 
   <p-panel header="Channel selection">

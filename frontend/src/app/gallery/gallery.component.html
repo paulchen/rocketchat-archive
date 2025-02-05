@@ -9,11 +9,13 @@
 </div>
 
 <div class="stats" *ngIf="dataLoaded && !channelNotFound">
-  <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex">
+  <p-tabView (onChange)="handleTabChange($event)" [(activeIndex)]="tabIndex" scrollable="true">
     <p-tabPanel *ngFor="let channel of channelData.channels" header="{{channel.name}}" [cache]="false">
       <ng-template pTemplate="content">
         <div style="text-align: center;">
-          <button pButton type="button" class="p-button-link" (click)="navigateToArchive();" label="Back to archive"></button>
+          <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
+            <span pButtonLabel>Back to archive</span>
+          </button>
         </div>
 
         <p-paginator
@@ -71,7 +73,9 @@
                 <p>{{item.description}}</p>
                 <p>
                   <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
-                  <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" label="{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}" style="padding: 0;"></button>
+                  <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" style="padding: 0;">
+                    <span pButtonLabel>{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                  </button>
                 </p>
               </div>
             </div>
