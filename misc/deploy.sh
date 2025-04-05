@@ -20,7 +20,7 @@ fi
 . deploy.conf
 
 . ~/.nvm/nvm.sh || exit 1
-nvm install lts/iron || exit 1
+nvm install lts/jod || exit 1
 
 docker pull debian:bookworm-slim || exit 1
 docker pull eclipse-temurin:21-jdk || exit 1
