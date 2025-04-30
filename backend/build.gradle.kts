@@ -4,7 +4,7 @@ import java.nio.file.Files
 
 val ktorVersion = "3.1.2"
 val log4jVersion = "2.24.3"
-val jacksonVersion = "2.18.3"
+val jacksonVersion = "2.19.0"
 val kotlinVersion = "2.1.20"
 
 plugins {
@@ -54,7 +54,7 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.17.0")
-    implementation("org.apache.commons:commons-text:1.13.0")
+    implementation("org.apache.commons:commons-text:1.13.1")
     implementation("org.mongodb:mongodb-driver-kotlin-sync:5.4.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
