@@ -1,6 +1,9 @@
 services:
   frontend:
     build: frontend
+    depends_on:
+      backend:
+        condition: service_healthy
     ports:
       - "127.0.0.1:42773:80"
       - "127.0.0.1:42775:5005"
@@ -33,7 +36,8 @@ services:
       test: curl http://localhost:8080/version || exit 1
       interval: 1m
       timeout: 10s 
-
+      start_period: 10s
+      start_interval: 5s
 networks:
   backend:
   rocketchat_default:

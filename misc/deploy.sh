@@ -19,16 +19,21 @@ fi
 
 . deploy.conf
 
+cd "$BASE_DIR"
+
+DEPLOY_HASH=`sha256sum misc/deploy.sh`
+git pull || exit 1
+if [ "$DEPLOY_HASH" != "`sha256sum misc/deploy.sh`" ]; then
+	misc/deploy.sh
+	exit $?
+fi
+
 . ~/.nvm/nvm.sh || exit 1
 nvm install lts/jod || exit 1
 
 docker pull debian:bookworm-slim || exit 1
 docker pull eclipse-temurin:21-jdk || exit 1
 docker pull nginx:latest || exit 1
-
-cd "$BASE_DIR"
-
-git pull || exit 1
 
 cd "$BASE_DIR/frontend"
 
