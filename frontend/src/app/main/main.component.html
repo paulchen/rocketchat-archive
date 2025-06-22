@@ -81,7 +81,7 @@
                     Username
                     <p-columnFilter type="text" field="username" [matchModeOptions]="matchModeOptions">
                       <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                        <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" appendTo="body">
+                        <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" id="multiselect-user">
                         </p-multiSelect>
                       </ng-template>
                     </p-columnFilter>

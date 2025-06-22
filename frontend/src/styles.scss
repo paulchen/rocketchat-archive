@@ -139,3 +139,6 @@ div.flex-auto > input { width: 100%; }
 div.flex-auto > p-button { width: 100%; }
 
 div.flex-auto > p-button > button { width: 100%; }
+
+// just a dirty hack to make the dropdown for the user selection always appear below the dropdown
+#multiselect-user > p-overlay > div.p-overlay { top: 36px !important; }
