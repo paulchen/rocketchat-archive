@@ -7,7 +7,7 @@
 
   <div style="height: 85vh;">
     <p-table *ngIf="reportData != null" [value]="reportData['reports']" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
-             [paginator]="true" [rows]="limit" [totalRecords]="reportData['reportCount']" [autoLayout]="true"
+             [paginator]="true" [rows]="limit" [totalRecords]="reportData['reportCount']"
              [lazy]="true" (onLazyLoad)="handleTableChange($event)" [loading]="loading"
              [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reports"
              [rowsPerPageOptions]="[100,500,1000]" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"

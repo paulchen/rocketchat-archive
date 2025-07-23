@@ -16,18 +16,18 @@
   <p-panel header="Channel selection">
     <div>
       Channel:
-      <p-dropdown [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
+      <p-select [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
         <ng-template pTemplate="selectedItem">
           <div>{{selectedChannel.name}}</div>
         </ng-template>
         <ng-template let-channel pTemplate="item">
           {{channel.name}}
         </ng-template>
-      </p-dropdown>
+      </p-select>
       From:
-      <p-calendar [(ngModel)]="startDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-calendar>
+      <p-date-picker [(ngModel)]="startDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
       To:
-      <p-calendar [(ngModel)]="endDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-calendar>
+      <p-date-picker [(ngModel)]="endDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
       <p-button (onClick)="resetDateRange();">Reset</p-button>
     </div>
   </p-panel>

@@ -19,12 +19,12 @@ import {Table, TableModule} from "primeng/table";
 import {sortChannels} from "../util";
 import {Dialog} from "primeng/dialog";
 import {ContextMenu} from "primeng/contextmenu";
-import {TabPanel, TabView} from "primeng/tabview";
 import {ButtonDirective, ButtonLabel} from "primeng/button";
-import {Calendar} from "primeng/calendar";
 import {MultiSelect} from "primeng/multiselect";
 import {FormsModule} from "@angular/forms";
 import {Toast} from "primeng/toast";
+import {DatePickerModule} from "primeng/datepicker";
+import {TabsModule} from "primeng/tabs";
 
 @Component({
   selector: 'app-main',
@@ -36,12 +36,11 @@ import {Toast} from "primeng/toast";
     DatePipe,
     ContextMenu,
     NgIf,
-    TabView,
-    TabPanel,
+    TabsModule,
     NgForOf,
     ButtonDirective,
     ButtonLabel,
-    Calendar,
+    DatePickerModule,
     MultiSelect,
     FormsModule,
     NgStyle,
@@ -52,12 +51,12 @@ import {Toast} from "primeng/toast";
 export class MainComponent implements OnInit {
   channelData: ChannelData = { channels: [], favouriteChannels: []};
   selectedChannel: Channel;
+  selectedChannelId: string;
   messageData: MessageData = { messages: [], messageCount: 0 };
   users: User[] = [];
   limit = 100;
   loading = true;
   private timeout: number;
-  tabIndex: number;
   first: number = 0;
   private initialFirst: number | null = null;
   private reloadCount: number = 0;
@@ -80,6 +79,8 @@ export class MainComponent implements OnInit {
   messageHistory: Message[] = []
   rowsPerPageOptions = [100, 500, 1000];
   matchModeOptions = [{ label: 'Filter', value: FilterMatchMode.EQUALS }];
+  tableVisible: boolean = true;
+  private navigatingToMessage: boolean = false;
 
   @ViewChild("table") table: Table;
 
@@ -193,6 +194,7 @@ export class MainComponent implements OnInit {
 
   private navigateToMessage(selectedMessage: Message) {
     clearTimeout(this.timeout);
+    this.navigatingToMessage = true;
     this.router.navigateByUrl('/' + encodeURIComponent(selectedMessage.rid) + "/" + encodeURIComponent(selectedMessage.id)).then(() => {
       this.ngOnInit();
     });
@@ -205,12 +207,13 @@ export class MainComponent implements OnInit {
       this.channelData.channels.unshift({ name: 'all', id: 'all'});
 
       this.selectedChannel = this.channelData.channels[1];
+      this.selectedChannelId = this.selectedChannel.id;
       if (channel) {
         this.channelNotFound = true;
         for (let i = 0; i < this.channelData.channels.length; i++) {
           if (this.channelData.channels[i].id == channel) {
             this.selectedChannel = this.channelData.channels[i];
-            this.tabIndex = i;
+            this.selectedChannelId = this.selectedChannel.id;
             this.channelNotFound = false;
             break;
           }
@@ -218,7 +221,7 @@ export class MainComponent implements OnInit {
       }
       else if (this.channelData.channels.length > 1) {
         this.selectedChannel = this.channelData.channels[1];
-        this.tabIndex = 1;
+        this.selectedChannelId = this.selectedChannel.id;
         this.channelNotFound = false;
       }
 
@@ -247,12 +250,22 @@ export class MainComponent implements OnInit {
       if (userIds.length > 0) {
         this.table.filter(userIds, 'username', 'equals');
       }
+
+      // workaround, see https://stackoverflow.com/a/40077260
+      if (this.navigatingToMessage) {
+        this.navigatingToMessage = false;
+        this.tableVisible = false;
+        this.changeDetectorRef.detectChanges();
+        setTimeout(() => this.tableVisible = true, 0);
+      }
     });
   }
 
-  handleTabChange(event: any) {
-    this.selectedChannel = this.channelData.channels[event.index];
+  handleTabChange(channel: Channel) {
+    this.selectedChannel = channel;
     this.first = 0;
+    clearTimeout(this.timeout);
+    this.reloadData({ limit: 100, sortOrder: -1 }, true);
   }
 
   handleTableChange(event: any, reload: boolean) {

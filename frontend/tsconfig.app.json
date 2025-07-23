@@ -3,7 +3,8 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    "skipLibCheck": true // https://github.com/primefaces/primeng/issues/18626
   },
   "files": [
     "src/main.ts",

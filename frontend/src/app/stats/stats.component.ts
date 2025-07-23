@@ -6,11 +6,11 @@ import {Location, NgIf} from "@angular/common";
 import {sortChannels} from "../util";
 import {ProgressSpinner} from "primeng/progressspinner";
 import {Panel} from "primeng/panel";
-import {DropdownModule} from "primeng/dropdown";
 import {FormsModule} from "@angular/forms";
-import {Calendar} from "primeng/calendar";
 import {Button, ButtonDirective, ButtonLabel} from "primeng/button";
 import {StatsTableComponent} from "../stats-table/stats-table.component";
+import {DatePickerModule} from "primeng/datepicker";
+import {SelectModule} from "primeng/select";
 
 @Component({
   selector: 'app-stats',
@@ -18,9 +18,9 @@ import {StatsTableComponent} from "../stats-table/stats-table.component";
   imports: [
     ProgressSpinner,
     Panel,
-    DropdownModule,
+    SelectModule,
     FormsModule,
-    Calendar,
+    DatePickerModule,
     Button,
     StatsTableComponent,
     ButtonDirective,

@@ -11,13 +11,13 @@ import {MessageService} from "primeng/api";
 import {sortChannels} from "../util";
 import {Toast} from "primeng/toast";
 import {ProgressSpinner} from "primeng/progressspinner";
-import {TabPanel, TabView} from "primeng/tabview";
-import {Calendar} from "primeng/calendar";
 import {MultiSelect} from "primeng/multiselect";
 import {FormsModule} from "@angular/forms";
 import {Button, ButtonDirective, ButtonLabel} from "primeng/button";
 import {GalleriaModule} from "primeng/galleria";
 import {InputText} from "primeng/inputtext";
+import {Tab, TabList, Tabs} from "primeng/tabs";
+import {DatePicker} from "primeng/datepicker";
 
 @Component({
   selector: 'app-stats',
@@ -27,27 +27,28 @@ import {InputText} from "primeng/inputtext";
     Toast,
     ProgressSpinner,
     NgIf,
-    TabView,
-    TabPanel,
     NgForOf,
     Paginator,
-    Calendar,
     MultiSelect,
     FormsModule,
     Button,
     GalleriaModule,
     ButtonDirective,
     ButtonLabel,
-    InputText
+    InputText,
+    Tab,
+    TabList,
+    Tabs,
+    DatePicker
   ],
   providers: [MessageService]
 })
 export class GalleryComponent implements OnInit {
   channelData: ChannelData = new ChannelData();
   selectedChannel: Channel;
+  selectedChannelId: string;
   dataLoaded: boolean;
   channelNotFound: true;
-  tabIndex: number;
   images: any[] | undefined;
   showGallery: boolean = false;
   activeIndex: number;
@@ -132,7 +133,7 @@ export class GalleryComponent implements OnInit {
     }
     else {
       this.selectedChannel = channel;
-      this.tabIndex = this.channelData.channels.indexOf(channel);
+      this.selectedChannelId = channel.id
       this.loadData();
     }
   }
@@ -179,8 +180,8 @@ export class GalleryComponent implements OnInit {
     this.router.navigate(['/' + this.selectedChannel.id]).then();
   }
 
-  handleTabChange(event: any) {
-    this.selectedChannel = this.channelData.channels[event.index];
+  handleTabChange(channel: Channel) {
+    this.selectedChannel = channel;
     this.loadData();
   }
 
