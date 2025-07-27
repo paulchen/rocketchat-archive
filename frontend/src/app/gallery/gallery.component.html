@@ -30,14 +30,14 @@
       [totalRecords]="totalRecords"
       [rowsPerPageOptions]="rowsPerPageOptions" />
 
-    <div class="card flex flex-wrap gap-3 p-fluid pb-3">
+    <div class="card flex flex-wrap gap-3 p-fluid pb-3" (keydown.enter)="applyFilter()">
       <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
         <label for="calendarFilter" class="font-bold block mb-2">Timestamp</label>
-        <p-date-picker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="calendarFilter" />
+        <p-date-picker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="calendarFilter" (onSelect)="loadData()"/>
       </div>
       <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
         <label for="userFilter" class="font-bold block mb-2">Users</label>
-        <p-multiSelect [options]="users" [(ngModel)]="selectedUsers" optionLabel="username" [showClear]="true" inputId="userFilter" />
+        <p-multiSelect [options]="users" [(ngModel)]="selectedUsers" optionLabel="username" [showClear]="true" inputId="userFilter" (onPanelShow)="onPanelShow()" (onPanelHide)="onPanelHide()" (onClear)="loadData()" />
       </div>
       <div class="flex-auto w-12 xl:w-5 lg:w-5 md:w-5">
         <label for="messageFilter" class="font-bold block mb-2">Message</label>

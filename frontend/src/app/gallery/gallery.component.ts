@@ -60,6 +60,8 @@ export class GalleryComponent implements OnInit {
   selectedUsers: User[] = [];
   users: User[] = [];
   messageFilter: string = "";
+  private savedSelectedUsers: User[];
+  private panelShown: boolean = false;
 
   constructor(
     public router: Router,
@@ -145,7 +147,7 @@ export class GalleryComponent implements OnInit {
     return new Date(this.selectedDate.getTime() - this.selectedDate.getTimezoneOffset()*60000).toISOString().split('T')[0]
   }
 
-  private loadData() {
+  loadData() {
     this.dataLoaded = false;
 
     const page = (this.first / this.rows) + 1;
@@ -263,6 +265,24 @@ export class GalleryComponent implements OnInit {
           this.activeIndex = this.images?.length - 1;
         }
         break;
+    }
+  }
+
+  onPanelShow() {
+    this.savedSelectedUsers = this.selectedUsers;
+    this.panelShown = true;
+  }
+
+  onPanelHide() {
+    if (this.selectedUsers != this.savedSelectedUsers) {
+      this.loadData();
+    }
+    this.panelShown = false;
+  }
+
+  onUsersChange() {
+    if (this.panelShown) {
+      this.loadData();
     }
   }
 }
