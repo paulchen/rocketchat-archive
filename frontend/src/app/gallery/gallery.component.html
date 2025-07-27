@@ -1,97 +1,100 @@
 <p-toast></p-toast>
 
-<div *ngIf="channelNotFound">Channel not found.</div>
+@if (channelNotFound) {
+  <div>Channel not found.</div>
+}
 
-<div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
-  <div style="height: 100px; width: 100px;">
-    <p-progressSpinner></p-progressSpinner>
-  </div>
-</div>
-
-<div class="stats" *ngIf="dataLoaded && !channelNotFound">
-  <p-tabs [(value)]="selectedChannelId" scrollable>
-    <p-tablist>
-      @for (channel of channelData.channels; track channel.id) {
-        <p-tab [value]="channel.id" (click)="handleTabChange(channel)">{{ channel.name }}</p-tab>
-      }
-    </p-tablist>
-  </p-tabs>
-  <div style="text-align: center;">
-    <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
-      <span pButtonLabel>Back to archive</span>
-    </button>
-  </div>
-
-  <div style="padding-left: 18px; padding-right: 18px;">
-    <p-paginator
-      (onPageChange)="onPageChange($event)"
-      [first]="first"
-      [rows]="rows"
-      [totalRecords]="totalRecords"
-      [rowsPerPageOptions]="rowsPerPageOptions" />
-
-    <div class="card flex flex-wrap gap-3 p-fluid pb-3" (keydown.enter)="applyFilter()">
-      <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
-        <label for="calendarFilter" class="font-bold block mb-2">Timestamp</label>
-        <p-date-picker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="calendarFilter" (onSelect)="loadData()"/>
-      </div>
-      <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
-        <label for="userFilter" class="font-bold block mb-2">Users</label>
-        <p-multiSelect [options]="users" [(ngModel)]="selectedUsers" optionLabel="username" [showClear]="true" inputId="userFilter" (onPanelShow)="onPanelShow()" (onPanelHide)="onPanelHide()" (onClear)="loadData()" />
-      </div>
-      <div class="flex-auto w-12 xl:w-5 lg:w-5 md:w-5">
-        <label for="messageFilter" class="font-bold block mb-2">Message</label>
-        <input type="text" pInputText [(ngModel)]="messageFilter" id="messageFilter"/>
-      </div>
-      <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
-        <label class="font-bold block mb-2">&nbsp;</label>
-        <p-button label="Apply" (onClick)="applyFilter()" />
-      </div>
-      <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
-        <label class="font-bold block mb-2">&nbsp;</label>
-        <p-button label="Clear" (onClick)="clearFilter()" />
-      </div>
+@if (!dataLoaded) {
+  <div style="display: grid; justify-content: center; align-items: center; height: 100vh;">
+    <div style="height: 100px; width: 100px;">
+      <p-progressSpinner></p-progressSpinner>
     </div>
+  </div>
+}
 
-    <div class="grid">
-      <div *ngFor="let image of images; let index = index;" class="col-12 xl:col-2 lg:col-3 md:col-6 align-content-center" style="text-align: center;">
-        <img [src]="image.url" [alt]="image.title" [title]="image.title" style="cursor: pointer; max-width: 80%; max-height: 200px;" (click)="imageClick(index)"/>
-      </div>
+@if (dataLoaded && !channelNotFound) {
+  <div class="stats">
+    <p-tabs [(value)]="selectedChannelId" scrollable>
+      <p-tablist>
+        @for (channel of channelData.channels; track channel.id) {
+          <p-tab [value]="channel.id" (click)="handleTabChange(channel)">{{ channel.name }}</p-tab>
+        }
+      </p-tablist>
+    </p-tabs>
+    <div style="text-align: center;">
+      <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
+        <span pButtonLabel>Back to archive</span>
+      </button>
     </div>
-
-    <p-galleria
-      [(visible)]="showGallery"
-      [(activeIndex)]="activeIndex"
-      [value]="images"
-      [containerStyle]="{ 'max-width': '100%' }"
-      [fullScreen]="true"
-      [showThumbnails]="false"
-      [showItemNavigators]="true"
-      (keyup)="handleKeyUp($event)">
-      <ng-template pTemplate="item" let-item>
-        <div>
-          <div style="text-align: center;">
-            <img [src]="item.url" [alt]="item.title" [title]="item.title" style="max-width: 90vw; max-height: 80vh;" /><br />
-          </div>
-          <div style="margin-left: 1em; margin-right: 1em;">
-            <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
-            <p>{{item.description}}</p>
-            <p>
-              <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
-              <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" style="padding: 0;">
-                <span pButtonLabel>{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
-              </button>
-            </p>
-          </div>
+    <div style="padding-left: 18px; padding-right: 18px;">
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="first"
+        [rows]="rows"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="rowsPerPageOptions" />
+      <div class="card flex flex-wrap gap-3 p-fluid pb-3" (keydown.enter)="applyFilter()">
+        <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
+          <label for="calendarFilter" class="font-bold block mb-2">Timestamp</label>
+          <p-date-picker [(ngModel)]="selectedDate" [iconDisplay]="'input'" [showIcon]="true" dateFormat="yy-mm-dd" inputId="calendarFilter" (onSelect)="loadData()"/>
         </div>
-      </ng-template>
-    </p-galleria>
-
-    <p-paginator
-      (onPageChange)="onPageChange($event)"
-      [first]="first"
-      [rows]="rows"
-      [totalRecords]="totalRecords"
-      [rowsPerPageOptions]="rowsPerPageOptions" />
+        <div class="flex-auto w-12 xl:w-2 lg:w-2 md:w-2">
+          <label for="userFilter" class="font-bold block mb-2">Users</label>
+          <p-multiSelect [options]="users" [(ngModel)]="selectedUsers" optionLabel="username" [showClear]="true" inputId="userFilter" (onPanelShow)="onPanelShow()" (onPanelHide)="onPanelHide()" (onClear)="loadData()" />
+        </div>
+        <div class="flex-auto w-12 xl:w-5 lg:w-5 md:w-5">
+          <label for="messageFilter" class="font-bold block mb-2">Message</label>
+          <input type="text" pInputText [(ngModel)]="messageFilter" id="messageFilter"/>
+        </div>
+        <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
+          <label class="font-bold block mb-2">&nbsp;</label>
+          <p-button label="Apply" (onClick)="applyFilter()" />
+        </div>
+        <div class="flex-auto w-12 xl:w-1 lg:w-1 md:w-1">
+          <label class="font-bold block mb-2">&nbsp;</label>
+          <p-button label="Clear" (onClick)="clearFilter()" />
+        </div>
+      </div>
+      <div class="grid">
+        @for (image of images; track image; let index = $index) {
+          <div class="col-12 xl:col-2 lg:col-3 md:col-6 align-content-center" style="text-align: center;">
+            <img [src]="image.url" [alt]="image.title" [title]="image.title" style="cursor: pointer; max-width: 80%; max-height: 200px;" (click)="imageClick(index)"/>
+          </div>
+        }
+      </div>
+      <p-galleria
+        [(visible)]="showGallery"
+        [(activeIndex)]="activeIndex"
+        [value]="images"
+        [containerStyle]="{ 'max-width': '100%' }"
+        [fullScreen]="true"
+        [showThumbnails]="false"
+        [showItemNavigators]="true"
+        (keyup)="handleKeyUp($event)">
+        <ng-template pTemplate="item" let-item>
+          <div>
+            <div style="text-align: center;">
+              <img [src]="item.url" [alt]="item.title" [title]="item.title" style="max-width: 90vw; max-height: 80vh;" /><br />
+            </div>
+            <div style="margin-left: 1em; margin-right: 1em;">
+              <h4 style="margin-bottom: .5rem; color: #ffffff;">{{item.title}}</h4>
+              <p>{{item.description}}</p>
+              <p>
+                <span style="font-weight: bold;">{{item.message.username}},&nbsp;</span>
+                <button pButton type="button" class="p-button-link" (click)="messageClick(item.message)" style="padding: 0;">
+                  <span pButtonLabel>{{item.message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                </button>
+              </p>
+            </div>
+          </div>
+        </ng-template>
+      </p-galleria>
+      <p-paginator
+        (onPageChange)="onPageChange($event)"
+        [first]="first"
+        [rows]="rows"
+        [totalRecords]="totalRecords"
+        [rowsPerPageOptions]="rowsPerPageOptions" />
+    </div>
   </div>
-</div>
+}

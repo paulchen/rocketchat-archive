@@ -1,60 +1,61 @@
-<div *ngIf="channelNotFound">Channel not found.</div>
+@if (channelNotFound) {
+  <div>Channel not found.</div>
+}
 
-<div style="display: grid; justify-content: center; align-items: center; height: 100vh;" *ngIf="!dataLoaded">
-  <div style="height: 100px; width: 100px;">
-    <p-progressSpinner></p-progressSpinner>
+@if (!dataLoaded) {
+  <div style="display: grid; justify-content: center; align-items: center; height: 100vh;">
+    <div style="height: 100px; width: 100px;">
+      <p-progressSpinner></p-progressSpinner>
+    </div>
   </div>
-</div>
+}
 
-<div class="stats" *ngIf="dataLoaded && !channelNotFound">
-  <div>
-    <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
-      <span pButtonLabel>Back to archive</span>
-    </button>
-  </div>
-
-  <p-panel header="Channel selection">
+@if (dataLoaded && !channelNotFound) {
+  <div class="stats">
     <div>
-      Channel:
-      <p-select [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
-        <ng-template pTemplate="selectedItem">
-          <div>{{selectedChannel.name}}</div>
-        </ng-template>
-        <ng-template let-channel pTemplate="item">
-          {{channel.name}}
-        </ng-template>
-      </p-select>
-      From:
-      <p-date-picker [(ngModel)]="startDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
-      To:
-      <p-date-picker [(ngModel)]="endDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
-      <p-button (onClick)="resetDateRange();">Reset</p-button>
+      <button pButton type="button" class="p-button-link" (click)="navigateToArchive();">
+        <span pButtonLabel>Back to archive</span>
+      </button>
     </div>
-  </p-panel>
-
-  <div class="grid">
-    <div class="col-12 md:col-6 lg:col-3">
-      <p-panel header="Message counts per user">
-        <app-stats-table [stats]="stats.userMessageCount" firstColumn="Username"></app-stats-table>
-      </p-panel>
-    </div>
-
-    <div class="col-12 md:col-6 lg:col-3">
-      <p-panel header="Top days">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts" firstColumn="Day"></app-stats-table>
-      </p-panel>
-    </div>
-
-    <div class="col-12 md:col-6 lg:col-3">
-      <p-panel header="Messages by year">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts" firstColumn="Year"></app-stats-table>
-      </p-panel>
-    </div>
-
-    <div class="col-12 md:col-6 lg:col-3">
-      <p-panel header="Messages by month">
-        <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts" firstColumn="Month"></app-stats-table>
-      </p-panel>
+    <p-panel header="Channel selection">
+      <div>
+        Channel:
+        <p-select [options]="channelData.channels" optionLabel="name" [(ngModel)]="selectedChannel" (onChange)="navigateToChannel($event.value)">
+          <ng-template pTemplate="selectedItem">
+            <div>{{selectedChannel.name}}</div>
+          </ng-template>
+          <ng-template let-channel pTemplate="item">
+            {{channel.name}}
+          </ng-template>
+        </p-select>
+        From:
+        <p-date-picker [(ngModel)]="startDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
+        To:
+        <p-date-picker [(ngModel)]="endDate" dateFormat="yy-mm-dd" (onSelect)="reloadData()"></p-date-picker>
+        <p-button (onClick)="resetDateRange();">Reset</p-button>
+      </div>
+    </p-panel>
+    <div class="grid">
+      <div class="col-12 md:col-6 lg:col-3">
+        <p-panel header="Message counts per user">
+          <app-stats-table [stats]="stats.userMessageCount" firstColumn="Username"></app-stats-table>
+        </p-panel>
+      </div>
+      <div class="col-12 md:col-6 lg:col-3">
+        <p-panel header="Top days">
+          <app-stats-table [stats]="stats.timebasedMessageCounts['topDays'].messageCounts" firstColumn="Day"></app-stats-table>
+        </p-panel>
+      </div>
+      <div class="col-12 md:col-6 lg:col-3">
+        <p-panel header="Messages by year">
+          <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerYear'].messageCounts" firstColumn="Year"></app-stats-table>
+        </p-panel>
+      </div>
+      <div class="col-12 md:col-6 lg:col-3">
+        <p-panel header="Messages by month">
+          <app-stats-table [stats]="stats.timebasedMessageCounts['messagesPerMonth'].messageCounts" firstColumn="Month"></app-stats-table>
+        </p-panel>
+      </div>
     </div>
   </div>
-</div>
+}

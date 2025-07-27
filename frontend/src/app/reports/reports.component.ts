@@ -4,7 +4,7 @@ import {Router} from "@angular/router";
 import {Report, ReportData} from "../report-data";
 import {TableModule} from "primeng/table";
 import {ButtonDirective, ButtonLabel} from "primeng/button";
-import {DatePipe, NgIf} from "@angular/common";
+import { DatePipe } from "@angular/common";
 
 @Component({
   selector: 'app-main',
@@ -14,9 +14,8 @@ import {DatePipe, NgIf} from "@angular/common";
     TableModule,
     ButtonDirective,
     ButtonLabel,
-    NgIf,
     DatePipe
-  ]
+]
 })
 export class ReportsComponent implements OnInit {
   reportData: ReportData | null;

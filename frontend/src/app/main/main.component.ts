@@ -4,15 +4,7 @@ import {Attachment, Message, MessageData} from "../message-data";
 import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
-import {
-  DatePipe,
-  Location,
-  LocationStrategy,
-  NgForOf,
-  NgIf,
-  NgStyle,
-  ViewportScroller
-} from "@angular/common";
+import { DatePipe, Location, LocationStrategy, NgStyle, ViewportScroller } from "@angular/common";
 import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
 import clientConfiguration from '../../client-configuration.json'
 import {Table, TableModule} from "primeng/table";
@@ -35,9 +27,7 @@ import {TabsModule} from "primeng/tabs";
     TableModule,
     DatePipe,
     ContextMenu,
-    NgIf,
     TabsModule,
-    NgForOf,
     ButtonDirective,
     ButtonLabel,
     DatePickerModule,
@@ -45,7 +35,7 @@ import {TabsModule} from "primeng/tabs";
     FormsModule,
     NgStyle,
     Toast
-  ],
+],
   providers: [MessageService]
 })
 export class MainComponent implements OnInit {

@@ -2,15 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {BackendService} from "./backend.service";
 import gitData from '../git-version.json'
 import {RouterOutlet} from "@angular/router";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   imports: [
-    RouterOutlet,
-    NgIf
-  ],
+    RouterOutlet
+],
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {

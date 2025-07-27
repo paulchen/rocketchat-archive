@@ -1,7 +1,11 @@
-<div *ngIf="versionError">
-  Git revisions of frontend and backend do not match, please check your deployment.
-</div>
+@if (versionError) {
+  <div>
+    Git revisions of frontend and backend do not match, please check your deployment.
+  </div>
+}
 
-<div *ngIf="!versionError">
-  <router-outlet></router-outlet>
-</div>
+@if (!versionError) {
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+}

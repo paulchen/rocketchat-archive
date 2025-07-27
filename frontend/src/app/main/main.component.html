@@ -14,131 +14,153 @@
   </p-dialog>
 
   <p-dialog header="Message history" [(visible)]="showHistoryOverlay" [modal]="true" [dismissableMask]="true" [blockScroll]="true">
-    <div *ngIf="messageHistory.length <= 1">
-      Message history not available.
-    </div>
-    <p-table [value]="messageHistory" *ngIf="messageHistory.length > 1">
-      <ng-template pTemplate="header">
-        <tr>
-          <th scope="col">Timestamp</th>
-          <th scope="col">Editor</th>
-          <th scope="col">Text</th>
-        </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-message>
-        <tr>
-          <td>{{message.editedAt|date:'yyyy-MM-dd HH:mm:ss'}}</td>
-          <td>{{message.editedBy}}</td>
-          <td>{{message.message}}</td>
-        </tr>
-      </ng-template>
-    </p-table>
+    @if (messageHistory.length <= 1) {
+      <div>
+        Message history not available.
+      </div>
+    }
+    @if (messageHistory.length > 1) {
+      <p-table [value]="messageHistory">
+        <ng-template pTemplate="header">
+          <tr>
+            <th scope="col">Timestamp</th>
+            <th scope="col">Editor</th>
+            <th scope="col">Text</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-message>
+          <tr>
+            <td>{{message.editedAt|date:'yyyy-MM-dd HH:mm:ss'}}</td>
+            <td>{{message.editedBy}}</td>
+            <td>{{message.message}}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
   </p-dialog>
 
   <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
 
-  <div *ngIf="this.channelNotFound && !this.loading">Channel not found.</div>
+  @if (this.channelNotFound && !this.loading) {
+    <div>Channel not found.</div>
+  }
 
-  <div *ngIf="this.messageNotFound && !this.loading">Message not found.</div>
+  @if (this.messageNotFound && !this.loading) {
+    <div>Message not found.</div>
+  }
 
-  <div *ngIf="!this.channelNotFound && !this.messageNotFound">
-    <p-tabs [(value)]="selectedChannelId" scrollable>
-      <p-tablist>
-        @for (channel of channelData.channels; track channel.id) {
-          <p-tab [value]="channel.id" (click)="handleTabChange(channel)">{{ channel.name }}</p-tab>
+  @if (!this.channelNotFound && !this.messageNotFound) {
+    <div>
+      <p-tabs [(value)]="selectedChannelId" scrollable>
+        <p-tablist>
+          @for (channel of channelData.channels; track channel.id) {
+            <p-tab [value]="channel.id" (click)="handleTabChange(channel)">{{ channel.name }}</p-tab>
+          }
+        </p-tablist>
+      </p-tabs>
+      <div style="text-align: center;">
+        <button pButton type="button" class="p-button-link" (click)="navigateToGallery()">
+          <span pButtonLabel>Gallery</span>
+        </button>
+        <button pButton type="button" class="p-button-link" (click)="navigateToStats()">
+          <span pButtonLabel>Stats</span>
+        </button>
+        <button pButton type="button" class="p-button-link" (click)="navigateToReports()">
+          <span pButtonLabel>Reports</span>
+        </button>
+      </div>
+      <div style="height: 85vh; padding-left: 15px; padding-right: 15px;">
+        @if (tableVisible) {
+          <p-table #table [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
+            [paginator]="true" [(rows)]="limit" [totalRecords]="messageData.messageCount"
+            [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
+            [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
+            [rowsPerPageOptions]="rowsPerPageOptions" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
+            [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
+            responsiveLayout="scroll">
+            <ng-template pTemplate="header">
+              <tr>
+                <th pSortableColumn="timestamp" scope="col">
+                  Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
+                  <p-columnFilter type="date" field="timestamp" [matchModeOptions]="matchModeOptions" (click)="$event.stopPropagation();" showClearButton>
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                      <p-date-picker [ngModel]="value" (onSelect)="filter($event)" dateFormat="yy-mm-dd"></p-date-picker>
+                    </ng-template>
+                  </p-columnFilter>
+                </th>
+                <th scope="col">
+                  Username
+                  <p-columnFilter type="text" field="username" [matchModeOptions]="matchModeOptions">
+                    <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                      <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" id="multiselect-user">
+                      </p-multiSelect>
+                    </ng-template>
+                  </p-columnFilter>
+                </th>
+                <th scope="col">
+                  Message
+                  <p-columnFilter type="text" field="message" placeholder="Regular expression" [matchModeOptions]="matchModeOptions"></p-columnFilter>
+                </th>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-message>
+              <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
+                <td style="white-space: nowrap;">
+                  <a id="{{message.id}}"></a>
+                  <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();">
+                    <span pButtonLabel>{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
+                  </button>
+                  @if (message.editedBy != null) {
+                    <span>
+                      <button pButton type="button" class="p-button-link" (click)="showHistory(message); $event.stopPropagation();">&#9998;</button>
+                    </span>
+                  }
+                </td>
+                <td style="white-space: nowrap;" class="username">
+                  <button pButton type="button" class="p-button-link" (click)="filterByUsername(message.username)">
+                    <span pButtonLabel>{{message.username}}</span>
+                  </button>
+                </td>
+                <td>
+                  <div [innerHTML]="message.message"></div>
+                  @if (message.attachments.length > 0) {
+                    <div>
+                      @if (message.attachments.length == 1) {
+                        <strong>Attachment</strong>
+                      }
+                      @if (message.attachments.length > 1) {
+                        <strong>Attachments</strong>
+                      }
+                      <br />
+                      <ul>
+                        @for (attachment of message.attachments; track attachment) {
+                          <li>
+                            @if (attachment.description) {
+                              <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
+                                <span pButtonLabel>{{attachment.description}}</span>
+                              </button>
+                            }
+                            @if (!attachment.description) {
+                              <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
+                                <span pButtonLabel>{{attachment.title}}</span>
+                              </button>
+                            }
+                          </li>
+                        }
+                      </ul>
+                    </div>
+                  }
+                </td>
+              </tr>
+            </ng-template>
+            <ng-template pTemplate="emptymessage">
+              <tr>
+                <td colspan="3">No messages found.</td>
+              </tr>
+            </ng-template>
+          </p-table>
         }
-      </p-tablist>
-    </p-tabs>
-    <div style="text-align: center;">
-      <button pButton type="button" class="p-button-link" (click)="navigateToGallery()">
-        <span pButtonLabel>Gallery</span>
-      </button>
-
-      <button pButton type="button" class="p-button-link" (click)="navigateToStats()">
-        <span pButtonLabel>Stats</span>
-      </button>
-
-      <button pButton type="button" class="p-button-link" (click)="navigateToReports()">
-        <span pButtonLabel>Reports</span>
-      </button>
+      </div>
     </div>
-
-    <div style="height: 85vh; padding-left: 15px; padding-right: 15px;">
-      <p-table *ngIf="tableVisible" #table [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
-               [paginator]="true" [(rows)]="limit" [totalRecords]="messageData.messageCount"
-               [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
-               [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
-               [rowsPerPageOptions]="rowsPerPageOptions" sortField="timestamp" [sortOrder]="-1" paginatorPosition="both" [(first)]="first"
-               [(contextMenuSelection)]="selectedMessage" [contextMenu]="cm" dataKey="id"
-               responsiveLayout="scroll">
-        <ng-template pTemplate="header">
-          <tr>
-            <th pSortableColumn="timestamp" scope="col">
-              Timestamp <p-sortIcon field="timestamp"></p-sortIcon>
-              <p-columnFilter type="date" field="timestamp" [matchModeOptions]="matchModeOptions" (click)="$event.stopPropagation();" showClearButton>
-                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                  <p-date-picker [ngModel]="value" (onSelect)="filter($event)" dateFormat="yy-mm-dd"></p-date-picker>
-                </ng-template>
-              </p-columnFilter>
-            </th>
-            <th scope="col">
-              Username
-              <p-columnFilter type="text" field="username" [matchModeOptions]="matchModeOptions">
-                <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                  <p-multiSelect [ngModel]="value" [options]="users" (onChange)="filter($event.value)" optionLabel="username" optionValue="id" id="multiselect-user">
-                  </p-multiSelect>
-                </ng-template>
-              </p-columnFilter>
-            </th>
-            <th scope="col">
-              Message
-              <p-columnFilter type="text" field="message" placeholder="Regular expression" [matchModeOptions]="matchModeOptions"></p-columnFilter>
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-message>
-          <tr [ngStyle]="{'background-color': (message.id == highlightedMessage) ? 'yellow' : 'transparent'}" [pContextMenuRow]="message">
-            <td style="white-space: nowrap;">
-              <a id="{{message.id}}"></a>
-              <button pButton type="button" class="p-button-link" (click)="selectedMessage = message; cm.show($event); $event.stopPropagation();">
-                <span pButtonLabel>{{message.timestamp|date:'yyyy-MM-dd HH:mm:ss'}}</span>
-              </button>
-              <span *ngIf="message.editedBy != null">
-                        <button pButton type="button" class="p-button-link" (click)="showHistory(message); $event.stopPropagation();">&#9998;</button>
-                      </span>
-            </td>
-            <td style="white-space: nowrap;" class="username">
-              <button pButton type="button" class="p-button-link" (click)="filterByUsername(message.username)">
-                <span pButtonLabel>{{message.username}}</span>
-              </button>
-            </td>
-            <td>
-              <div [innerHTML]="message.message"></div>
-              <div *ngIf="message.attachments.length > 0">
-                <strong *ngIf="message.attachments.length == 1">Attachment</strong>
-                <strong *ngIf="message.attachments.length > 1">Attachments</strong>
-                <br />
-                <ul>
-                  <li *ngFor="let attachment of message.attachments">
-                    <button *ngIf="attachment.description" pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
-                      <span pButtonLabel>{{attachment.description}}</span>
-                    </button>
-                    <button *ngIf="!attachment.description" pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
-                      <span pButtonLabel>{{attachment.title}}</span>
-                    </button>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="emptymessage">
-          <tr>
-            <td colspan="3">No messages found.</td>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-
-  </div>
+  }
 </div>

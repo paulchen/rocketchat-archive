@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData} from "../channel-data";
-import {Location, LocationStrategy, NgForOf, NgIf} from "@angular/common";
+import { Location, LocationStrategy } from "@angular/common";
 import clientConfiguration from '../../client-configuration.json'
 import {Paginator, PaginatorState} from "primeng/paginator";
 import {User} from "../user-data";
@@ -26,8 +26,6 @@ import {DatePicker} from "primeng/datepicker";
   imports: [
     Toast,
     ProgressSpinner,
-    NgIf,
-    NgForOf,
     Paginator,
     MultiSelect,
     FormsModule,
@@ -40,7 +38,7 @@ import {DatePicker} from "primeng/datepicker";
     TabList,
     Tabs,
     DatePicker
-  ],
+],
   providers: [MessageService]
 })
 export class GalleryComponent implements OnInit {
