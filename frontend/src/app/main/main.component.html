@@ -63,7 +63,7 @@
       </button>
     </div>
 
-    <div style="height: 85vh;">
+    <div style="height: 85vh; padding-left: 15px; padding-right: 15px;">
       <p-table *ngIf="tableVisible" #table [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
                [paginator]="true" [(rows)]="limit" [totalRecords]="messageData.messageCount"
                [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
