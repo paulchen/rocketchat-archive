@@ -265,7 +265,7 @@ export class MainComponent implements OnInit {
     this.selectedChannel = channel;
     this.first = 0;
     clearTimeout(this.timeout);
-    this.reloadData({ limit: 100, sortOrder: -1 }, true);
+    this.reloadData({ rows: 100, sortOrder: -1 }, true);
   }
 
   handleTableChange(event: any, reload: boolean) {
