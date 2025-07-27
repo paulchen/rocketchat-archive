@@ -149,7 +149,7 @@ export class GalleryComponent implements OnInit {
     this.dataLoaded = false;
 
     const page = (this.first / this.rows) + 1;
-    const userIds = this.selectedUsers.map(user => { return user.id });
+    const userIds = this.selectedUsers ? this.selectedUsers.map(user => { return user.id }) : [];
     const date = this.getSelectedDate();
 
     this.backendService.getMessages(this.selectedChannel, page, this.rows, "desc", userIds, this.messageFilter, date, 'image').subscribe(response => {
