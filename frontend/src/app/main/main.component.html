@@ -135,16 +135,17 @@
                       <ul>
                         @for (attachment of message.attachments; track attachment) {
                           <li>
-                            @if (attachment.description) {
-                              <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
+                            <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
+                              @if (attachment.description) {
                                 <span pButtonLabel>{{attachment.description}}</span>
-                              </button>
-                            }
-                            @if (!attachment.description) {
-                              <button pButton type="button" class="p-button-link" (click)="showOverlay(attachment)">
+                              }
+                              @else if (attachment.title) {
                                 <span pButtonLabel>{{attachment.title}}</span>
-                              </button>
-                            }
+                              }
+                              @else {
+                                <span pButtonLabel>Attachment</span>
+                              }
+                            </button>
                           </li>
                         }
                       </ul>

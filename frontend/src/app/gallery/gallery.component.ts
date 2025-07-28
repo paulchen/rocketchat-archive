@@ -165,7 +165,7 @@ export class GalleryComponent implements OnInit {
             filename = filename.substring(1);
           }
           this.images?.push({
-            url: clientConfiguration.rocketchatUrl + filename,
+            url: filename.startsWith('http') ? filename : (clientConfiguration.rocketchatUrl + filename),
             title: attachment.title,
             description: attachment.description,
             message: item

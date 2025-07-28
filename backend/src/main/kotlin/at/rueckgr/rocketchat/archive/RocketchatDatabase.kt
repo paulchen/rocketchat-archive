@@ -271,7 +271,7 @@ class RocketchatDatabase : Logging {
         else {
             "file"
         }
-        return Attachment(type, attachment.title, attachment.title_link, attachment.description, attachment.message_link)
+        return Attachment(type, attachment.title, attachment.title_link ?: attachment.image_url, attachment.description, attachment.message_link)
     }
     private fun mapReport(report: RocketchatReport, users: Map<String, User>) =
         Report(report._id, mapMessage(report.message), report.description, report.ts, users[report.userId]!!)

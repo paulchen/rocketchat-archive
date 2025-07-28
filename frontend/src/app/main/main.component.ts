@@ -427,7 +427,7 @@ export class MainComponent implements OnInit {
   }
 
   showOverlay(attachment: Attachment) {
-    let url = this.rocketchatUrl + attachment.titleLink;
+    let url = attachment.titleLink.startsWith('http') ? attachment.titleLink : (this.rocketchatUrl + attachment.titleLink);
     if (attachment.type == 'file') {
       window.open(url, '_blank');
       return;
