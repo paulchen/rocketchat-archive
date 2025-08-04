@@ -102,6 +102,11 @@ a:hover {
       }
     }
   }
+
+  .messages-table table {
+    width: 100%;
+    table-layout: fixed;
+  }
 }
 
 .stats {

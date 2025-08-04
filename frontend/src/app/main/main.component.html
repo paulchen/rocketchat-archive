@@ -75,7 +75,7 @@
       </div>
       <div style="height: 85vh; padding-left: 15px; padding-right: 15px;">
         @if (tableVisible) {
-          <p-table #table [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive"
+          <p-table #table [value]="messageData.messages" styleClass="p-datatable-sm p-datatable-striped p-datatable-responsive messages-table"
             [paginator]="true" [(rows)]="limit" [totalRecords]="messageData.messageCount"
             [lazy]="true" (onLazyLoad)="handleTableChange($event, false)" [loading]="loading"
             [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} messages"
@@ -125,7 +125,7 @@
                     <span pButtonLabel>{{message.username}}</span>
                   </button>
                 </td>
-                <td>
+                <td style="overflow: hidden;">
                   <div [innerHTML]="message.message"></div>
                   @if (message.attachments.length > 0) {
                     <div>
