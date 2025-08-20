@@ -92,6 +92,7 @@ export class MainComponent implements OnInit {
       { label: 'Copy link to archive', command: () => this.createLink(false, this.selectedMessage) },
       { label: 'Copy link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },
       { label: 'Navigate to message', command: () => this.navigateToMessage(this.selectedMessage) },
+      { label: 'Copy text', command: () => this.copyText(this.selectedMessage)},
     ];
 
     let page = null;
@@ -187,6 +188,14 @@ export class MainComponent implements OnInit {
     this.navigatingToMessage = true;
     this.router.navigateByUrl('/' + encodeURIComponent(selectedMessage.rid) + "/" + encodeURIComponent(selectedMessage.id)).then(() => {
       this.ngOnInit();
+    });
+  }
+
+  private copyText(selectedMessage: Message) {
+    navigator.clipboard.writeText(selectedMessage.message).then(() => {
+      this.messageService.add({ severity: 'success', summary: 'Message text copied to clipboard'});
+    }).catch(() => {
+      this.messageService.add({ severity: 'error', summary: 'Error copying message text to clipboard'});
     });
   }
 
