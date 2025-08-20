@@ -155,9 +155,9 @@ class RocketchatDatabase : Logging {
         if (historyFromDatabase.size > 0) {
             historyFromDatabase
                 .zipWithNext()
-                .forEach { history.add(Message(it.first.id, it.first.rid, it.first.message, it.first.timestamp, it.first.username, it.first.attachments, it.second.editedAt, it.second.editedBy)) }
+                .forEach { history.add(Message(it.first.id, it.first.rid, it.first.message, it.first.message, it.first.timestamp, it.first.username, it.first.attachments, it.second.editedAt, it.second.editedBy)) }
             val last = historyFromDatabase.last()
-            history.add(Message(last.id, last.rid, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username))
+            history.add(Message(last.id, last.rid, last.message, last.message, last.timestamp, last.username, last.attachments, last.timestamp, last.username))
         }
         return history
     }
@@ -247,6 +247,7 @@ class RocketchatDatabase : Logging {
         Message(
             message._id,
             message.rid,
+            message.msg,
             message.msg,
             message.ts,
             message.u.username,
