@@ -192,7 +192,7 @@ export class MainComponent implements OnInit {
   }
 
   private copyText(selectedMessage: Message) {
-    navigator.clipboard.writeText(selectedMessage.message).then(() => {
+    navigator.clipboard.writeText(selectedMessage.rawMessage).then(() => {
       this.messageService.add({ severity: 'success', summary: 'Message text copied to clipboard'});
     }).catch(() => {
       this.messageService.add({ severity: 'error', summary: 'Error copying message text to clipboard'});

@@ -6,6 +6,7 @@ export class MessageData {
 export class Message {
   id: string;
   rid: string;
+  rawMessage: string;
   message: string;
   timestamp: Date;
   username: string;
