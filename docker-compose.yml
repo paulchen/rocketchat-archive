@@ -1,6 +1,8 @@
 services:
   frontend:
-    build: frontend
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
     depends_on:
       backend:
         condition: service_healthy
@@ -24,7 +26,12 @@ services:
       - RAVUSBOT_PASSWORD
       - TZ
       - FAVOURITE_CHANNELS
-    build: backend
+      - ROCKETCHAT_URL
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      args:
+        ROCKETCHAT_URL: ${ROCKETCHAT_URL}
     networks:
       - backend
       - rocketchat_default

@@ -1,3 +1,2 @@
-BASE_HREF=/archive/
 SYSTEMD_UNIT=rocketchat-archive
 ROCKETCHAT_URL=https://chat.rueckgr.at/
