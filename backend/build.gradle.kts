@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Files
 
-val ktorVersion = "3.2.3"
+val ktorVersion = "3.3.0"
 val log4jVersion = "2.25.1"
-val jacksonVersion = "2.19.2"
-val kotlinVersion = "2.2.0"
+val jacksonVersion = "2.20.0"
+val kotlinVersion = "2.2.20"
 
 plugins {
-    kotlin("jvm") version "2.2.0"
+    kotlin("jvm") version "2.2.20"
     application
     id("com.github.ben-manes.versions") version "0.52.0"
 }
@@ -55,7 +55,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.18.0")
     implementation("org.apache.commons:commons-text:1.14.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.5.1")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.6.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
