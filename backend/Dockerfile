@@ -17,10 +17,10 @@ RUN apt-get update && \
 
 ENV JAVA_HOME=/opt/java/openjdk
 COPY --from=jdk $JAVA_HOME $JAVA_HOME
-COPY --from=jdk /opt/app/backend/build/install/rocketchat-archive-backend/ /app
+COPY --from=jdk /opt/app/backend/build/install/rocketchat-archive-backend/ /app/rocketchat-archive-backend/
 
 RUN addgroup --gid 1026 mygroup && adduser --disabled-password --ingroup mygroup --system myuser
 USER myuser
 
-WORKDIR /app/rocketchat-archive-backend-latest
+WORKDIR /app/rocketchat-archive-backend
 CMD ["bin/rocketchat-archive-backend"]
