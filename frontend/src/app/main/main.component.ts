@@ -6,7 +6,6 @@ import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import { DatePipe, Location, LocationStrategy, NgStyle, ViewportScroller } from "@angular/common";
 import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
-import clientConfiguration from '../../client-configuration.json'
 import {Table, TableModule} from "primeng/table";
 import {sortChannels} from "../util";
 import {Dialog} from "primeng/dialog";
@@ -17,6 +16,7 @@ import {FormsModule} from "@angular/forms";
 import {Toast} from "primeng/toast";
 import {DatePickerModule} from "primeng/datepicker";
 import {TabsModule} from "primeng/tabs";
+import {ConfigService} from "../config.service";
 
 @Component({
   selector: 'app-main',
@@ -59,7 +59,6 @@ export class MainComponent implements OnInit {
   private userIdFilter: string[];
   private messageFilter: string;
   private dateFilter: string;
-  rocketchatUrl: string;
   showImageOverlay: boolean = false;
   showAudioOverlay: boolean = false;
   showVideoOverlay: boolean = false;
@@ -82,12 +81,11 @@ export class MainComponent implements OnInit {
     private messageService: MessageService,
     private viewportScroller: ViewportScroller,
     private router: Router,
-    private changeDetectorRef: ChangeDetectorRef
+    private changeDetectorRef: ChangeDetectorRef,
+    private configService: ConfigService,
   ) { }
 
   ngOnInit(): void {
-    this.rocketchatUrl = clientConfiguration.rocketchatUrl;
-
     this.contextMenuItems = [
       { label: 'Copy link to archive', command: () => this.createLink(false, this.selectedMessage) },
       { label: 'Copy link to Rocket.Chat', command: () => this.createLink(true, this.selectedMessage) },
@@ -171,7 +169,7 @@ export class MainComponent implements OnInit {
     }
     let url;
     if(rocketchat) {
-      url = this.rocketchatUrl + "channel/" + encodeURIComponent(channel.name.substring(1)) + "?msg=" + encodeURIComponent(selectedMessage.id);
+      url = this.configService.getConfig().rocketchatUrl + "channel/" + encodeURIComponent(channel.name.substring(1)) + "?msg=" + encodeURIComponent(selectedMessage.id);
     }
     else {
       url = location.origin + this.locationStrategy.getBaseHref() + encodeURIComponent(channel.id) + "/" + encodeURIComponent(selectedMessage.id);
@@ -436,7 +434,7 @@ export class MainComponent implements OnInit {
   }
 
   showOverlay(attachment: Attachment) {
-    let url = attachment.titleLink.startsWith('http') ? attachment.titleLink : (this.rocketchatUrl + attachment.titleLink);
+    let url = attachment.titleLink.startsWith('http') ? attachment.titleLink : (this.configService.getConfig().rocketchatUrl + attachment.titleLink);
     if (attachment.type == 'file') {
       window.open(url, '_blank');
       return;

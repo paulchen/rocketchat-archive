@@ -1,7 +1,5 @@
 FROM node:22 AS node
 
-ARG ROCKETCHAT_URL
-ENV ROCKETCHAT_URL=$ROCKETCHAT_URL
 COPY . /opt/app
 WORKDIR /opt/app/frontend
 RUN npm install && npm run build

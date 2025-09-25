@@ -6,6 +6,7 @@ import {MessageData, MessageHistory, MessagePage} from "./message-data";
 import {UserData} from "./user-data";
 import {VersionData} from "./version-data";
 import {ReportData} from "./report-data";
+import {Config} from "./config.service";
 
 @Injectable({
   providedIn: 'root'
@@ -24,6 +25,10 @@ export class BackendService {
 
   getUsers(): Observable<UserData> {
     return this.http.get<UserData>("./services/users")
+  }
+
+  getConfig(): Observable<Config> {
+    return this.http.get<Config>("./services/config")
   }
 
   getVersion(): Observable<VersionData> {
@@ -48,5 +53,3 @@ export class BackendService {
     return this.http.get<ReportData>("./services/reports", { params });
   }
 }
-
-

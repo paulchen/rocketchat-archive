@@ -16,7 +16,7 @@ Finally, fire up everything
 * Git
 * Docker
 * Docker-Compose
-* Node.js (recently enough; Node 16.14.2 with npm 8.5.0 was used for development)
+* Node.js (recently enough; Node 22 with npm 10.9.3 was used for development; use nvm for reducing headache)
 
 ### Build frontend
 
@@ -24,16 +24,14 @@ From the `frontend` directory, run
 
 ```
 npm install
-ROCKETCHAT_URL='...' npm run build
+npm run build
 ```
-
-Set the variable `ROCKETCHAT_URL` to the URL of your Rocket.Chat installation (including the trailing `/`).
 
 Remember to add the `--base-href` switch in case the application will not be deployed
 on top level of your domain, e.g.
 
 ```
-ROCKETCHAT_URL='...' npm run build -- --base-href="/archive/"
+npm run build -- --base-href="/archive/"
 ```
 
 ### Build backend
@@ -41,7 +39,7 @@ ROCKETCHAT_URL='...' npm run build -- --base-href="/archive/"
 From the `backend` directory, run
 
 ```
-./gradlew distTar
+./gradlew build
 ```
 
 ### Build docker images
@@ -57,15 +55,16 @@ docker-compose build
 Finally, you are ready to start everything up:
 
 ```
-RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... FAVORUITE_CHANNELS=... docker-compose up
+RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... FAVORUITE_CHANNELS=... ROCKETCHAT_URL=... docker-compose up
 ```
 
-Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
+ * Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
 [RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
-Set `DATABASE` to the name of your MongoDB database (usually `rocketchat`).
-Set `FAVOURITE_CHANNELS` to a comma-separated list of channel names (without leading `#`) that should come first
+ * Set `DATABASE` to the name of your MongoDB database (usually `rocketchat`).
+ * Set `FAVOURITE_CHANNELS` to a comma-separated list of channel names (without leading `#`) that should come first
 the channel list.
-You can add the `TZ` variable and set it to a time zone from the Olsen Database (e.g. `Europe/Vienna`) to get
+ * Set `ROCKETCHAT_URL` to the root URL of your Rocket.Chat instance. Make sure the URL includes the trailing slash.
+ * You can add the `TZ` variable and set it to a time zone from the Olsen Database (e.g. `Europe/Vienna`) to get
 the timestamps right. 
 
 The frontend will listen on port `42773` locally, so you may want to point your browser to http://localhost:42773/.
@@ -123,6 +122,7 @@ RAVUSBOT_PASSWORD=...
 DATABASE=...
 TZ=...
 FAVOURITE_CHANNELS=...
+ROCKETCHAT_URL=...
 ```
 * This application does not involve any authentication.
   Therefore, without taking any additional measures, all messages in all channels would be exposed to the public.
@@ -149,8 +149,6 @@ To simplify build and deployment of both frontend and backend, there is a deploy
 To use it, copy `deploy.conf.dist` to `deploy.conf` and configure it accordingly.
 The script will perform the following steps:
 * Run `git pull`.
-* Build the frontend.
-* Build the backend.
 * Run `docker-compose build`.
 * Restart the systemd unit.
 
@@ -201,11 +199,11 @@ apply Service "Rocketchat Archive" {
 In order to run the application on your local machine, take the following steps:
 
 * Ensure Docker is installed.
-* Use NVM to set up Node 20.x via `nvm use lts/jod`.
+* Use nvm to set up Node 22.x via `nvm use lts/jod`.
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --ulimit nofile=64000:64000 --name mongo -p 127.0.0.1:27017:27017 mongo:7.0.22 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --ulimit nofile=64000:64000 --name mongo -p 127.0.0.1:27017:27017 mongo:7.0.24 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 
@@ -215,8 +213,8 @@ In order to run the application on your local machine, take the following steps:
   of your production installation of Rocket.Chat (into a directory named `dump`).
 * Place this directory on your local machine.
 * From the directory containing that directory, invoke `mongorestore`.
-* Start the backend (e.g., import the Gradle project into IntelliJ IDEA and invoke `MainKt`).
-* Start the frontend (e.g., run `npm install` and `ROCKETCHAT_URL='...' npm run start`) from the `frontend` directory.
+* Start the backend (e.g., import the Gradle project into IntelliJ IDEA, configure the aforementioned environment variables, and invoke `MainKt`).
+* Start the frontend (e.g., run `npm install` and `npm run start`) from the `frontend` directory.
 * Point your browser to http://localhost:4200.
 
 ## Remote debugging

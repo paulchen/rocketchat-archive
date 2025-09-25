@@ -3,7 +3,6 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData} from "../channel-data";
 import { Location, LocationStrategy } from "@angular/common";
-import clientConfiguration from '../../client-configuration.json'
 import {Paginator, PaginatorState} from "primeng/paginator";
 import {User} from "../user-data";
 import {Message} from "../message-data";
@@ -18,6 +17,7 @@ import {GalleriaModule} from "primeng/galleria";
 import {InputText} from "primeng/inputtext";
 import {Tab, TabList, Tabs} from "primeng/tabs";
 import {DatePicker} from "primeng/datepicker";
+import {ConfigService} from "../config.service";
 
 @Component({
   selector: 'app-stats',
@@ -68,6 +68,7 @@ export class GalleryComponent implements OnInit {
     private location: Location,
     private locationStrategy: LocationStrategy,
     private messageService: MessageService,
+    private configService: ConfigService,
   ) { }
 
   ngOnInit(): void {
@@ -165,7 +166,7 @@ export class GalleryComponent implements OnInit {
             filename = filename.substring(1);
           }
           this.images?.push({
-            url: filename.startsWith('http') ? filename : (clientConfiguration.rocketchatUrl + filename),
+            url: filename.startsWith('http') ? filename : (this.configService.getConfig().rocketchatUrl + filename),
             title: attachment.title,
             description: attachment.description,
             message: item

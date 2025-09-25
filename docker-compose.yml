@@ -30,8 +30,6 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-      args:
-        ROCKETCHAT_URL: ${ROCKETCHAT_URL}
     networks:
       - backend
       - rocketchat_default

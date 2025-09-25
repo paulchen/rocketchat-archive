@@ -1,4 +1,3 @@
 .idea
 misc/deploy.conf
 frontend/src/git-version.json
-frontend/src/client-configuration.json

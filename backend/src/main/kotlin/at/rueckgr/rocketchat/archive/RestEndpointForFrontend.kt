@@ -148,6 +148,11 @@ class RestEndpointForFrontend(private val favouriteChannels: List<String>) : Log
                         }
                     }
                 }
+                route("/config") {
+                    get {
+                        call.respond(mapOf("rocketchatUrl" to System.getenv("ROCKETCHAT_URL")))
+                    }
+                }
                 route("/version") {
                     get {
                         call.respond(mapOf("version" to VersionHelper.instance.getVersion().revision))

@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node git-version.js && node client-config.js && ng serve",
-    "build": "node git-version.js && node client-config.js && ng build",
+    "start": "node git-version.js && ng serve",
+    "build": "node git-version.js && ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

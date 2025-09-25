@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import {ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection} from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
@@ -7,6 +7,7 @@ import Aura from '@primeng/themes/aura';
 import {provideHttpClient} from '@angular/common/http';
 import {routes} from "./app.routes";
 import {definePreset} from "@primeng/themes";
+import {ConfigService} from "./config.service";
 
 const CustomTheme = definePreset(Aura, {
   semantic: {
@@ -36,6 +37,7 @@ export const appConfig: ApplicationConfig = {
         preset: CustomTheme
       }
     }),
-    provideHttpClient()
+    provideHttpClient(),
+    provideAppInitializer(() => inject(ConfigService).loadConfig()),
   ]
 };
