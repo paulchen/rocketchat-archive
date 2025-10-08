@@ -6,9 +6,15 @@ RUN npm install && npm run build
 
 FROM nginx:latest
 
-RUN addgroup --gid 1026 mygroup && adduser --disabled-password --ingroup mygroup --system myuser
-RUN mkdir -p /var/cache/nginx && chown -R myuser /var/cache/nginx
-RUN touch /var/run/nginx.pid && chown myuser /var/run/nginx.pid
+RUN apt-get update && \
+    apt-get install --no-install-recommends --no-install-suggests -y adduser && \
+    rm -rf /var/lib/apt/lists/* && \
+    addgroup --gid 1026 mygroup && \
+    adduser --disabled-password --ingroup mygroup --system myuser && \
+    mkdir -p /var/cache/nginx && \
+    chown -R myuser /var/cache/nginx && \
+    touch /var/run/nginx.pid && \
+    chown myuser /var/run/nginx.pid
 
 USER myuser
 
