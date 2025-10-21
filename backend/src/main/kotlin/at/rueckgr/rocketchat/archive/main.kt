@@ -1,8 +1,6 @@
 package at.rueckgr.rocketchat.archive
 
-import at.rueckgr.rocketchat.ravusbot.RavusBotService
-import kotlinx.coroutines.async
-import kotlinx.coroutines.runBlocking
+import at.rueckgr.rocketchat.aliasservice.AliasService
 import org.apache.commons.lang3.StringUtils
 import java.time.ZonedDateTime
 
@@ -31,10 +29,11 @@ data class UserDetails(val id: String, val username: String, val mostRecentMessa
 data class Report(val id: String, val message: Message, val description: String, val timestamp: ZonedDateTime, val reporter: User)
 
 fun main() {
-    val ravusBotUsername = System.getenv("RAVUSBOT_USERNAME") ?: return
-    val ravusBotPassword = System.getenv("RAVUSBOT_PASSWORD") ?: return
+    val aliasServiceEndpoint: String? = System.getenv("ALIAS_SERVICE_ENDPOINT")
+    val aliasServiceUsername: String? = System.getenv("ALIAS_SERVICE_USERNAME")
+    val aliasServicePassword: String? = System.getenv("ALIAS_SERVICE_PASSWORD")
 
-    val ravusBotService = RavusBotService(ravusBotUsername, ravusBotPassword)
+    val aliasService = AliasService(aliasServiceEndpoint, aliasServiceUsername, aliasServicePassword)
 
     if (StringUtils.isBlank(ConfigurationProvider.getConfiguration().database)) {
         return
@@ -42,6 +41,6 @@ fun main() {
 
     val favouriteChannels = System.getenv("FAVOURITE_CHANNELS")?.split(",") ?: emptyList()
 
-    RestEndpointForBot(ravusBotService).start()
+    RestEndpointForBot(aliasService).start()
     RestEndpointForFrontend(favouriteChannels).start()
 }

@@ -55,11 +55,13 @@ docker-compose build
 Finally, you are ready to start everything up:
 
 ```
-RAVUSBOT_USERNAME=... RAVUSBOT_PASSWORD=... DATABASE=... FAVORUITE_CHANNELS=... ROCKETCHAT_URL=... docker-compose up
+ALIAS_SERVICE_ENDPOINT=... ALIAS_SERVICE_USERNAME=... ALIAS_SERVICE_PASSWORD=... DATABASE=... FAVORUITE_CHANNELS=... ROCKETCHAT_URL=... docker-compose up
 ```
 
- * Set the environment variables `RAVUSBOT_USERNAME` and `RAVUSBOT_PASSWORD` to the credentials to access the API of
-[RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
+ * If available, configure the environment variables `ALIAS_SERVICE_ENDPOINT`, `ALIAS_SERVICE_USERNAME`, and `ALIAS_SERVICE_PASSWORD`
+for accessing a service that takes a username as parameter and returns a plain-text list of aliases of that username.
+If present, the placeholder `[USERNAME]` in `ALIAS_SERVICE_ENDPOINT` will automatically be replaced by the url-encoded username to be
+queried. One implementation for such a service is provided by [RavuAlHemio/rocketbot](https://github.com/RavuAlHemio/rocketbot).
  * Set `DATABASE` to the name of your MongoDB database (usually `rocketchat`).
  * Set `FAVOURITE_CHANNELS` to a comma-separated list of channel names (without leading `#`) that should come first
 the channel list.
@@ -117,8 +119,9 @@ WantedBy=multi-user.target
 ```
 * This snippet references the file `/etc/default/rocketchat-archive` which contains the environment variables required for running the archive:
 ```
-RAVUSBOT_USERNAME=...
-RAVUSBOT_PASSWORD=...
+ALIAS_SERVICE_ENDPOINT=...
+ALIAS_SERVICE_USERNAME=...
+ALIAS_SERVICE_PASSWORD=...
 DATABASE=...
 TZ=...
 FAVOURITE_CHANNELS=...

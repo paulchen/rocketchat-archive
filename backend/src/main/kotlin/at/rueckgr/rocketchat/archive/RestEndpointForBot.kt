@@ -1,6 +1,6 @@
 package at.rueckgr.rocketchat.archive
 
-import at.rueckgr.rocketchat.ravusbot.RavusBotService
+import at.rueckgr.rocketchat.aliasservice.AliasService
 import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
@@ -10,7 +10,7 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
 
 @Suppress("ExtractKtorModule")
-class RestEndpointForBot(private val ravusBotService: RavusBotService) {
+class RestEndpointForBot(private val aliasService: AliasService) {
     fun start() {
         embeddedServer(Netty, 8081) {
             install(ContentNegotiation) {
@@ -28,9 +28,9 @@ class RestEndpointForBot(private val ravusBotService: RavusBotService) {
                             }
                             result {
                                 val username = parameter("username")!!
-                                val usernamesFromRavusBot = ravusBotService.getUsernames(username)
+                                val usernamesFromAliasService = aliasService.getUsernames(username)
 
-                                val usernames = usernamesFromRavusBot
+                                val usernames = usernamesFromAliasService
                                     .ifEmpty { listOf(username) }
                                     .map { it.lowercase() }
                                 val userDetails = RocketchatDatabase().getUserByUsernames(usernames)

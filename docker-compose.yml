@@ -22,8 +22,9 @@ services:
   backend:
     environment:
       - DATABASE
-      - RAVUSBOT_USERNAME
-      - RAVUSBOT_PASSWORD
+      - ALIAS_SERVICE_ENDPOINT
+      - ALIAS_SERVICE_USERNAME
+      - ALIAS_SERVICE_PASSWORD
       - TZ
       - FAVOURITE_CHANNELS
       - ROCKETCHAT_URL
