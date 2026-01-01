@@ -25,7 +25,7 @@ docker pull debian:trixie-slim || exit 1
 docker pull eclipse-temurin:21-jdk || exit 1
 docker pull eclipse-temurin:21-jre || exit 1
 docker pull nginx:latest || exit 1
-docker pull node:22 || exit 1
+docker pull node:24 || exit 1
 
 cd "$BASE_DIR"
 
