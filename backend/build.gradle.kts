@@ -2,9 +2,9 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Files
 
-val ktorVersion = "3.3.3"
+val ktorVersion = "3.4.0"
 val log4jVersion = "2.25.3"
-val jacksonVersion = "2.20.1"
+val jacksonVersion = "2.21.0"
 val kotlinVersion = "2.3.0"
 
 plugins {
