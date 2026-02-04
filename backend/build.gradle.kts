@@ -55,7 +55,7 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.20.0")
     implementation("org.apache.commons:commons-text:1.15.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.6.2")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.6.3")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
