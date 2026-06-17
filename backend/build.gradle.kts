@@ -2,13 +2,13 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.nio.file.Files
 
-val ktorVersion = "3.4.3"
+val ktorVersion = "3.5.0"
 val log4jVersion = "2.26.0"
-val jacksonVersion = "2.21.3"
-val kotlinVersion = "2.3.21"
+val jacksonVersion = "2.22.0"
+val kotlinVersion = "2.4.0"
 
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.0"
     application
     id("com.github.ben-manes.versions") version "0.54.0"
 }
@@ -50,12 +50,12 @@ dependencies {
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("org.apache.logging.log4j:log4j-api:$log4jVersion")
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    implementation("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-api:2.0.18")
     implementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion")
     implementation("org.apache.commons:commons-lang3:3.20.0")
     implementation("org.apache.commons:commons-text:1.15.0")
-    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.7.0")
+    implementation("org.mongodb:mongodb-driver-kotlin-sync:5.8.0")
 
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 }
