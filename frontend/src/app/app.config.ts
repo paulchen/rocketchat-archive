@@ -4,7 +4,7 @@ import { provideRouter } from '@angular/router';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {provideOptimus} from '@openng/optimus-ui/config';
 import Aura from '@openng/optimus-ui-themes/aura';
-import {provideHttpClient} from '@angular/common/http';
+import {provideHttpClient, withXhr} from '@angular/common/http';
 import {routes} from "./app.routes";
 import {definePreset} from "@openng/optimus-ui-themes";
 import {ConfigService} from "./config.service";
@@ -38,7 +38,7 @@ export const appConfig: ApplicationConfig = {
         preset: CustomTheme
       }
     }),
-    provideHttpClient(),
+    provideHttpClient(withXhr()),
     provideAppInitializer(() => inject(ConfigService).loadConfig()),
   ]
 };

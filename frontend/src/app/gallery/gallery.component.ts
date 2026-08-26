@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData} from "../channel-data";
@@ -39,6 +39,7 @@ import {ConfigService} from "../config.service";
     Tabs,
     DatePicker
 ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class GalleryComponent implements OnInit {

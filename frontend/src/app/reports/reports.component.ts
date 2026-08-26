@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {BackendService} from "../backend.service";
 import {Router} from "@angular/router";
 import {Report, ReportData} from "../report-data";
@@ -10,6 +10,7 @@ import { DatePipe } from "@angular/common";
   selector: 'app-main',
   templateUrl: './reports.component.html',
   styleUrls: ['./reports.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
     TableModule,
     ButtonDirective,

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit, ViewChild, ChangeDetectionStrategy} from '@angular/core';
 import {Channel, ChannelData} from "../channel-data";
 import {Attachment, Message, MessageData} from "../message-data";
 import {User} from "../user-data";
@@ -36,6 +36,7 @@ import {ConfigService} from "../config.service";
     NgStyle,
     Toast
 ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   providers: [MessageService]
 })
 export class MainComponent implements OnInit {

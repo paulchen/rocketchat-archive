@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ChangeDetectionStrategy} from '@angular/core';
 import {MessageCount} from "../channel-data";
 import {TableModule} from "@openng/optimus-ui/table";
 
@@ -8,6 +8,7 @@ import {TableModule} from "@openng/optimus-ui/table";
   imports: [
     TableModule
   ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./stats-table.component.scss']
 })
 export class StatsTableComponent implements OnInit {

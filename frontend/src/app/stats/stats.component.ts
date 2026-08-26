@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {BackendService} from "../backend.service";
 import {Channel, ChannelData, ChannelStats} from "../channel-data";
@@ -26,6 +26,7 @@ import {SelectModule} from "@openng/optimus-ui/select";
     ButtonDirective,
     ButtonLabel
 ],
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./stats.component.scss']
 })
 export class StatsComponent implements OnInit {

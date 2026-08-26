@@ -19,6 +19,6 @@ RUN apt-get update && \
 USER myuser
 
 COPY frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=node /opt/app/frontend/dist/rocketchat-archive /usr/share/nginx/html
+COPY --from=node /opt/app/frontend/dist/rocketchat-archive/browser /usr/share/nginx/html
 EXPOSE 80
 
