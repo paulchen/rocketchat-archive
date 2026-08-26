@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {BackendService} from "../backend.service";
 import {Router} from "@angular/router";
 import {Report, ReportData} from "../report-data";
-import {TableModule} from "primeng/table";
-import {ButtonDirective, ButtonLabel} from "primeng/button";
+import {TableModule} from "@openng/optimus-ui/table";
+import {ButtonDirective, ButtonLabel} from "@openng/optimus-ui/button";
 import { DatePipe } from "@angular/common";
 
 @Component({

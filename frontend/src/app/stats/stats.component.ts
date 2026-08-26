@@ -4,13 +4,13 @@ import {BackendService} from "../backend.service";
 import {Channel, ChannelData, ChannelStats} from "../channel-data";
 import { Location } from "@angular/common";
 import {sortChannels} from "../util";
-import {ProgressSpinner} from "primeng/progressspinner";
-import {Panel} from "primeng/panel";
+import {ProgressSpinner} from "@openng/optimus-ui/progressspinner";
+import {Panel} from "@openng/optimus-ui/panel";
 import {FormsModule} from "@angular/forms";
-import {Button, ButtonDirective, ButtonLabel} from "primeng/button";
+import {Button, ButtonDirective, ButtonLabel} from "@openng/optimus-ui/button";
 import {StatsTableComponent} from "../stats-table/stats-table.component";
-import {DatePickerModule} from "primeng/datepicker";
-import {SelectModule} from "primeng/select";
+import {DatePickerModule} from "@openng/optimus-ui/datepicker";
+import {SelectModule} from "@openng/optimus-ui/select";
 
 @Component({
   selector: 'app-stats',

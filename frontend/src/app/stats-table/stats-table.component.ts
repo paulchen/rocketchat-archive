@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MessageCount} from "../channel-data";
-import {TableModule} from "primeng/table";
+import {TableModule} from "@openng/optimus-ui/table";
 
 @Component({
   selector: 'app-stats-table',

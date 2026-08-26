@@ -202,11 +202,11 @@ apply Service "Rocketchat Archive" {
 In order to run the application on your local machine, take the following steps:
 
 * Ensure Docker is installed.
-* Use nvm to set up Node 22.x via `nvm use lts/jod`.
+* Use nvm to set up Node 24.x via `nvm use lts/krypton`.
 * Map the host name `mongo` to `127.0.0.1` using `/etc/hosts`.
 * Fire up a local MongoDB instance using Docker: 
 
-```docker run --ulimit nofile=64000:64000 --name mongo -p 127.0.0.1:27017:27017 mongo:7.0.24 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
+```docker run --ulimit nofile=64000:64000 --name mongo -p 127.0.0.1:27017:27017 mongo:8.3.8 mongod --oplogSize 128 --replSet rs0 --storageEngine=wiredTiger```
 
 * Set up the MongoDB replica set:
 

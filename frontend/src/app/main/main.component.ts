@@ -5,17 +5,17 @@ import {User} from "../user-data";
 import {BackendService} from "../backend.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import { DatePipe, Location, LocationStrategy, NgStyle, ViewportScroller } from "@angular/common";
-import {FilterMatchMode, MenuItem, MessageService} from "primeng/api";
-import {Table, TableModule} from "primeng/table";
+import {FilterMatchMode, MenuItem, MessageService} from "@openng/optimus-ui/api";
+import {Table, TableModule} from "@openng/optimus-ui/table";
 import {sortChannels} from "../util";
-import {Dialog} from "primeng/dialog";
-import {ContextMenu} from "primeng/contextmenu";
-import {ButtonDirective, ButtonLabel} from "primeng/button";
-import {MultiSelect} from "primeng/multiselect";
+import {Dialog} from "@openng/optimus-ui/dialog";
+import {ContextMenu} from "@openng/optimus-ui/contextmenu";
+import {ButtonDirective, ButtonLabel} from "@openng/optimus-ui/button";
+import {MultiSelect} from "@openng/optimus-ui/multiselect";
 import {FormsModule} from "@angular/forms";
-import {Toast} from "primeng/toast";
-import {DatePickerModule} from "primeng/datepicker";
-import {TabsModule} from "primeng/tabs";
+import {Toast} from "@openng/optimus-ui/toast";
+import {DatePickerModule} from "@openng/optimus-ui/datepicker";
+import {TabsModule} from "@openng/optimus-ui/tabs";
 import {ConfigService} from "../config.service";
 
 @Component({
