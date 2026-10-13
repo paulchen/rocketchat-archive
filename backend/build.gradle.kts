@@ -10,7 +10,7 @@ val kotlinVersion = "2.4.21"
 plugins {
     kotlin("jvm") version "2.4.21"
     application
-    id("com.github.ben-manes.versions") version "0.66.0"
+    id("io.github.ben-manes.versions") version "0.66.0"
 }
 
 tasks.named<com.github.benmanes.gradle.versions.updates.DependencyUpdatesTask>("dependencyUpdates").configure {
