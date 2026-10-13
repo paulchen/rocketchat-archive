@@ -1,6 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('../dist/custom-fonts/noto-color-emoji.css?20261012');
+
 html {
-  font-family: sans-serif;
+  font-family: sans-serif, 'Noto Color Emoji';
   margin: 0;
   padding: 0;
 }

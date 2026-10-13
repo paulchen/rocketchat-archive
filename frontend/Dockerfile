@@ -2,7 +2,12 @@ FROM node:24 AS node
 
 COPY . /opt/app
 WORKDIR /opt/app/frontend
-RUN npm install && npm run build
+RUN mkdir dist && \
+    cd dist && \
+    /opt/app/frontend/download-fonts.sh && \
+    cd /opt/app/frontend && \
+    npm install && \
+    npm run build
 
 FROM nginx:latest
 
@@ -20,5 +25,6 @@ USER myuser
 
 COPY frontend/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=node /opt/app/frontend/dist/rocketchat-archive/browser /usr/share/nginx/html
+COPY --from=node /opt/app/frontend/dist/custom-fonts /usr/share/nginx/html/custom-fonts
 EXPOSE 80
 
